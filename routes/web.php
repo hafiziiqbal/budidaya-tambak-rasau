@@ -23,3 +23,10 @@ Route::group(['middleware' => 'guest'], function () {
 
     Route::post('/login', [AuthController::class, 'authenticate'])->name('login.auth');
 });
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/dashboard', function () {
+        return view('dashboard')->with(['title' => 'DASHBOARD']);
+    })->name('dashboard');
+});
