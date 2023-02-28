@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <title>{{ $title ?? env('APP_NAME', null) }}</title>
 
     {{-- font --}}
@@ -18,6 +19,10 @@
 
     {{-- fontawesome --}}
     <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+
+    {{-- datatables --}}
+    <link rel="stylesheet" href="{{ asset('/vendor/datatables/css/dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/vendor/datatables/css/responsive.bootstrap.min.css') }}">
 </head>
 
 <body class="sb-nav-fixed">
@@ -55,16 +60,18 @@
                             Dashboard
                         </a>
                         <div class="sb-sidenav-menu-heading">Database Kami</div>
-                        <a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
-                            data-bs-target="#collapseLayouts" aria-expanded="false" aria-controls="collapseLayouts">
+                        <a class="nav-link {{ isset($masterdata_toogle) ? 'active' : 'collapsed' }}" href="#"
+                            data-bs-toggle="collapse" data-bs-target="#collapseMasterData" aria-expanded="false"
+                            aria-controls="collapseMasterData">
                             <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
                             Master Data
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne"
-                            data-bs-parent="#sidenavAccordion">
+                        <div class="collapse {{ isset($masterdata_toogle) ? 'show' : '' }}" id="collapseMasterData"
+                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link" href="layout-static.html">Static Navigation</a>
+                                <a class="nav-link {{ $title == 'SUPPLIER' || $title == 'TAMBAH SUPPLIER' ? 'active' : '' }}"
+                                    href="{{ route('supplier') }}">Supplier</a>
                                 <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
                             </nav>
                         </div>
@@ -95,6 +102,10 @@
 
     <script src="{{ asset('/js/script.js') }}"></script>
     <script src="{{ asset('/vendor/jquery/jquery-3.5.1.js') }}"></script>
+    <script src="{{ asset('/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('/vendor/datatables/js/dataTables.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('/vendor/datatables/js/responsive.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
     @stack('script')
 </body>

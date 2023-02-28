@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\SupplierController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +30,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/dashboard', function () {
         return view('dashboard')->with(['title' => 'DASHBOARD']);
     })->name('dashboard');
+
+    Route::group(['prefix' => 'supplier'], function () {
+        Route::get('/', [SupplierController::class, 'index'])->name('supplier');
+        Route::get('/create', [SupplierController::class, 'create'])->name('supplier.create');
+
+        Route::post('/', [SupplierController::class, 'store'])->name('supplier.store');
+        Route::post('/datatable', [SupplierController::class, 'datatable'])->name('supplier.datatable');
+    });
 });
