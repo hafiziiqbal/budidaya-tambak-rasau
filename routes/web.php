@@ -34,8 +34,11 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'supplier'], function () {
         Route::get('/', [SupplierController::class, 'index'])->name('supplier');
         Route::get('/create', [SupplierController::class, 'create'])->name('supplier.create');
+        Route::get('/{id}/edit', [SupplierController::class, 'edit'])->name('supplier.edit');
+        Route::get('/delete/{id}', [SupplierController::class, 'destroy'])->name('supplier.destory');
 
         Route::post('/', [SupplierController::class, 'store'])->name('supplier.store');
+        Route::post('/{id}/update', [SupplierController::class, 'update'])->name('supplier.update');
         Route::post('/datatable', [SupplierController::class, 'datatable'])->name('supplier.datatable');
     });
 });

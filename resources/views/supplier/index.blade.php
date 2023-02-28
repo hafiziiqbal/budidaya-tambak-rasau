@@ -26,9 +26,6 @@
         $(document).ready(function() {
             let table = $('#tblSupplier').DataTable({
                 responsive: true,
-                order: [
-                    [5, 'desc']
-                ],
                 ajax: {
                     url: "/supplier/datatable",
                     type: "POST",
@@ -40,9 +37,9 @@
                     },
                 },
                 columns: [{
-                        data: "id",
+                        data: "updated_at",
                         render: function(data, type, row, meta) {
-                            return meta.row + meta.settings._iDisplayStart + 1;
+                            return row.DT_RowIndex
                         },
                     },
                     {
@@ -59,7 +56,14 @@
                     },
                     {
                         data: "id",
-                        name: "id",
+                        render: function(id) {
+
+                            let edit =
+                                `<a title="Edit Data" href="/supplier/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                            let deletebtn =
+                                `<a title="Hapus Data" href="/supplier/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
+                            return edit + deletebtn
+                        },
                     },
                     {
                         data: "updated_at",

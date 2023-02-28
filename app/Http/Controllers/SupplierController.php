@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreUpdateSupplierRequest;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -20,7 +21,7 @@ class SupplierController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = Supplier::all();
+                $data = Supplier::orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -38,17 +39,70 @@ class SupplierController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(StoreUpdateSupplierRequest $request)
     {
-        Supplier::create([
-            'nama' => $request->nama,
-            'alamat' => $request->alamat,
-            'telepon' => $request->telepon,
-        ]);
+        try {
+            Supplier::create([
+                'nama' => $request->nama,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
+            ]);
 
-        return redirect()->route('supplier')->with(
-            'success',
-            'Berhasil Tambah Supplier'
-        );
+            return redirect()->route('supplier')->with(
+                'success',
+                'Berhasil Tambah Supplier'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
+    public function edit($id)
+    {
+        $supplier = Supplier::find($id);
+        return view('supplier.edit')->with([
+            'title' => 'EDIT SUPPLIER',
+            'supplier' => $supplier,
+            'masterdata_toogle' => 1
+        ]);
+    }
+
+    public function update(StoreUpdateSupplierRequest $request, $id)
+    {
+        try {
+            $supplier = Supplier::find($id);
+            $supplier->update([
+                'nama' => $request->nama,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
+            ]);
+
+            return redirect()->route('supplier')->with(
+                'success',
+                'Berhasil Perbarui Supplier'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $supplier = Supplier::find($id);
+            $supplier->delete();
+            return redirect()->route('supplier')->with(
+                'success',
+                'Berhasil Hapus Supplier'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
     }
 }
