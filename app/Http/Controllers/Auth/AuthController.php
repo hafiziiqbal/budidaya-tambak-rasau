@@ -18,12 +18,17 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password], $request->remember)) {
-            // return redirect()->route('');
-            return 'masuk';
+            return redirect()->route('dashboard');
         } else {
             return back()->withErrors([
                 'error' => 'Akun yang Anda Masukan Tidak Terdeteksi'
             ])->withInput();
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        return redirect('/');
     }
 }
