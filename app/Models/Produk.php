@@ -19,4 +19,9 @@ class Produk extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function kategori()
+    {
+        return $this->belongsTo(Kategori::class, 'id_kategori');
+    }
 }

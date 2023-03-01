@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\KategoriControler;
+use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\SupplierController;
 
 /*
@@ -52,5 +53,18 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [KategoriControler::class, 'store'])->name('kategori.store');
         Route::post('/{id}/update', [KategoriControler::class, 'update'])->name('kategori.update');
         Route::post('/datatable', [KategoriControler::class, 'datatable'])->name('kategori.datatable');
+    });
+
+    Route::group(['prefix' => 'pembelian'], function () {
+        Route::get('/', [PembelianController::class, 'index'])->name('pembelian');
+        Route::get('/contoh', [PembelianController::class, 'contoh'])->name('pembelian.contoh');
+        Route::get('/{id}/show', [PembelianController::class, 'show'])->name('pembelian.show');
+        // Route::get('/create', [KategoriControler::class, 'create'])->name('kategori.create');
+        // Route::get('/{id}/edit', [KategoriControler::class, 'edit'])->name('kategori.edit');
+        // Route::get('/delete/{id}', [KategoriControler::class, 'destroy'])->name('kategori.destory');
+
+        // Route::post('/', [KategoriControler::class, 'store'])->name('kategori.store');
+        // Route::post('/{id}/update', [KategoriControler::class, 'update'])->name('kategori.update');
+        Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
     });
 });

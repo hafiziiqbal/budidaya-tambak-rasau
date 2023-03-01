@@ -22,4 +22,14 @@ class DetailBeli extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function produk()
+    {
+        return $this->belongsTo(Produk::class, 'id_produk');
+    }
+
+    public function header_beli()
+    {
+        return $this->belongsTo(HeaderBeli::class, 'id_header_beli');
+    }
 }

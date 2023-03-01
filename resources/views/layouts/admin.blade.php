@@ -59,6 +59,7 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+
                         <div class="sb-sidenav-menu-heading">Database Kami</div>
                         <a class="nav-link {{ isset($masterdata_toogle) ? 'active' : 'collapsed' }}" href="#"
                             data-bs-toggle="collapse" data-bs-target="#collapseMasterData" aria-expanded="false"
@@ -74,6 +75,23 @@
                                     href="{{ route('supplier') }}">Supplier</a>
                                 <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}""
                                     href="{{ route('kategori') }}">Kategori</a>
+                            </nav>
+                        </div>
+
+                        <div class="sb-sidenav-menu-heading">Transaksi Kami</div>
+                        <a class="nav-link {{ isset($transaksi_toogle) ? 'active' : 'collapsed' }}" href="#"
+                            data-bs-toggle="collapse" data-bs-target="#collapseTransaksi" aria-expanded="false"
+                            aria-controls="collapseTransaksi">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                            Transaksi
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse {{ isset($transaksi_toogle) ? 'show' : '' }}" id="collapseTransaksi"
+                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PEMBELIAN' || $title == 'TAMBAH PEMBELIAN' || $title == 'EDIT PEMBELIAN' ? 'active' : '' }}"
+                                    href="{{ route('pembelian') }}">Pembelian</a>
+
                             </nav>
                         </div>
 

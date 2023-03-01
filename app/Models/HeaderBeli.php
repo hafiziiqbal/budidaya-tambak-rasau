@@ -22,4 +22,9 @@ class HeaderBeli extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'id_supplier');
+    }
 }
