@@ -11,7 +11,7 @@ class SupplierController extends Controller
 {
     public function index()
     {
-        return view('supplier.index')->with([
+        return view('pages.supplier.index')->with([
             'title' => 'SUPPLIER',
             'masterdata_toogle' => 1
         ]);
@@ -33,7 +33,7 @@ class SupplierController extends Controller
 
     public function create()
     {
-        return view('supplier.create')->with([
+        return view('pages.supplier.create')->with([
             'title' => 'TAMBAH SUPPLIER',
             'masterdata_toogle' => 1
         ]);
@@ -62,7 +62,7 @@ class SupplierController extends Controller
     public function edit($id)
     {
         $supplier = Supplier::find($id);
-        return view('supplier.edit')->with([
+        return view('pages.supplier.edit')->with([
             'title' => 'EDIT SUPPLIER',
             'supplier' => $supplier,
             'masterdata_toogle' => 1
