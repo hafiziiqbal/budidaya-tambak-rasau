@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\SupplierController;
 
 /*
@@ -40,5 +41,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [SupplierController::class, 'store'])->name('supplier.store');
         Route::post('/{id}/update', [SupplierController::class, 'update'])->name('supplier.update');
         Route::post('/datatable', [SupplierController::class, 'datatable'])->name('supplier.datatable');
+    });
+
+    Route::group(['prefix' => 'kategori'], function () {
+        Route::get('/', [KategoriControler::class, 'index'])->name('kategori');
+        Route::get('/create', [KategoriControler::class, 'create'])->name('kategori.create');
+        Route::get('/{id}/edit', [KategoriControler::class, 'edit'])->name('kategori.edit');
+        Route::get('/delete/{id}', [KategoriControler::class, 'destroy'])->name('kategori.destory');
+
+        Route::post('/', [KategoriControler::class, 'store'])->name('kategori.store');
+        Route::post('/{id}/update', [KategoriControler::class, 'update'])->name('kategori.update');
+        Route::post('/datatable', [KategoriControler::class, 'datatable'])->name('kategori.datatable');
     });
 });
