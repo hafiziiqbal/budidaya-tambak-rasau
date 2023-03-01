@@ -23,6 +23,10 @@
     {{-- datatables --}}
     <link rel="stylesheet" href="{{ asset('/vendor/datatables/css/dataTables.bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('/vendor/datatables/css/responsive.bootstrap.min.css') }}">
+
+    {{-- select2 --}}
+    <link rel="stylesheet" href="{{ asset('/vendor/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('/vendor/select2/css/select2-bootstrap-5-theme.min.css') }}">
 </head>
 
 <body class="sb-nav-fixed">
@@ -55,10 +59,36 @@
                 <div class="sb-sidenav-menu">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Beranda</div>
-                        <a class="nav-link {{ $title == 'DASHBOARD' ? 'active' : '' }}" href="{{ route('dashboard') }}">
+                        <a class="nav-link {{ $title == 'DASHBOARD' ? 'active' : '' }}"
+                            href="{{ route('dashboard') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
+
+                        <div class="sb-sidenav-menu-heading">Produk Kami</div>
+                        <a class="nav-link {{ $title == 'PRODUK' || $title == 'TAMBAH PRODUK' || $title == 'EDIT PRODUK' ? 'active' : '' }}"
+                            href="{{ route('produk') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Produk
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Transaksi Kami</div>
+                        <a class="nav-link {{ isset($transaksi_toogle) ? 'active' : 'collapsed' }}" href="#"
+                            data-bs-toggle="collapse" data-bs-target="#collapseTransaksi" aria-expanded="false"
+                            aria-controls="collapseTransaksi">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                            Transaksi
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                        </a>
+                        <div class="collapse {{ isset($transaksi_toogle) ? 'show' : '' }}" id="collapseTransaksi"
+                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PEMBELIAN' || $title == 'TAMBAH PEMBELIAN' || $title == 'EDIT PEMBELIAN' ? 'active' : '' }}"
+                                    href="{{ route('pembelian') }}">Pembelian</a>
+
+                            </nav>
+                        </div>
+
 
                         <div class="sb-sidenav-menu-heading">Database Kami</div>
                         <a class="nav-link {{ isset($masterdata_toogle) ? 'active' : 'collapsed' }}" href="#"
@@ -78,22 +108,6 @@
                             </nav>
                         </div>
 
-                        <div class="sb-sidenav-menu-heading">Transaksi Kami</div>
-                        <a class="nav-link {{ isset($transaksi_toogle) ? 'active' : 'collapsed' }}" href="#"
-                            data-bs-toggle="collapse" data-bs-target="#collapseTransaksi" aria-expanded="false"
-                            aria-controls="collapseTransaksi">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
-                            Transaksi
-                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                        </a>
-                        <div class="collapse {{ isset($transaksi_toogle) ? 'show' : '' }}" id="collapseTransaksi"
-                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
-                            <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link {{ $title == 'PEMBELIAN' || $title == 'TAMBAH PEMBELIAN' || $title == 'EDIT PEMBELIAN' ? 'active' : '' }}"
-                                    href="{{ route('pembelian') }}">Pembelian</a>
-
-                            </nav>
-                        </div>
 
                     </div>
                 </div>
@@ -125,6 +139,7 @@
     <script src="{{ asset('/vendor/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/responsive.bootstrap.min.js') }}"></script>
+    <script src="{{ asset('/vendor/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
     @stack('script')
 </body>

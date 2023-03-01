@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\PembelianController;
+use App\Http\Controllers\Produk\PakanController;
+use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 
 /*
@@ -66,5 +68,16 @@ Route::group(['middleware' => 'auth'], function () {
         // Route::post('/', [KategoriControler::class, 'store'])->name('kategori.store');
         // Route::post('/{id}/update', [KategoriControler::class, 'update'])->name('kategori.update');
         Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
+    });
+
+    Route::group(['prefix' => 'produk'], function () {
+        Route::get('/', [ProdukController::class, 'index'])->name('produk');
+        Route::get('/create', [ProdukController::class, 'create'])->name('produk.create');
+        Route::get('/{id}/edit', [ProdukController::class, 'edit'])->name('produk.edit');
+        Route::get('/delete/{id}', [ProdukController::class, 'destroy'])->name('produk.destory');
+
+        Route::post('/', [ProdukController::class, 'store'])->name('produk.store');
+        Route::post('/{id}/update', [ProdukController::class, 'update'])->name('produk.update');
+        Route::post('{id}/datatable', [ProdukController::class, 'datatable'])->name('produk.datatable');
     });
 });
