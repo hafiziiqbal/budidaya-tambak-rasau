@@ -70,9 +70,10 @@
                         <div class="collapse {{ isset($masterdata_toogle) ? 'show' : '' }}" id="collapseMasterData"
                             aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
-                                <a class="nav-link {{ $title == 'SUPPLIER' || $title == 'TAMBAH SUPPLIER' ? 'active' : '' }}"
+                                <a class="nav-link {{ $title == 'SUPPLIER' || $title == 'TAMBAH SUPPLIER' || $title == 'EDIT SUPPLIER' ? 'active' : '' }}"
                                     href="{{ route('supplier') }}">Supplier</a>
-                                <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a>
+                                <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}""
+                                    href="{{ route('kategori') }}">Kategori</a>
                             </nav>
                         </div>
 
