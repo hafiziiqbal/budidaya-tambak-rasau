@@ -13,13 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('header_beli', function (Blueprint $table) {
+        Schema::create('master_kolam', function (Blueprint $table) {
             $table->id();
-            $table->date('tgl_beli');
-            $table->foreignId('id_supplier')->constrained('supplier')->cascadeOnDelete();
-            $table->decimal('total_bruto');
-            $table->decimal('potongan_harga');
-            $table->decimal('total_netto');
+            $table->string('nama');
+            $table->string('posisi');
             $table->timestamps();
         });
     }
@@ -31,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('header_beli');
+        Schema::dropIfExists('master_kolam');
     }
 };

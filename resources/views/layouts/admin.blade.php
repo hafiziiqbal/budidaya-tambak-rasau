@@ -108,6 +108,10 @@
                                     href="{{ route('supplier') }}">Supplier</a>
                                 <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}""
                                     href="{{ route('kategori') }}">Kategori</a>
+                                <a class="nav-link {{ $title == 'KOLAM' || $title == 'TAMBAH KOLAM' || $title == 'EDIT KOLAM' ? 'active' : '' }}""
+                                    href="{{ route('kolam') }}">Kolam</a>
+                                <a class="nav-link {{ $title == 'JARING' || $title == 'TAMBAH JARING' || $title == 'EDIT JARING' ? 'active' : '' }}""
+                                    href="{{ route('jaring') }}">Jaring</a>
                             </nav>
                         </div>
 

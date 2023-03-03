@@ -2,7 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
+use App\Http\Controllers\KolamController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Produk\PakanController;
 use App\Http\Controllers\ProdukController;
@@ -55,6 +57,28 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [KategoriControler::class, 'store'])->name('kategori.store');
         Route::post('/{id}/update', [KategoriControler::class, 'update'])->name('kategori.update');
         Route::post('/datatable', [KategoriControler::class, 'datatable'])->name('kategori.datatable');
+    });
+
+    Route::group(['prefix' => 'kolam'], function () {
+        Route::get('/', [KolamController::class, 'index'])->name('kolam');
+        Route::get('/create', [KolamController::class, 'create'])->name('kolam.create');
+        Route::get('/{id}/edit', [KolamController::class, 'edit'])->name('kolam.edit');
+        Route::get('/delete/{id}', [KolamController::class, 'destroy'])->name('kolam.destory');
+
+        Route::post('/', [KolamController::class, 'store'])->name('kolam.store');
+        Route::post('/{id}/update', [KolamController::class, 'update'])->name('kolam.update');
+        Route::post('/datatable', [KolamController::class, 'datatable'])->name('kolam.datatable');
+    });
+
+    Route::group(['prefix' => 'jaring'], function () {
+        Route::get('/', [JaringController::class, 'index'])->name('jaring');
+        Route::get('/create', [JaringController::class, 'create'])->name('jaring.create');
+        Route::get('/{id}/edit', [JaringController::class, 'edit'])->name('jaring.edit');
+        Route::get('/delete/{id}', [JaringController::class, 'destroy'])->name('jaring.destory');
+
+        Route::post('/', [JaringController::class, 'store'])->name('jaring.store');
+        Route::post('/{id}/update', [JaringController::class, 'update'])->name('jaring.update');
+        Route::post('/datatable', [JaringController::class, 'datatable'])->name('jaring.datatable');
     });
 
     Route::group(['prefix' => 'pembelian'], function () {
