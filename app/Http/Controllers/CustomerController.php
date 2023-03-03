@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MasterJaring;
-use App\Models\MasterKolam;
-use App\Models\MasterTong;
 use Illuminate\Http\Request;
+use App\Models\MasterCustomer;
 use Yajra\DataTables\Facades\DataTables;
 
-class JaringController extends Controller
+class CustomerController extends Controller
 {
     public function index()
     {
-        return view('pages.jaring.index')->with([
-            'title' => 'JARING',
+        return view('pages.customer.index')->with([
+            'title' => 'CUSTOMER',
             'masterdata_toogle' => 1
         ]);
     }
@@ -22,7 +20,7 @@ class JaringController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = MasterJaring::with('kolam')->orderBy('updated_at', 'desc')->get();
+                $data = MasterCustomer::orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -34,26 +32,25 @@ class JaringController extends Controller
 
     public function create()
     {
-        $kolam = MasterKolam::all();
-        return view('pages.jaring.create')->with([
-            'title' => 'TAMBAH JARING',
-            'kolam' => $kolam,
+        return view('pages.customer.create')->with([
+            'title' => 'TAMBAH CUSTOMER',
             'masterdata_toogle' => 1
         ]);
     }
 
+
     public function store(Request $request)
     {
         try {
-            MasterJaring::create([
+            MasterCustomer::create([
                 'nama' => $request->nama,
-                'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
             ]);
 
-            return redirect()->route('jaring')->with(
+            return redirect()->route('customer')->with(
                 'success',
-                'Berhasil Tambah Jaring'
+                'Berhasil Tambah Customer'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([
@@ -64,30 +61,27 @@ class JaringController extends Controller
 
     public function edit($id)
     {
-        $jaring = MasterJaring::find($id);
-        $kolam = MasterKolam::all();
-        return view('pages.jaring.edit')->with([
-            'title' => 'EDIT KOLAM',
-            'jaring' => $jaring,
-            'kolam' => $kolam,
+        $customer = MasterCustomer::find($id);
+        return view('pages.customer.edit')->with([
+            'title' => 'EDIT CUSTOMER',
+            'customer' => $customer,
             'masterdata_toogle' => 1
         ]);
     }
 
-
     public function update(Request $request, $id)
     {
         try {
-            $jaring = MasterJaring::find($id);
-            $jaring->update([
+            $customer = MasterCustomer::find($id);
+            $customer->update([
                 'nama' => $request->nama,
-                'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
+                'alamat' => $request->alamat,
+                'telepon' => $request->telepon,
             ]);
 
-            return redirect()->route('jaring')->with(
+            return redirect()->route('customer')->with(
                 'success',
-                'Berhasil Perbarui Jaring'
+                'Berhasil Perbarui Customer'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([
@@ -99,18 +93,11 @@ class JaringController extends Controller
     public function destroy($id)
     {
         try {
-            $tong = MasterTong::where('id_jaring', $id)->first();
-            if ($tong != '') {
-                return redirect('jaring')->withErrors([
-                    'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
-                ]);
-            }
-
-            $jaring = MasterJaring::find($id);
-            $jaring->delete();
-            return redirect()->route('jaring')->with(
+            $customer = MasterCustomer::find($id);
+            $customer->delete();
+            return redirect()->route('customer')->with(
                 'success',
-                'Berhasil Hapus Jaring'
+                'Berhasil Hapus Customer'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([

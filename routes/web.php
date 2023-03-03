@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\KolamController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Produk\PakanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TongController;
 
 /*
 |--------------------------------------------------------------------------
@@ -103,5 +105,27 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [ProdukController::class, 'store'])->name('produk.store');
         Route::post('/{id}/update', [ProdukController::class, 'update'])->name('produk.update');
         Route::post('{id}/datatable', [ProdukController::class, 'datatable'])->name('produk.datatable');
+    });
+
+    Route::group(['prefix' => 'tong'], function () {
+        Route::get('/', [TongController::class, 'index'])->name('tong');
+        Route::get('/create', [TongController::class, 'create'])->name('tong.create');
+        Route::get('/{id}/edit', [TongController::class, 'edit'])->name('tong.edit');
+        Route::get('/delete/{id}', [TongController::class, 'destroy'])->name('tong.destory');
+        Route::get('/contoh', [TongController::class, 'contoh'])->name('tong.contoh');
+        Route::post('/', [TongController::class, 'store'])->name('tong.store');
+        Route::post('/{id}/update', [TongController::class, 'update'])->name('tong.update');
+        Route::post('/datatable', [TongController::class, 'datatable'])->name('tong.datatable');
+    });
+
+    Route::group(['prefix' => 'customer'], function () {
+        Route::get('/', [CustomerController::class, 'index'])->name('customer');
+        Route::get('/create', [CustomerController::class, 'create'])->name('customer.create');
+        Route::get('/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+        Route::get('/delete/{id}', [CustomerController::class, 'destroy'])->name('customer.destory');
+
+        Route::post('/', [CustomerController::class, 'store'])->name('customer.store');
+        Route::post('/{id}/update', [CustomerController::class, 'update'])->name('customer.update');
+        Route::post('/datatable', [CustomerController::class, 'datatable'])->name('customer.datatable');
     });
 });

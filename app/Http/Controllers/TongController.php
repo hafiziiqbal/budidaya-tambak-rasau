@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterJaring;
-use App\Models\MasterKolam;
 use App\Models\MasterTong;
+use App\Models\MasterKolam;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class JaringController extends Controller
+class TongController extends Controller
 {
     public function index()
     {
-        return view('pages.jaring.index')->with([
-            'title' => 'JARING',
+        return view('pages.tong.index')->with([
+            'title' => 'TONG',
             'masterdata_toogle' => 1
         ]);
     }
@@ -22,7 +22,7 @@ class JaringController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = MasterJaring::with('kolam')->orderBy('updated_at', 'desc')->get();
+                $data = MasterTong::with(['kolam', 'jaring'])->orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -35,25 +35,28 @@ class JaringController extends Controller
     public function create()
     {
         $kolam = MasterKolam::all();
-        return view('pages.jaring.create')->with([
-            'title' => 'TAMBAH JARING',
+        $jaring = MasterJaring::all();
+        return view('pages.tong.create')->with([
+            'title' => 'TAMBAH TONG',
             'kolam' => $kolam,
+            'jaring' => $jaring,
             'masterdata_toogle' => 1
         ]);
     }
 
+
     public function store(Request $request)
     {
         try {
-            MasterJaring::create([
+            MasterTong::create([
                 'nama' => $request->nama,
                 'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
+                'id_jaring' => $request->id_jaring,
             ]);
 
-            return redirect()->route('jaring')->with(
+            return redirect()->route('tong')->with(
                 'success',
-                'Berhasil Tambah Jaring'
+                'Berhasil Tambah Tong'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([
@@ -64,30 +67,31 @@ class JaringController extends Controller
 
     public function edit($id)
     {
-        $jaring = MasterJaring::find($id);
+        $jaring = MasterJaring::all();
         $kolam = MasterKolam::all();
-        return view('pages.jaring.edit')->with([
+        $tong = MasterTong::find($id);
+        return view('pages.tong.edit')->with([
             'title' => 'EDIT KOLAM',
             'jaring' => $jaring,
             'kolam' => $kolam,
+            'tong' => $tong,
             'masterdata_toogle' => 1
         ]);
     }
 
-
     public function update(Request $request, $id)
     {
         try {
-            $jaring = MasterJaring::find($id);
-            $jaring->update([
+            $tong = MasterTong::find($id);
+            $tong->update([
                 'nama' => $request->nama,
                 'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
+                'id_jaring' => $request->id_jaring,
             ]);
 
-            return redirect()->route('jaring')->with(
+            return redirect()->route('tong')->with(
                 'success',
-                'Berhasil Perbarui Jaring'
+                'Berhasil Perbarui Tong'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([
@@ -96,21 +100,15 @@ class JaringController extends Controller
         }
     }
 
+
     public function destroy($id)
     {
         try {
-            $tong = MasterTong::where('id_jaring', $id)->first();
-            if ($tong != '') {
-                return redirect('jaring')->withErrors([
-                    'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
-                ]);
-            }
-
-            $jaring = MasterJaring::find($id);
-            $jaring->delete();
-            return redirect()->route('jaring')->with(
+            $tong = MasterTong::find($id);
+            $tong->delete();
+            return redirect()->route('tong')->with(
                 'success',
-                'Berhasil Hapus Jaring'
+                'Berhasil Hapus Tong'
             );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([

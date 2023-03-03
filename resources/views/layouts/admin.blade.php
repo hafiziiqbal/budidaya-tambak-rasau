@@ -104,14 +104,18 @@
                         <div class="collapse {{ isset($masterdata_toogle) ? 'show' : '' }}" id="collapseMasterData"
                             aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'CUSTOMER' || $title == 'TAMBAH CUSTOMER' || $title == 'EDIT CUSTOMER' ? 'active' : '' }}"
+                                    href="{{ route('customer') }}">Customer</a> 
                                 <a class="nav-link {{ $title == 'SUPPLIER' || $title == 'TAMBAH SUPPLIER' || $title == 'EDIT SUPPLIER' ? 'active' : '' }}"
                                     href="{{ route('supplier') }}">Supplier</a>
-                                <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}""
+                                <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}"
                                     href="{{ route('kategori') }}">Kategori</a>
-                                <a class="nav-link {{ $title == 'KOLAM' || $title == 'TAMBAH KOLAM' || $title == 'EDIT KOLAM' ? 'active' : '' }}""
+                                <a class="nav-link {{ $title == 'KOLAM' || $title == 'TAMBAH KOLAM' || $title == 'EDIT KOLAM' ? 'active' : '' }}"
                                     href="{{ route('kolam') }}">Kolam</a>
-                                <a class="nav-link {{ $title == 'JARING' || $title == 'TAMBAH JARING' || $title == 'EDIT JARING' ? 'active' : '' }}""
+                                <a class="nav-link {{ $title == 'JARING' || $title == 'TAMBAH JARING' || $title == 'EDIT JARING' ? 'active' : '' }}"
                                     href="{{ route('jaring') }}">Jaring</a>
+                                <a class="nav-link {{ $title == 'TONG' || $title == 'TAMBAH TONG' || $title == 'EDIT TONG' ? 'active' : '' }}"
+                                    href="{{ route('tong') }}">Tong</a>
                             </nav>
                         </div>
 
