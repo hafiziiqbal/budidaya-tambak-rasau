@@ -23,6 +23,11 @@ class HeaderBeli extends Model
         'created_at'
     ];
 
+    public function detail_beli()
+    {
+        return $this->hasMany(DetailBeli::class, 'id_header_beli');
+    }
+
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'id_supplier');

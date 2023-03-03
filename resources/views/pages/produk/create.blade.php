@@ -29,9 +29,9 @@
             @endif
         </div>
         <div class="mb-3">
-            <label for="inputQuantity" class="form-label">Quantity (Kg)</label>
+            <label for="inputQuantity" id="labelQuantity" class="form-label">Quantity (Kg)</label>
             <input type="number" class="form-control" id="inputQuantity" required name="quantity"
-                value="{{ old('quantity') ?? '0.00' }}" placeholder="0.00" step="0.01">
+                value="{{ old('quantity') }}" step="0.01">
             @if ($errors->has('quantity'))
                 <small class="text-danger">*{{ $errors->first('quantity') }}</small>
             @endif
@@ -49,19 +49,34 @@
                 dropdownCssClass: "select2--medium",
             });
 
-            let idKategori = $("#selectKategori").find(":selected").val();
+
+            let idKategori = $("#selectKategori").val();
+
+            let cookieKategori = getCookie('kategori');
+            if (cookieKategori == '') {
+                document.cookie = `kategori=${cookieKategori}`;
+            } else {
+                $("#selectKategori").val(cookieKategori).change();
+            }
 
             $("input[name='id_kategori']").val(idKategori);
 
             $('#selectKategori').on('change', function(e) {
                 let optionSelected = $("option:selected", this);
                 idKategori = this.value;
+                document.cookie = `kategori=${idKategori}`;
+                if (idKategori == 1) {
+                    // $("#inputQuantity").change(function() {
+                    //     $(this).val(parseFloat($(this).val()).toFixed(2));
+                    // });
+                    $('#labelQuantity').html('Quantity (Kg)')
+                } else {
+                    $('#labelQuantity').html('Quantity (ekor/pcs)')
+                }
                 $("input[name='id_kategori']").val(idKategori);
             });
 
-            $("#inputQuantity").change(function() {
-                $(this).val(parseFloat($(this).val()).toFixed(2));
-            });
+
 
         });
     </script>

@@ -19,8 +19,8 @@ return new class extends Migration
             $table->foreignId('id_produk')->constrained('produk');
             $table->decimal('harga_satuan');
             $table->decimal('quantity');
-            $table->decimal('diskon_persen');
-            $table->decimal('diskon_rupiah');
+            $table->decimal('diskon_persen')->nullable();
+            $table->decimal('diskon_rupiah')->nullable();
             $table->timestamps();
         });
     }

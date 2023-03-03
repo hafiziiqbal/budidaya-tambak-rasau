@@ -35,7 +35,7 @@
                     Total Bruto
                 </div>
                 <div class="col-md-6 col-12 ">
-                    {{ $pembelian->header_beli->total_bruto }} Kg
+                    {{ $pembelian->header_beli->total_bruto }}
                 </div>
             </div>
             <div class="row border-bottom py-2">
@@ -43,7 +43,7 @@
                     Total Netto
                 </div>
                 <div class="col-md-6 col-12 ">
-                    {{ $pembelian->header_beli->total_netto }} Kg
+                    {{ $pembelian->header_beli->total_netto }}
                 </div>
             </div>
             <div class="row border-bottom py-2">
@@ -84,7 +84,7 @@
                     Quantity
                 </div>
                 <div class="col-md-6 col-12 ">
-                    {{ $pembelian->quantity }} Kg
+                    {{ $pembelian->quantity }}
                 </div>
             </div>
             <div class="row border-bottom py-2">

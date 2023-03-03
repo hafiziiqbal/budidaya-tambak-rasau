@@ -40,7 +40,13 @@
         });
 
         let idKategori = $("#selectKategori").find(":selected").val();
-
+        let cookieKategori = getCookie('kategori');
+        if (cookieKategori == '') {
+            document.cookie = `kategori=${cookieKategori}`;
+        } else {
+            $("#selectKategori").val(cookieKategori).change();
+            idKategori = cookieKategori
+        }
 
 
         let table = $('#tblProduk').DataTable({
@@ -98,6 +104,7 @@
             let optionSelected = $("option:selected", this);
             idKategori = this.value;
             table.ajax.url(`/produk/${idKategori}/datatable`).load();
+            document.cookie = `kategori=${idKategori}`;
         });
     </script>
 @endpush

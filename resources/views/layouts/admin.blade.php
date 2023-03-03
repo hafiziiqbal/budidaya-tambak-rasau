@@ -27,6 +27,9 @@
     {{-- select2 --}}
     <link rel="stylesheet" href="{{ asset('/vendor/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('/vendor/select2/css/select2-bootstrap-5-theme.min.css') }}">
+
+    {{-- datepicker --}}
+    <link rel="stylesheet" href="{{ asset('/vendor/datapicker/bootstrap-datepicker.min.css') }}">
 </head>
 
 <body class="sb-nav-fixed">
@@ -140,7 +143,24 @@
     <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/responsive.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/vendor/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('/vendor\datapicker\bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
+    <script>
+        function getCookie(cname) {
+            let name = cname + "=";
+            let ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+    </script>
     @stack('script')
 </body>
 
