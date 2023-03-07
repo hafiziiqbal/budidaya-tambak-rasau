@@ -42,7 +42,7 @@
         let idKategori = $("#selectKategori").find(":selected").val();
         let cookieKategori = getCookie('kategori');
         if (cookieKategori == '') {
-            document.cookie = `kategori=${cookieKategori}`;
+            document.cookie = `kategori=${idKategori};path=/produk;`;
         } else {
             $("#selectKategori").val(cookieKategori).change();
             idKategori = cookieKategori
@@ -74,7 +74,7 @@
                 {
                     data: "quantity",
                     render: function(quantity) {
-                        return `${quantity} Kg`
+                        return `${quantity}`
                     }
                 },
                 {
@@ -104,7 +104,7 @@
             let optionSelected = $("option:selected", this);
             idKategori = this.value;
             table.ajax.url(`/produk/${idKategori}/datatable`).load();
-            document.cookie = `kategori=${idKategori}`;
+            document.cookie = `kategori=${idKategori};path=/produk;`;
         });
     </script>
 @endpush

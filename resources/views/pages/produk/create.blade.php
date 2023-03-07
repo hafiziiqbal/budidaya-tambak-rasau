@@ -11,7 +11,7 @@
         <select class="form-select" id="selectKategori" data-placeholder="Pilih Produk">
             <option></option>
             @foreach ($kategori as $produk)
-                <option value="{{ $produk->id }}" {{ $produk->id == 1 ? 'selected="selected"' : '' }}>{{ $produk->nama }}
+                <option value="{{ $produk->id }}">{{ $produk->nama }}
                 </option>
             @endforeach
         </select>
@@ -54,28 +54,31 @@
 
             let cookieKategori = getCookie('kategori');
             if (cookieKategori == '') {
-                document.cookie = `kategori=${cookieKategori}`;
+                document.cookie = `kategori=${idKategori};path=/produk;`;
+                $("input[name='id_kategori']").val($("#selectKategori").val());
             } else {
                 $("#selectKategori").val(cookieKategori).change();
+                $("input[name='id_kategori']").val($("#selectKategori").val());
             }
 
-            $("input[name='id_kategori']").val(idKategori);
 
+
+            if (getCookie('kategori') == 1) {
+                $('#labelQuantity').html('Quantity (Kg)')
+            } else {
+                $('#labelQuantity').html('Quantity (ekor/pcs)')
+            }
             $('#selectKategori').on('change', function(e) {
                 let optionSelected = $("option:selected", this);
                 idKategori = this.value;
-                document.cookie = `kategori=${idKategori}`;
+                document.cookie = `kategori=${idKategori};path=/produk;`;
                 if (idKategori == 1) {
-                    // $("#inputQuantity").change(function() {
-                    //     $(this).val(parseFloat($(this).val()).toFixed(2));
-                    // });
                     $('#labelQuantity').html('Quantity (Kg)')
                 } else {
                     $('#labelQuantity').html('Quantity (ekor/pcs)')
                 }
-                $("input[name='id_kategori']").val(idKategori);
+                $("input[name='id_kategori']").val($("#selectKategori").val());
             });
-
 
 
         });

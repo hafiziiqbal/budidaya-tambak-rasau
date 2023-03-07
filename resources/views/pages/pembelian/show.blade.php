@@ -35,7 +35,7 @@
                     Total Bruto
                 </div>
                 <div class="col-md-6 col-12 ">
-                    {{ $pembelian->header_beli->total_bruto }}
+                    {{ Laraindo\RupiahFormat::currency($pembelian->header_beli->total_bruto) }}
                 </div>
             </div>
             <div class="row border-bottom py-2">
@@ -43,7 +43,8 @@
                     Total Netto
                 </div>
                 <div class="col-md-6 col-12 ">
-                    {{ $pembelian->header_beli->total_netto }}
+                    {{ Laraindo\RupiahFormat::currency($pembelian->header_beli->total_netto) }}
+
                 </div>
             </div>
             <div class="row border-bottom py-2">
@@ -51,7 +52,8 @@
                     Potongan Harga
                 </div>
                 <div class="col-md-6 col-12 ">
-                    Rp. {{ $pembelian->header_beli->potongan_harga }}
+                    {{ Laraindo\RupiahFormat::currency($pembelian->header_beli->potongan_harga) }}
+
                 </div>
             </div>
         </div>
@@ -76,7 +78,8 @@
                     Harga Satuan
                 </div>
                 <div class="col-md-6 col-12 ">
-                    Rp. {{ $pembelian->harga_satuan }}
+
+                    {{ Laraindo\RupiahFormat::currency($pembelian->harga_satuan) }}
                 </div>
             </div>
             <div class="row border-bottom py-2">
@@ -100,7 +103,9 @@
                     Diskon Rupiah
                 </div>
                 <div class="col-md-6 col-12 ">
-                    Rp. {{ $pembelian->diskon_rupiah }}
+                    {{ Laraindo\RupiahFormat::currency($pembelian->diskon_rupiah) }}
+
+
                 </div>
             </div>
         </div>

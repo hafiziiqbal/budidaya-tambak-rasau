@@ -68,6 +68,14 @@
                             Dashboard
                         </a>
 
+                        <div class="sb-sidenav-menu-heading">Pekerjaan Kami</div>
+                        <a class="nav-link {{ $title == 'PEMBAGIAN BIBIT' || $title == 'TAMBAH PEMBAGIAN BIBIT' || $title == 'EDIT PEMBAGIAN BIBIT' ? 'active' : '' }}"
+                            href="{{ route('pembagian.bibit') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Pembagian Bibit
+                        </a>
+
+
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>
                         <a class="nav-link {{ $title == 'PRODUK' || $title == 'TAMBAH PRODUK' || $title == 'EDIT PRODUK' ? 'active' : '' }}"
                             href="{{ route('produk') }}">
@@ -105,7 +113,7 @@
                             aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link {{ $title == 'CUSTOMER' || $title == 'TAMBAH CUSTOMER' || $title == 'EDIT CUSTOMER' ? 'active' : '' }}"
-                                    href="{{ route('customer') }}">Customer</a> 
+                                    href="{{ route('customer') }}">Customer</a>
                                 <a class="nav-link {{ $title == 'SUPPLIER' || $title == 'TAMBAH SUPPLIER' || $title == 'EDIT SUPPLIER' ? 'active' : '' }}"
                                     href="{{ route('supplier') }}">Supplier</a>
                                 <a class="nav-link {{ $title == 'KATEGORI' || $title == 'TAMBAH KATEGORI' || $title == 'EDIT KATEGORI' ? 'active' : '' }}"

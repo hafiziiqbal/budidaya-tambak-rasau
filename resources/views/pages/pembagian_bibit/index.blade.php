@@ -1,13 +1,14 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Pembelian</h1>
+    <h1 class="mt-4">Pembagian Bibit</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Pembelian</li>
+        <li class="breadcrumb-item active">Pembagian Bibit</li>
     </ol>
 
-    <a href="{{ route('pembelian.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Data</a>
+    <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
+        Data</a>
     @include('components.alert')
-    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+    {{-- <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
                 role="tab" aria-controls="detail" aria-selected="true">Detail Beli</button>
@@ -27,18 +28,17 @@
                         <th>Supplier</th>
                         <th>Produk</th>
                         <th>Quantity</th>
-                        <th>Stok Di Produk</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
             </table>
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-    </div>
+    </div> --}}
 @endsection
 
 @push('script')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             let table = $('#tblPembelian').DataTable({
                 responsive: true,
@@ -75,10 +75,6 @@
                         name: "quantity",
                     },
                     {
-                        data: "quantity_stok",
-                        name: "quantity_stok",
-                    },
-                    {
                         data: "id",
                         render: function(id) {
                             let show =
@@ -100,5 +96,5 @@
 
             // $.fn.dataTable.ext.errMode = 'none';
         });
-    </script>
+    </script> --}}
 @endpush

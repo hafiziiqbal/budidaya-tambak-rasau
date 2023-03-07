@@ -13,16 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('detail_beli', function (Blueprint $table) {
+        Schema::create('detail_pembagian_bibit', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_header_beli')->constrained('header_beli');
             $table->foreignId('id_produk')->constrained('produk');
-            $table->bigInteger('harga_satuan');
+            $table->foreignId('id_header_pembagian_bibit')->constrained('header_pembagian_bibit');
             $table->decimal('quantity');
-            $table->decimal('quantity_stok');
-            $table->decimal('diskon_persen')->nullable();
-            $table->decimal('diskon_rupiah')->nullable();
-            $table->decimal('subtotal');
+            $table->bigInteger('id_jaring')->nullable();
+            $table->foreignId('id_master_kolam')->constrained('master_kolam');
             $table->timestamps();
         });
     }
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detail_beli');
+        Schema::dropIfExists('detail_pembagian_bibit');
     }
 };

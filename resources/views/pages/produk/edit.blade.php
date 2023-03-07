@@ -17,10 +17,9 @@
             @endif
         </div>
         <div class="mb-3">
-            <label for="inputQuantity" class="form-label">Quantity (Kg)</label>
+            <label for="inputQuantity" class="form-label">Quantity</label>
             <input type="text" class="form-control" id="inputQuantity" required name="quantity"
-                placeholder="Masukkan Alamat" value="{{ old('quantity') ?? $produk->quantity }}" placeholder="0.00"
-                step="0.01">
+                placeholder="Masukkan Alamat" value="{{ old('quantity') ?? $produk->quantity }}">
             @if ($errors->has('quantity'))
                 <small class="text-danger">*{{ $errors->first('quantity') }}</small>
             @endif
@@ -36,9 +35,9 @@
 
 
 
-            $("#inputQuantity").change(function() {
-                $(this).val(parseFloat($(this).val()).toFixed(2));
-            });
+            // $("#inputQuantity").change(function() {
+            //     $(this).val(parseFloat($(this).val()).toFixed(2));
+            // });
 
         });
     </script>

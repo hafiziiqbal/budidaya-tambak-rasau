@@ -36,14 +36,14 @@
                     @endforeach
                 </select>
             </div>
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Bruto</label>
                 <input type="number" class="form-control" id="inputBruto" required name="bruto"
-                    value="{{ old('bruto') }}">
+                    value="{{ old('bruto') }}" readonly>
                 @if ($errors->has('bruto'))
                     <small class="text-danger">*{{ $errors->first('bruto') }}</small>
                 @endif
-            </div>
+            </div> --}}
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
                 <input type="number" class="form-control" id="inputPotonganHarga" required name="potongan_harga"
@@ -52,14 +52,14 @@
                     <small class="text-danger">*{{ $errors->first('potongan_harga') }}</small>
                 @endif
             </div>
-            <div class="mb-3">
+            {{-- <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Netto</label>
                 <input type="number" class="form-control" id="inputNetto" required name="netto"
-                    value="{{ old('netto') }}">
+                    value="{{ old('netto') }}" readonly>
                 @if ($errors->has('netto'))
                     <small class="text-danger">*{{ $errors->first('netto') }}</small>
                 @endif
-            </div>
+            </div> --}}
 
         </div>
 
@@ -67,7 +67,7 @@
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Detail Pembelian</label>
             </div>
-            <div class="mb-4 detail-pembelian">
+            <div class="mb-4 detail-pembelian" id="detailPembelianFirst">
                 <div class="card-header border d-flex justify-content-end"></div>
                 <div class="card-body border">
                     <div class="mb-3">
@@ -83,37 +83,26 @@
                     </div>
                     <div class="mb-3">
                         <label for="inputHargaSatuan" class="form-label">Harga Satuan</label>
-                        <input type="number" class="form-control" id="inputHargaSatuan" required
-                            value="{{ old('harga_satuan') }}">
-                        @if ($errors->has('harga_satuan'))
-                            <small class="text-danger">*{{ $errors->first('harga_satuan') }}</small>
-                        @endif
+                        <input type="number" class="form-control" id="inputHargaSatuan" required value="">
+
                     </div>
                     <div class="mb-3">
                         <label for="inputQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="inputQuantity" required
-                            value="{{ old('quantity') }}">
-                        @if ($errors->has('quantity'))
-                            <small class="text-danger">*{{ $errors->first('quantity') }}</small>
-                        @endif
+                        <input type="number" class="form-control" id="inputQuantity" required value="">
+
                     </div>
                     <div class="mb-3">
                         <label for="inputDiskonPersen" class="form-label">Diskon Persen</label>
 
                         <input type="number" class="form-control" id="inputDiskonPersen" name="detail_beli[]diskon_persen"
-                            value="{{ old('diskon_persen') }}">
+                            value="">
 
-                        @if ($errors->has('diskon_persen'))
-                            <small class="text-danger">*{{ $errors->first('diskon_persen') }}</small>
-                        @endif
                     </div>
                     <div class="mb-3">
                         <label for="inputDiskonRupiah" class="form-label">Diskon Rupiah</label>
-                        <input type="number" class="form-control" id="inputDiskonRupiah"
-                            name="detail_beli[]diskon_rupiah" value="{{ old('diskon_rupiah') }}">
-                        @if ($errors->has('diskon_rupiah'))
-                            <small class="text-danger">*{{ $errors->first('diskon_rupiah') }}</small>
-                        @endif
+                        <input type="number" class="form-control" id="inputDiskonRupiah" name="detail_beli[]diskon_rupiah"
+                            value="">
+
                     </div>
                 </div>
             </div>
@@ -139,7 +128,7 @@
         $('#inputDiskonRupiah').attr('name', `detail_beli[${i}][diskon_rupiah]`);
 
         $("#btnTambahBarang").click(function() {
-            let element = $('.detail-pembelian');
+            let element = $('#detailPembelianFirst');
             element.find('select').select2('destroy')
             let clone = element.clone()
             clone.find('input').val('')

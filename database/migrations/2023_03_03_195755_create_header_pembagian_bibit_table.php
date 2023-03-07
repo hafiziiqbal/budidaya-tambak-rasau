@@ -13,13 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('header_beli', function (Blueprint $table) {
+        Schema::create('header_pembagian_bibit', function (Blueprint $table) {
             $table->id();
-            $table->date('tgl_beli');
-            $table->foreignId('id_supplier')->constrained('supplier')->cascadeOnDelete();
-            $table->decimal('total_bruto')->nullable();
-            $table->decimal('potongan_harga');
-            $table->decimal('total_netto')->nullable();
+            $table->date('tgl_pembelian');
+            $table->foreignId('id_detail_beli')->constrained('detail_beli');
+            $table->bigInteger('id_detail_panen')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('header_beli');
+        Schema::dropIfExists('header_pembagian_bibit');
     }
 };

@@ -6,6 +6,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\KolamController;
+use App\Http\Controllers\PembagianBibitController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\Produk\PakanController;
 use App\Http\Controllers\ProdukController;
@@ -127,5 +128,16 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [CustomerController::class, 'store'])->name('customer.store');
         Route::post('/{id}/update', [CustomerController::class, 'update'])->name('customer.update');
         Route::post('/datatable', [CustomerController::class, 'datatable'])->name('customer.datatable');
+    });
+
+    Route::group(['prefix' => 'pembagian-bibit'], function () {
+        Route::get('/', [PembagianBibitController::class, 'index'])->name('pembagian.bibit');
+        Route::get('/create', [PembagianBibitController::class, 'create'])->name('pembagian.bibit.create');
+        // Route::get('/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+        // Route::get('/delete/{id}', [CustomerController::class, 'destroy'])->name('customer.destory');
+
+        Route::post('/', [PembagianBibitController::class, 'store'])->name('pembagian.bibit.store');
+        // Route::post('/{id}/update', [CustomerController::class, 'update'])->name('customer.update');
+        // Route::post('/datatable', [CustomerController::class, 'datatable'])->name('customer.datatable');
     });
 });

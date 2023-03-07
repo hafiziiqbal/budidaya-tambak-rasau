@@ -15,8 +15,10 @@ class DetailBeli extends Model
         'id_produk',
         'harga_satuan',
         'quantity',
+        'quantity_stok',
         'diskon_persen',
         'diskon_rupiah',
+        'subtotal'
     ];
 
     protected $hidden = [
