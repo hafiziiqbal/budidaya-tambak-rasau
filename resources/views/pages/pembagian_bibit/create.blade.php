@@ -31,7 +31,7 @@
                     name="id_detail_beli">
                     <option></option>
                     @foreach ($pembelian as $value)
-                        <option value="{{ $value->id }}">
+                        <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
                             @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
                         </option>
                     @endforeach
@@ -62,11 +62,9 @@
                 <div class="card-body border">
                     <div class="mb-3">
                         <label for="inputQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="inputQuantity" required
+                        <input type="number" class="form-control quantity" id="inputQuantity" required
                             value="{{ old('quantity') }}">
-                        @if ($errors->has('quantity'))
-                            <small class="text-danger">*{{ $errors->first('quantity') }}</small>
-                        @endif
+                        <small class="text-danger error-quantity"></small>
                     </div>
 
 
@@ -99,7 +97,7 @@
         <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
         </button>
 
-        <button type="submit" class="btn btn-primary  w-100">Simpan</button>
+        <button type="submit" class="btn btn-primary  w-100" id="btnSimpan" disabled>Simpan</button>
     </form>
 @endsection
 
@@ -138,6 +136,9 @@
                 $(this).parent().parent().remove();
 
             })
+            $('.quantity').on('input', function() {
+                totalQuantity()
+            });
         });
 
 
@@ -147,6 +148,32 @@
 
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
+        });
+
+        function totalQuantity() {
+            let arrayQuantity = $('.quantity').map(function() {
+                return isNaN(parseInt(this.value)) ? 0 : parseInt(this.value);
+            }).get();
+            let totalQuantity = arrayQuantity.reduce((a, b) => a + b, 0)
+            let quantityProduk = parseInt($("#inputDetailBeli").select2().find(":selected").data("quantity"));
+
+            $('#inputDetailBeli').on('select2:select', function(e) {
+                quantityProduk = parseInt($("#inputDetailBeli").select2().find(":selected").data("quantity"));
+            });
+            if (totalQuantity > quantityProduk) {
+                $('.error-quantity').html(`*Quantity Melebihi Stok, Total Stok Hanya ${quantityProduk}`)
+                $('#btnSimpan').attr('disabled', 'disabled')
+            } else if (totalQuantity < quantityProduk) {
+                $('.error-quantity').html('')
+                $('#btnSimpan').removeAttr('disabled')
+            }
+            return totalQuantity
+        }
+
+
+        totalQuantity()
+        $('.quantity').on('input', function() {
+            totalQuantity()
         });
     </script>
 @endpush

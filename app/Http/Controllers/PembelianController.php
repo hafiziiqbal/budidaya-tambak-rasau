@@ -34,65 +34,65 @@ class PembelianController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
-        // try {
-        $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
-        $detail = $request->detail_beli;
-        $subtotal = [];
-        $totalBruto = 0;
-        $headBeli =  HeaderBeli::create([
-            'tgl_beli' => $tglBeli,
-            'id_supplier' => $request->supplier,
-            'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
-        ]);
 
-        foreach ($detail as $key => $value) {
-            $hargaTotal = $detail[$key]['harga_satuan'] * $detail[$key]['quantity'];
-            $percentage = $detail[$key]['diskon_persen'] / 100; // 10% expressed as a decimal
-            $diskonRupiah = $detail[$key]['diskon_rupiah'];
-            $discount = $hargaTotal * $percentage;
+        try {
+            $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
+            $detail = $request->detail_beli;
+            $subtotal = [];
+            $totalBruto = 0;
+            $headBeli =  HeaderBeli::create([
+                'tgl_beli' => $tglBeli,
+                'id_supplier' => $request->supplier,
+                'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
+            ]);
 
-            if ($detail[$key]['diskon_persen'] == null || $detail[$key]['diskon_persen'] == '') {
-                $detail[$key]['diskon_persen'] = 0;
+            foreach ($detail as $key => $value) {
+                $hargaTotal = $detail[$key]['harga_satuan'] * $detail[$key]['quantity'];
+                $percentage = $detail[$key]['diskon_persen'] / 100; // 10% expressed as a decimal
+                $diskonRupiah = $detail[$key]['diskon_rupiah'];
+                $discount = $hargaTotal * $percentage;
+
+                if ($detail[$key]['diskon_persen'] == null || $detail[$key]['diskon_persen'] == '') {
+                    $detail[$key]['diskon_persen'] = 0;
+                }
+                if ($detail[$key]['diskon_rupiah'] == null ||   $detail[$key]['diskon_rupiah'] == '') {
+                    $detail[$key]['diskon_rupiah'] = 0;
+                }
+
+
+                if ($detail[$key]['diskon_persen'] != null || $detail[$key]['diskon_persen'] != '') {
+                    array_push($subtotal, $hargaTotal - $discount);
+                    $detail[$key]['subtotal'] = $hargaTotal - $discount;
+                } elseif ($detail[$key]['diskon_rupiah'] != null ||   $detail[$key]['diskon_rupiah'] != '') {
+                    array_push($subtotal, $hargaTotal - $diskonRupiah);
+                    $detail[$key]['subtotal'] = $hargaTotal - $diskonRupiah;
+                }
+
+                $detail[$key]['id_header_beli'] = $headBeli->id;
+                $detail[$key]['quantity_stok'] = $detail[$key]['quantity'];
+
+                Produk::where('id', $detail[$key]['id_produk'])->update([
+                    'quantity' => DB::raw("quantity+" . $detail[$key]['quantity']),
+                ]);
             }
-            if ($detail[$key]['diskon_rupiah'] == null ||   $detail[$key]['diskon_rupiah'] == '') {
-                $detail[$key]['diskon_rupiah'] = 0;
-            }
 
+            $totalBruto = array_sum($subtotal);
+            $totalNetto = $totalBruto - $headBeli->potongan_harga;
+            $headBeli->update([
+                'total_bruto' => $totalBruto,
+                'total_netto' => $totalNetto
+            ]);
+            DetailBeli::insert($detail);
 
-            if ($detail[$key]['diskon_persen'] != null || $detail[$key]['diskon_persen'] != '') {
-                array_push($subtotal, $hargaTotal - $discount);
-                $detail[$key]['subtotal'] = $hargaTotal - $discount;
-            } elseif ($detail[$key]['diskon_rupiah'] != null ||   $detail[$key]['diskon_rupiah'] != '') {
-                array_push($subtotal, $hargaTotal - $diskonRupiah);
-                $detail[$key]['subtotal'] = $hargaTotal - $diskonRupiah;
-            }
-
-            $detail[$key]['id_header_beli'] = $headBeli->id;
-            $detail[$key]['quantity_stok'] = $detail[$key]['quantity'];
-
-            Produk::where('id', $detail[$key]['id_produk'])->update([
-                'quantity' => DB::raw("quantity+" . $detail[$key]['quantity']),
+            return redirect()->route('pembelian')->with(
+                'success',
+                'Berhasil Tambah Pembelian'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
             ]);
         }
-
-        $totalBruto = array_sum($subtotal);
-        $totalNetto = $totalBruto - $headBeli->potongan_harga;
-        $headBeli->update([
-            'total_bruto' => $totalBruto,
-            'total_netto' => $totalNetto
-        ]);
-        DetailBeli::insert($detail);
-
-        return redirect()->route('pembelian')->with(
-            'success',
-            'Berhasil Tambah Pembelian'
-        );
-        // } catch (\Throwable $th) {
-        //     return redirect('/')->withErrors([
-        //         'error' => 'Terdapat Kesalahan'
-        //     ]);
-        // }
     }
 
 

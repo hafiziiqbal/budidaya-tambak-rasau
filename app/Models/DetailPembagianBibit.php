@@ -12,7 +12,6 @@ class DetailPembagianBibit extends Model
     protected $table = 'detail_pembagian_bibit';
 
     protected $fillable = [
-        'id_produk',
         'id_header_pembagian_bibit',
         'quantity',
         'id_jaring',

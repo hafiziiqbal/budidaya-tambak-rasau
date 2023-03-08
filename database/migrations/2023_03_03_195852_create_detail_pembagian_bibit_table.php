@@ -15,7 +15,6 @@ return new class extends Migration
     {
         Schema::create('detail_pembagian_bibit', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_produk')->constrained('produk');
             $table->foreignId('id_header_pembagian_bibit')->constrained('header_pembagian_bibit');
             $table->decimal('quantity');
             $table->bigInteger('id_jaring')->nullable();

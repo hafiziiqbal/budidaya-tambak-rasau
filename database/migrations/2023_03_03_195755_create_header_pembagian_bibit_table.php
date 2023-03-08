@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('header_pembagian_bibit', function (Blueprint $table) {
             $table->id();
-            $table->date('tgl_pembelian');
+            $table->date('tgl_pembagian');
             $table->foreignId('id_detail_beli')->constrained('detail_beli');
             $table->bigInteger('id_detail_panen')->nullable();
             $table->timestamps();

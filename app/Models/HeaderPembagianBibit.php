@@ -12,7 +12,7 @@ class HeaderPembagianBibit extends Model
     protected $table = 'header_pembagian_bibit';
 
     protected $fillable = [
-        'tgl_pembelian',
+        'tgl_pembagian',
         'id_detail_beli',
         'id_detail_panen',
     ];
