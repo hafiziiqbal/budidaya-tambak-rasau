@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Models\Supplier;
 use App\Models\DetailBeli;
+use App\Models\DetailPembagianBibit;
 use App\Models\HeaderBeli;
+use App\Models\HeaderPembagianBibit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -143,6 +145,12 @@ class PembelianController extends Controller
                 }]);
             }, 'header_beli.supplier'
         ])->where('id', $id)->first();
+        $cekPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $pembelian->id)->first();
+        if (!empty($cekPembagianBibit)) {
+            return redirect('pembelian')->withErrors([
+                'alert' => 'Data Ini Sudah Digunakan Di Tabel Bibit'
+            ]);
+        }
         return view('pages.pembelian.edit')->with([
             'title' => 'PEMBELIAN',
             'pembelian' => $pembelian,
@@ -155,6 +163,7 @@ class PembelianController extends Controller
     {
         try {
             $pembelian = DetailBeli::find($id);
+
             $headerBeli = HeaderBeli::find($pembelian->id_header_beli);
             $produk = Produk::find($pembelian->id_produk);
             $hargaTotal = $request->harga_satuan * $request->quantity;
@@ -211,18 +220,45 @@ class PembelianController extends Controller
 
     public function destroy($id)
     {
-        try {
-            $detailBeli = DetailBeli::find($id);
-            $detailBeli->delete();
-            return redirect()->route('pembelian')->with(
-                'success',
-                'Berhasil Hapus Pembelian'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
+        // try {
+        $detailBeli = DetailBeli::find($id);
+        $cekPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $detailBeli->id)->first();
+        if (!empty($cekPembagianBibit)) {
+            return redirect('pembelian')->withErrors([
+                'alert' => 'Data Ini Sudah Digunakan Di Tabel Bibit'
             ]);
         }
+        $headerBeli = HeaderBeli::find($detailBeli->id_header_beli);
+        $produk = Produk::find($detailBeli->id_produk);
+        $subtotal = $detailBeli->subtotal;
+        $newTotalBruto = 0;
+        $newTotalNetto = 0;
+        $newQuantityProduk = 0;
+
+        $newTotalBruto = $headerBeli->total_bruto - $subtotal;
+        $newTotalNetto = $newTotalBruto - $headerBeli->potongan_harga;
+
+        $headerBeli->update([
+            'total_bruto' => $newTotalBruto,
+            'total_netto' => $newTotalNetto,
+        ]);
+
+
+        $newQuantityProduk = $produk->quantity - $detailBeli->quantity;
+        $produk->update([
+            'quantity' => $newQuantityProduk,
+        ]);
+
+        $detailBeli->delete();
+        return redirect()->route('pembelian')->with(
+            'success',
+            'Berhasil Hapus Pembelian'
+        );
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
     }
 
     public function contoh()

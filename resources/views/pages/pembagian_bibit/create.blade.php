@@ -31,9 +31,11 @@
                     name="id_detail_beli">
                     <option></option>
                     @foreach ($pembelian as $value)
-                        <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                        </option>
+                        @if ($value->produk->quantity > 0)
+                            <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
+                                @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                            </option>
+                        @endif
                     @endforeach
                 </select>
             </div>
@@ -78,6 +80,7 @@
                                 </option>
                             @endforeach
                         </select>
+                        <small class="text-danger error-jaring"></small>
                     </div>
 
                     <div class="mb-3">
@@ -139,6 +142,10 @@
             $('.quantity').on('input', function() {
                 totalQuantity()
             });
+
+            $(".jaring").on("change", function(e) {
+                selectJaring()
+            });
         });
 
 
@@ -163,17 +170,45 @@
             if (totalQuantity > quantityProduk) {
                 $('.error-quantity').html(`*Quantity Melebihi Stok, Total Stok Hanya ${quantityProduk}`)
                 $('#btnSimpan').attr('disabled', 'disabled')
+
             } else if (totalQuantity < quantityProduk) {
                 $('.error-quantity').html('')
-                $('#btnSimpan').removeAttr('disabled')
+
+                if ($('.error-quantity').html() == '' && $('.error-jaring').html() == '') {
+                    $('#btnSimpan').removeAttr('disabled')
+                }
             }
             return totalQuantity
+        }
+
+        function selectJaring() {
+            let arrayJaring = $('.jaring').map(function() {
+                return isNaN(parseInt(this.value)) ? 0 : parseInt(this.value);
+            }).get();
+
+            for (let i = 0; i < arrayJaring.length - 1; i++) {
+                if (arrayJaring[i + 1] == arrayJaring[i]) {
+                    $('#btnSimpan').attr('disabled', 'disabled')
+                    $('.error-jaring').html(`*Jaring Ini Telah Digunakan, Silahkan Pilih Jaring Lain`)
+                } else {
+                    $('.error-jaring').html(``)
+                    if ($('.error-quantity').html() == '' & $('.error-jaring').html() == '') {
+                        $('#btnSimpan').removeAttr('disabled')
+                    }
+                }
+            }
+
         }
 
 
         totalQuantity()
         $('.quantity').on('input', function() {
             totalQuantity()
+        });
+
+        selectJaring();
+        $(".jaring").on("change", function(e) {
+            selectJaring()
         });
     </script>
 @endpush

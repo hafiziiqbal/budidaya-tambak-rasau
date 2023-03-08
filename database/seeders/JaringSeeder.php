@@ -17,17 +17,17 @@ class JaringSeeder extends Seeder
     {
         MasterJaring::updateOrCreate(
             [
-                'id_kolam' => 1,
+                'id_kolam' => null,
                 'nama' => 'jaring 1',
-                'quantity' => 2,
+                'posisi' => '111',
             ],
         );
 
         MasterJaring::updateOrCreate(
             [
-                'id_kolam' => 2,
+                'id_kolam' => null,
                 'nama' => 'jaring 2',
-                'quantity' => 2,
+                'posisi' => '111',
             ],
         );
     }

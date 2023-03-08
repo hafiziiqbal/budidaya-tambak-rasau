@@ -8,42 +8,44 @@
     <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
         Data</a>
     @include('components.alert')
-    {{-- <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
+    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
             <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
-                role="tab" aria-controls="detail" aria-selected="true">Detail Beli</button>
+                role="tab" aria-controls="detail" aria-selected="true">Detail Pembagian Bibit</button>
         </li>
         <li class="nav-item" role="presentation">
             <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                role="tab" aria-controls="profile" aria-selected="false">Header Beli</button>
+                role="tab" aria-controls="profile" aria-selected="false">Header Pembagian Bibit</button>
         </li>
     </ul>
+
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
-            <table id="tblPembelian" class="table table-striped table-bordered nowrap" style="width:100%">
+            <table id="tblPembagianBibit" class="table table-striped table-bordered nowrap" style="width:100%">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Tanggal</th>
-                        <th>Supplier</th>
-                        <th>Produk</th>
+                        <th>Bibit</th>
                         <th>Quantity</th>
+                        <th>Jaring</th>
+                        <th>Kolam</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
             </table>
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-    </div> --}}
+    </div>
 @endsection
 
 @push('script')
-    {{-- <script>
+    <script>
         $(document).ready(function() {
-            let table = $('#tblPembelian').DataTable({
+            let table = $('#tblPembagianBibit').DataTable({
                 responsive: true,
                 ajax: {
-                    url: "/pembelian/datatable",
+                    url: "/pembagian-bibit/datatable",
                     type: "POST",
                     beforeSend: function(xhr, type) {
                         if (!type.crossDomain) {
@@ -59,30 +61,35 @@
                         },
                     },
                     {
-                        data: "header_beli.tgl_beli",
-                        name: "header_beli.tgl_beli",
+                        data: "header_pembagian_bibit.tgl_pembagian",
+                        name: "header_pembagian_bibit.tgl_pembagian",
                     },
                     {
-                        data: "header_beli.supplier.nama",
-                        name: "header_beli.supplier.nama",
-                    },
-                    {
-                        data: "produk.nama",
-                        name: "produk.nama",
+                        data: "header_pembagian_bibit.detail_beli.produk.nama",
+                        name: "header_pembagian_bibit.detail_beli.produk.nama",
                     },
                     {
                         data: "quantity",
                         name: "quantity",
                     },
                     {
+                        data: "jaring.nama",
+                        name: "jaring.nama",
+                        defaultContent: ""
+                    },
+                    {
+                        data: "kolam.nama",
+                        name: "kolam.nama",
+                    },
+                    {
                         data: "id",
                         render: function(id) {
                             let show =
-                                `<a title="Info Pembelian" href="/pembelian/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
+                                `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                             let edit =
-                                `<a title="Edit Data" href="/pembelian/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                                `<a title="Edit Data" href="/pembagian-bibit/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
-                                `<a title="Hapus Data" href="/pembelian/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
+                                `<a title="Hapus Data" href="/pembagian-bibit/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
                             return show + edit + deletebtn
                         },
                     },
@@ -96,5 +103,5 @@
 
             // $.fn.dataTable.ext.errMode = 'none';
         });
-    </script> --}}
+    </script>
 @endpush

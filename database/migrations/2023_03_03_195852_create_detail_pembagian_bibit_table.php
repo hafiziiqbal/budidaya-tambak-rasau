@@ -18,7 +18,7 @@ return new class extends Migration
             $table->foreignId('id_header_pembagian_bibit')->constrained('header_pembagian_bibit');
             $table->decimal('quantity');
             $table->bigInteger('id_jaring')->nullable();
-            $table->foreignId('id_master_kolam')->constrained('master_kolam');
+            $table->foreignId('id_kolam')->constrained('master_kolam');
             $table->timestamps();
         });
     }

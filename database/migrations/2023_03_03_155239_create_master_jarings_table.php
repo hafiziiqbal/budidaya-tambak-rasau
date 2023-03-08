@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('master_jaring', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_kolam')->constrained('master_kolam');
+            $table->bigInteger('id_kolam')->nullable();
             $table->string('nama');
-            $table->integer('quantity');
+            $table->string('posisi');
             $table->timestamps();
+
+            $table->index(['id_kolam']);
         });
     }
 
