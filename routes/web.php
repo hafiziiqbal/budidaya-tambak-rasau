@@ -134,11 +134,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [PembagianBibitController::class, 'index'])->name('pembagian.bibit');
         Route::get('/create', [PembagianBibitController::class, 'create'])->name('pembagian.bibit.create');
         Route::get('/contoh', [PembagianBibitController::class, 'contoh'])->name('pembagian.bibit.contoh');
-        // Route::get('/{id}/edit', [CustomerController::class, 'edit'])->name('customer.edit');
+        Route::get('/{id}/edit', [PembagianBibitController::class, 'edit'])->name('pembagian.bibit.edit');
+        Route::get('/{id}/show', [PembagianBibitController::class, 'show'])->name('pembagian.bibit.show');
         Route::get('/delete/{id}', [PembagianBibitController::class, 'destroy'])->name('pembagian.bibit.destory');
 
         Route::post('/', [PembagianBibitController::class, 'store'])->name('pembagian.bibit.store');
-        // Route::post('/{id}/update', [CustomerController::class, 'update'])->name('customer.update');
+        Route::post('/detail', [PembagianBibitController::class, 'storeDetail'])->name('pembagian.bibit.store.detail');
+        Route::post('/{id}/update', [PembagianBibitController::class, 'update'])->name('pembagian.bibit.update');
+        Route::post('/{id}/update-detail', [PembagianBibitController::class, 'updateDetail'])->name('pembagian.bibit.update.detail');
         Route::post('/datatable', [PembagianBibitController::class, 'datatable'])->name('pembagian.bibit.datatable');
     });
 });

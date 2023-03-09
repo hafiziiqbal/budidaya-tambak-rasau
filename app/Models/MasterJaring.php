@@ -14,7 +14,7 @@ class MasterJaring extends Model
     protected $fillable = [
         'id_kolam',
         'nama',
-        'quantity',
+        'posisi',
     ];
 
     protected $hidden = [

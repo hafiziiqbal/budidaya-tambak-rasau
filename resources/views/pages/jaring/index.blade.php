@@ -14,7 +14,7 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Kolam</th>
-                <th>Quantity</th>
+                <th>Posisi</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -51,8 +51,8 @@
                         name: "kolam.nama",
                     },
                     {
-                        data: "quantity",
-                        name: "quantity",
+                        data: "posisi",
+                        name: "posisi",
                     },
                     {
                         data: "id",

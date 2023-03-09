@@ -26,4 +26,9 @@ class HeaderPembagianBibit extends Model
     {
         return $this->belongsTo(DetailBeli::class, 'id_detail_beli');
     }
+
+    public function detail_pembagian_bibit()
+    {
+        return $this->hasMany(DetailPembagianBibit::class, 'id_header_pembagian_bibit', 'id');
+    }
 }

@@ -8,35 +8,21 @@
     <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
         Data</a>
     @include('components.alert')
-    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
-                role="tab" aria-controls="detail" aria-selected="true">Detail Pembagian Bibit</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                role="tab" aria-controls="profile" aria-selected="false">Header Pembagian Bibit</button>
-        </li>
-    </ul>
 
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
-            <table id="tblPembagianBibit" class="table table-striped table-bordered nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Bibit</th>
-                        <th>Quantity</th>
-                        <th>Jaring</th>
-                        <th>Kolam</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-    </div>
+
+
+
+    <table id="tblPembagianBibit" class="table table-striped table-bordered nowrap" style="width:100%">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Tanggal</th>
+                <th>Produk</th>
+                <th>Tanggal Beli</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+    </table>
 @endsection
 
 @push('script')
@@ -61,25 +47,16 @@
                         },
                     },
                     {
-                        data: "header_pembagian_bibit.tgl_pembagian",
-                        name: "header_pembagian_bibit.tgl_pembagian",
+                        data: "tgl_pembagian",
+                        name: "tgl_pembagian",
                     },
                     {
-                        data: "header_pembagian_bibit.detail_beli.produk.nama",
-                        name: "header_pembagian_bibit.detail_beli.produk.nama",
+                        data: "detail_beli.produk.nama",
+                        name: "detail_beli.produk.nama",
                     },
                     {
-                        data: "quantity",
-                        name: "quantity",
-                    },
-                    {
-                        data: "jaring.nama",
-                        name: "jaring.nama",
-                        defaultContent: ""
-                    },
-                    {
-                        data: "kolam.nama",
-                        name: "kolam.nama",
+                        data: "detail_beli.header_beli.tgl_beli",
+                        name: "detail_beli.header_beli.tgl_beli",
                     },
                     {
                         data: "id",

@@ -19,4 +19,14 @@ class MasterKolam extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function jaring()
+    {
+        return $this->hasMany(MasterJaring::class, 'id_kolam', 'id');
+    }
+
+    public function detail_pembagian_bibit()
+    {
+        return $this->hasMany(DetailPembagianBibit::class, 'id_kolam', 'id');
+    }
 }

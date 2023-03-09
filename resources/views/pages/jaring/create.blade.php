@@ -19,22 +19,11 @@
             @endif
         </div>
         <div class="mb-3">
-            <label for="selectKolam" class="form-label">Kolam</label>
-            <select class="form-select" id="selectKolam" data-placeholder="Pilih Kolam" name="id_kolam">
-                <option></option>
-                @foreach ($kolam as $value)
-                    <option value="{{ $value->id }}">
-                        {{ $value->nama }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="inputQuantity" class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="inputQuantity" required name="quantity"
-                placeholder="Masukkan Jumlah" value="{{ old('quantity') }}">
-            @if ($errors->has('quantity'))
-                <small class="text-danger">*{{ $errors->first('quantity') }}</small>
+            <label for="inputPosisi" class="form-label">Posisi</label>
+            <input type="text" class="form-control" id="inputPosisi" required name="posisi"
+                placeholder="Masukkan Posisi" value="{{ old('posisi') }}">
+            @if ($errors->has('posisi'))
+                <small class="text-danger">*{{ $errors->first('posisi') }}</small>
             @endif
         </div>
         <button type="submit" class="btn btn-primary  w-100">Simpan</button>

@@ -44,22 +44,22 @@ class JaringController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            MasterJaring::create([
-                'nama' => $request->nama,
-                'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
-            ]);
+        // try {
+        MasterJaring::create([
+            'nama' => $request->nama,
+            'id_kolam' => null,
+            'posisi' => $request->posisi,
+        ]);
 
-            return redirect()->route('jaring')->with(
-                'success',
-                'Berhasil Tambah Jaring'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
-            ]);
-        }
+        return redirect()->route('jaring')->with(
+            'success',
+            'Berhasil Tambah Jaring'
+        );
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
     }
 
     public function edit($id)
