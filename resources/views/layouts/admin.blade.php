@@ -159,7 +159,8 @@
     <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/responsive.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/vendor/select2/js/select2.full.min.js') }}"></script>
-    <script src="{{ asset('/vendor\datapicker\bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('/vendor/datapicker/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('/vendor/priceformat/jquery.priceformat.min.js') }}"></script>
     <script src="{{ asset('/js/custom.js') }}"></script>
     <script>
         function getCookie(cname) {

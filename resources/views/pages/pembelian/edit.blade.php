@@ -7,19 +7,25 @@
     </ol>
 
     {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembelian.update', $data->id) }}" name="form_header">
+    <form method="POST" id="formHeader" action="{{ route('pembelian.update', $id) }}" name="form_header">
         @csrf
         <div id="headerPembelian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembelian</label>
             </div>
+
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
+
             <div class="mb-3">
                 <label for="inputNama" class="form-label">Tanggal Beli</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tgl_beli" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker"
-                        value="{{ date('d-m-Y', strtotime($data->tgl_beli)) }}">>
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
                 </div>
             </div>
 
@@ -37,90 +43,94 @@
             </div>
             <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Bruto</label>
-                <input type="number" class="form-control" id="inputBruto" value="{{ $data->total_bruto }}" disabled>
+                <input type="text" class="form-control mata-uang" id="inputBruto" value="" disabled>
 
             </div>
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="number" class="form-control" id="inputPotonganHarga" required name="potongan_harga"
-                    value="{{ $data->potongan_harga }}">
+                <input type="text" class="form-control number mata-uang" id="inputPotonganHarga" required
+                    name="potongan_harga" value="">
             </div>
             <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Netto</label>
-                <input type="number" class="form-control" id="inputNetto" value="{{ $data->total_netto }}" disabled>
+                <input type="text" class="form-control mata-uang" id="inputNetto" value="" disabled>
 
             </div>
-            <button type="submit" class="btn btn-primary w-100">Simpan Perubahan</button>
+            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+                Perubahan</button>
         </div>
     </form>
-
-
-    {{-- <form action="{{ route('pembelian.update', $pembelian->id) }}" method="POST">
-        @csrf
-        <input type="hidden" name="id_header_beli" value="{{ $pembelian->header_beli->id }}" required>
-        <div id="detail">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Detail Pembelian</label>
-            </div>
-            <div class="mb-4 detail-pembelian">
-                <div class="card-header border d-flex justify-content-end"></div>
+    <div id="detail">
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Pembelian</label>
+        </div>
+        <form action="" class="d-none form-detail first mb-5" method="POST">
+            @csrf
+            <div class="mb-4">
+                <div class="card-header border d-flex justify-content-between align-items-center">
+                    <span class="fw-bold"></span>
+                    <div class="btn-content d-none">
+                        <button class="btn btn-primary simpan-detail-baru me-2"> <i
+                                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan</button>
+                    </div>
+                </div>
                 <div class="card-body border">
                     <div class="mb-3">
-                        <label for="selectProduk" class="form-label">Produk</label>
-                        <select class="form-select produk" data-placeholder="Pilih Produk" required name="id_produk">
+                        <label class="form-label">Pilih Produk</label>
+                        <select class="form-select produk" data-placeholder="Pilih Produk">
                             <option></option>
-                            @foreach ($produk as $produk)
-                                <option value="{{ $produk->id }}">
-                                    {{ $produk->nama }}
+                            @foreach ($produk as $value)
+                                <option value="{{ $value->id }}">
+                                    {{ $value->nama }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
-                    <div class="mb-3">
-                        <label for="inputHargaSatuan" class="form-label">Harga Satuan</label>
-                        <input type="number" class="form-control" id="inputHargaSatuan" required name="harga_satuan"
-                            value="{{ $pembelian->harga_satuan }}">
-                        @if ($errors->has('harga_satuan'))
-                            <small class="text-danger">*{{ $errors->first('harga_satuan') }}</small>
-                        @endif
-                    </div>
-                    <div class="mb-3">
-                        <label for="inputQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control" id="inputQuantity" required name="quantity"
-                            value="{{ $pembelian->quantity }}">
-                        @if ($errors->has('quantity'))
-                            <small class="text-danger">*{{ $errors->first('quantity') }}</small>
-                        @endif
-                    </div>
-                    <div class="mb-3">
-                        <label for="inputDiskonPersen" class="form-label">Diskon Persen</label>
 
-                        <input type="number" class="form-control" id="inputDiskonPersen" name="diskon_persen"
-                            value="{{ $pembelian->diskon_persen }}">
-
-                        @if ($errors->has('diskon_persen'))
-                            <small class="text-danger">*{{ $errors->first('diskon_persen') }}</small>
-                        @endif
-                    </div>
                     <div class="mb-3">
-                        <label for="inputDiskonRupiah" class="form-label">Diskon Rupiah</label>
-                        <input type="number" class="form-control" id="inputDiskonRupiah" name="diskon_rupiah"
-                            value="{{ $pembelian->diskon_rupiah }}">
-                        @if ($errors->has('diskon_rupiah'))
-                            <small class="text-danger">*{{ $errors->first('diskon_rupiah') }}</small>
-                        @endif
+                        <label class="form-label">Harga Satuan</label>
+                        <input type="text" class="form-control mata-uang harga-satuan">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="text" class="form-control quantity">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Quantity Stok</label>
+                        <input type="text" class="form-control quantity-stok" disabled>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Diskon Persen</label>
+                        <input type="text" class="form-control diskon-persen">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label ">Diskon Rupiah</label>
+                        <input type="text" class="form-control diskon-rupiah mata-uang">
+                    </div>
+
+                    <div class="btn-update-content d-none">
+                        <button class="btn btn-success btn-update-detail"><i class="fas fa-spinner fa-spin d-none"></i>
+                            Perbarui</button>
+                        <button class="btn btn-danger btn-delete-detail"><i class="fas fa-spinner fa-spin d-none"></i>
+                            Hapus</button>
                     </div>
                 </div>
+
             </div>
-
-
-        </div>
-        <button type="submit" class="btn btn-primary  w-100">Perbarui</button>
-    </form> --}}
+        </form>
+    </div>
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+    </button>
 @endsection
 
 @push('script')
     <script>
+        let detailBeli
         // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
@@ -128,19 +138,114 @@
             dropdownCssClass: "select2--medium",
         });
 
-        // nilai default suppplier
-        let supplier = {!! $data->supplier->id !!}
-        console.log(supplier);
-        $(`#selectSupplier`).val(supplier)
-        $(`#selectSupplier`).trigger('change');
+        // load data header
+        function loadDataHeader() {
+            let idHeader = {!! $id !!}
+            $.ajax({
+                url: `/pembelian/${idHeader}/edit-json`,
+                dataType: 'json', // what to expect back from the server
+                cache: false,
+                async: false,
+                contentType: false,
+                processData: false,
+                type: 'GET',
+
+                success: function(response) {
+                    detailBeli = response.detail_beli
+                    // default value supplier
+                    $(`#selectSupplier`).val(response.id_supplier)
+                    $(`#selectSupplier`).trigger('change');
+
+                    // default tgl_beli                
+                    $(`input[name='tgl_beli']`).val(response.tgl_beli.split("-").reverse().join("-"));
+
+                    // default total bruto
+                    $(`#inputBruto`).val(response.total_bruto);
+
+                    // default potongan harga
+                    $(`input[name='potongan_harga']`).val(response.potongan_harga);
+
+                    // default total netto
+                    $(`#inputNetto`).val(response.total_netto);
+
+                    $('input.mata-uang').priceFormat({
+                        prefix: 'Rp ',
+                        centsLimit: 0,
+                        thousandsSeparator: '.'
+                    });
+
+                },
+                error: function(response) { // handle the error
+                    try {} catch (err) {
+
+                    }
+
+                },
+
+            })
+        }
+        loadDataHeader()
+
+        // loop detail beli
+        let elementClone = $('form.form-detail.first');
+        detailBeli.forEach((item, index) => {
+            // clone element            
+            elementClone.find('select').select2('destroy')
+
+            elementClone.find('.card-header span').html(`Produk Ke ${index+1}`)
+            elementClone.find('select.produk').attr(
+                'name', `detail_beli[${index}]['produk']`,
+            ).addClass(`produk${index}`)
+
+            elementClone.find('.btn-update-content').removeClass('d-none')
+            elementClone.find('.harga-satuan').attr('name', `detail_beli[${index}]['harga_satuan']`).val(
+                item.harga_satuan)
+            elementClone.find('.quantity').attr('name', `detail_beli[${index}]['quantity']`).val(item.quantity)
+            elementClone.find('.quantity-stok').attr('name', `detail_beli[${index}]['quantity_stok']`).val(item
+                .quantity_stok)
+            elementClone.find('.diskon-persen').attr('name', `detail_beli[${index}]['diskon-persen']`).val(item
+                .diskon_persen)
+            elementClone.find('.diskon-rupiah').attr('name', `detail_beli[${index}]['diskon-rupiah']`).val(item
+                .diskon_rupiah)
+            let clone = elementClone.clone()
+            clone.removeClass('d-none');
+            $("#detail").append(clone);
+
+            // inisialisasi form select 2
+            $(".form-select").select2({
+                theme: "bootstrap-5",
+                containerCssClass: "select2--medium",
+                dropdownCssClass: "select2--medium",
+            });
+
+            $(`.produk${index}`).val(item.id_produk.toString())
+            $(`.produk${index}`).trigger('change');
+
+
+            // inisialisasi ulang format mata uang
+            $('input.mata-uang').priceFormat({
+                prefix: 'Rp ',
+                centsLimit: 0,
+                thousandsSeparator: '.'
+            });
+        });
+
 
 
         // handle form_header
         $("#formHeader").on("submit", function(e) { //id of form 
+            $('#btnSimpanHeader').attr('disabled', 'disabled')
+            $('#btnSimpanHeader').children().removeClass('d-none')
+
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata         
+            let form_data = new FormData($(this)[0]); // convert form into formdata        
+
+            // hilangkan karakter RP dan titik
+            form_data.set('potongan_harga', $(`input[name='potongan_harga']`).val().replace("Rp ", "").replace(
+                /\./g, ""));
+
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
@@ -151,38 +256,40 @@
                 type: method,
 
                 success: function(response) {
-                    if (response.status) {
-                        $(".alert-danger").remove();
-                        form.trigger("reset");
-                        $("#suc_msg").show();
-                        var data = `${response.msg}
-                                <div>id : ${response.post.id} <br>
-                                title :   ${response.post.title} <br>
-                                Image : <img src='${response.post.picture}' width=100 /> <br></div>`;
-                        $("#suc_msg").html(data);
-
+                    if (response.success != undefined) {
+                        $('#btnSimpanHeader').removeAttr('disabled')
+                        $('#btnSimpanHeader').children().addClass('d-none')
+                        $('.status-header').removeClass('d-none')
+                        $('.status-header span').html(response.success)
+                        setTimeout(function() {
+                            $(".status-header").addClass("d-none");
+                        }, 3000);
+                        loadDataHeader();
                     }
-                    // display success response from the server
                 },
-                error: function(response) { // handle the error
-                    $(".alert-danger").remove();
-                    try {
-                        var erroJson = JSON.parse(response.responseText);
-                        for (var err in erroJson) {
-                            for (var errstr of erroJson[err])
-                                $("[name='" + err + "']").after("<div class='alert alert-danger'>" +
-                                    errstr + "</div>");
-                        }
-                        if (options.error) {
-                            options.error(response);
-                        }
-                    } catch (err) {
-
-                    }
-
+                error: function(response) { // handle the error            
+                    $('#btnSimpanHeader').removeAttr('disabled')
+                    $('#btnSimpanHeader').children().addClass('d-none')
+                    $('.status-error-header').removeClass('d-none')
+                    $('.status-error-header span').html(response.responseText)
+                    setTimeout(function() {
+                        $(".status-error-header").addClass("d-none");
+                    }, 3000);
+                    loadDataHeader();
                 },
 
             })
+
+
+        });
+
+
+
+        // format mata uang
+        $('input.mata-uang').priceFormat({
+            prefix: 'Rp ',
+            centsLimit: 0,
+            thousandsSeparator: '.'
         });
     </script>
 @endpush

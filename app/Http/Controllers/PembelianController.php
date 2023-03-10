@@ -37,102 +37,113 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
 
-        // return response()->json($request->all());   
-        // try {
-        $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
-        $totalBruto = [];
-        $headerBeli =  HeaderBeli::create([
-            'tgl_beli' => $tglBeli,
-            'id_supplier' => $request->supplier,
-            'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
-        ]);
+        try {
+            $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
+            $totalBruto = [];
+            $headerBeli =  HeaderBeli::create([
+                'tgl_beli' => $tglBeli,
+                'id_supplier' => $request->supplier,
+                'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
+            ]);
 
-        foreach ($request->detail_beli as $key =>  $valueArray) {
-            // ubah array ke objek
-            $value = (object) $valueArray;
+            foreach ($request->detail_beli as $key =>  $valueArray) {
+                // ubah array ke objek
+                $value = (object) $valueArray;
 
-            // menghitung subtotal
-            $subtotal = 0;
-            if ($value->diskon_persen == null) {
-                $subtotal = ($value->harga_satuan * $value->quantity) - $value->diskon_rupiah;
-            } else {
-                $subtotal = $value->harga_satuan * $value->quantity * ((100 / 10) - ($value->diskon_persen / 100));
+                // menghitung subtotal
+                $subtotal = 0;
+                if ($value->diskon_persen == null) {
+                    $subtotal = ($value->harga_satuan * $value->quantity) - $value->diskon_rupiah;
+                } else {
+                    $subtotal = $value->harga_satuan * $value->quantity * ((100 / 10) - ($value->diskon_persen / 100));
+                }
+
+                // memasukkan subtotal ke total bruto
+                array_push($totalBruto, $subtotal);
+
+                // memasukkan detail beli ke database
+                DetailBeli::create([
+                    'id_header_beli' => $headerBeli->id,
+                    'id_produk' => $value->id_produk,
+                    'harga_satuan' => $value->harga_satuan,
+                    'quantity' => $value->quantity,
+                    'quantity_stok' => $value->quantity,
+                    'diskon_persen' => $value->diskon_persen,
+                    'diskon_rupiah' => $value->diskon_rupiah,
+                    'subtotal' => $subtotal
+                ]);
+
+                // update quantity produk
+                Produk::where('id', $value->id_produk)->update([
+                    'quantity' => DB::raw("quantity+" . $value->quantity),
+                ]);
             }
 
-            // memasukkan subtotal ke total bruto
-            array_push($totalBruto, $subtotal);
-
-            // memasukkan detail beli ke database
-            DetailBeli::create([
-                'id_header_beli' => $headerBeli->id,
-                'id_produk' => $value->id_produk,
-                'harga_satuan' => $value->harga_satuan,
-                'quantity' => $value->quantity,
-                'quantity_stok' => $value->quantity,
-                'diskon_persen' => $value->diskon_persen,
-                'diskon_rupiah' => $value->diskon_rupiah,
-                'subtotal' => $subtotal
+            $headerBeli->update([
+                'total_bruto' => array_sum($totalBruto),
+                'total_netto' => array_sum($totalBruto) - $request->potongan_harga,
             ]);
 
-            // update quantity produk
-            Produk::where('id', $value->id_produk)->update([
-                'quantity' => DB::raw("quantity+" . $value->quantity),
+            return redirect()->route('pembelian')->with(
+                'success',
+                'Berhasil Tambah Pembelian'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
             ]);
         }
-
-        $headerBeli->update([
-            'total_bruto' => array_sum($totalBruto),
-            'total_netto' => array_sum($totalBruto) - $request->potongan_harga,
-        ]);
-
-        return redirect()->route('pembelian')->with(
-            'success',
-            'Berhasil Tambah Pembelian'
-        );
-        // } catch (\Throwable $th) {
-        //     return redirect('/')->withErrors([
-        //         'error' => 'Terdapat Kesalahan'
-        //     ]);
-        // }
     }
 
     public function edit($id)
     {
         $supplier = Supplier::all();
+        $produk = Produk::all();
         return view('pages.pembelian.edit')->with([
             'title' => 'PEMBELIAN',
             'id' => $id,
             'supplier' => $supplier,
+            'produk' => $produk,
             'transaksi_toogle' => 1
         ]);
     }
 
     public function editJson($id)
     {
-        $headerBeli = HeaderBeli::with(['detail_beli', 'supplier'])->first();
-        // 'data' => $headerBeli
-        //     'supplier' => $supplier
+        $headerBeli = HeaderBeli::with('detail_beli')->where('id', $id)->first();
+        return response()->json($headerBeli);
     }
 
     public function update(Request $request, $id)
     {
-        // try {
-        $tglBeli = date('Y-m-d', strtotime($request->tgl_beli));
-        $headerBeli = HeaderBeli::find($id);
-        $headerBeli->update([
-            'tgl_beli' => $tglBeli,
-            'supplier' => $request->supplier,
-            'potongan_harga' => $request->potongan_harga,
-        ]);
-        return redirect()->route('pembelian')->with(
-            'success',
-            'Berhasil Perbarui Pembelian'
-        );
-        // } catch (\Throwable $th) {
-        //     return redirect('/')->withErrors([
-        //         'error' => 'Terdapat Kesalahan'
-        //     ]);
-        // }
+        try {
+
+
+            $tglBeli = date('Y-m-d', strtotime($request->tgl_beli));
+            $totalBruto = [];
+            $headerBeli = HeaderBeli::where('id', $id)->with('detail_beli')->first();
+
+            foreach ($headerBeli->detail_beli as $key => $value) {
+                array_push($totalBruto, $value->subtotal);
+            }
+
+            $headerBeli->update([
+                'tgl_beli' => $tglBeli,
+                'supplier' => $request->supplier,
+                'potongan_harga' => $request->potongan_harga,
+                'total_bruto' => array_sum($totalBruto),
+                'total_netto' => array_sum($totalBruto) - $request->potongan_harga,
+            ]);
+
+            return response()->json([
+                'success' => 'Data Berhasil di Perbarui'
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json(
+                'Kesalahan Aplikasi',
+                400
+            );
+        }
     }
 
 
