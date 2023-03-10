@@ -187,8 +187,34 @@ class PembagianBibitController extends Controller
                 'alert_quantity' => 'total quantity melebihi jumlah stok ' . $detailBeli->quantity
             ]);
         } else {
+            $quantityPembagianOld =  DetailPembagianBibit::all();
+            $quantityPembagianBibitOld = [];
+            foreach ($quantityPembagianOld as $key => $value) {
+                array_push($quantityPembagianBibitOld, $value->quantity);
+            }
+            $produk = Produk::find($detailBeli->id_produk);
+
             $detailPembagianBibit->update([
                 'quantity' => $request->quantity
+            ]);
+
+            // ubah data quantity di produk dan detail beli
+            $detailPembagianBibitAll = DetailPembagianBibit::all();
+            $quantityPembagianBibit = [];
+
+            foreach ($detailPembagianBibitAll as $key => $value) {
+                array_push($quantityPembagianBibit, $value->quantity);
+            }
+
+            $totalQuantityPembagian = array_sum($quantityPembagianBibit);
+            $quantityUpdate = $detailBeli->quantity - $totalQuantityPembagian;
+
+            $quantityProduk = ($produk->quantity - ($detailBeli->quantity - array_sum($quantityPembagianBibitOld))) + $quantityUpdate;
+            $produk->update([
+                'quantity' => $quantityProduk,
+            ]);
+            $detailBeli->update([
+                'quantity_stok' =>  $quantityUpdate,
             ]);
         }
 
@@ -254,11 +280,17 @@ class PembagianBibitController extends Controller
             'id_jaring' => $request->id_jaring == 'null' ? null : $request->id_jaring,
             'id_kolam' => $request->id_kolam
         ]);
-
+        $produk = Produk::find($detailBeli->id_produk);
+        $produk->update([
+            'quantity' => DB::raw("quantity-" . $detailPembagianBibit->quantity),
+        ]);
+        $detailBeli->update([
+            'quantity_stok' => DB::raw("quantity_stok-" . $detailPembagianBibit->quantity),
+        ]);
 
         return response()->json([
             'sukses' => 'Berhasil Tambah Data',
-            'id' =>$detailPembagianBibit->id
+            'id' => $detailPembagianBibit->id
         ]);
     }
 

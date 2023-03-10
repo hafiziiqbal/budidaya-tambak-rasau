@@ -243,7 +243,7 @@
 
 
             $('.btn-close').click(function() {
-                $(this).parent().parent().remove();
+                $(this).parent().parent().parent().remove();
 
             })
 
@@ -261,9 +261,12 @@
                     "id_header_pembagian_bibit": {!! $data->id !!}
                 }
 
-                data["quantity"] = $(`input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
-                data["id_jaring"] = $(`.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
-                data["id_kolam"] = $(`.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
+                data["quantity"] = $(
+                    `input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
+                data["id_jaring"] = $(
+                    `.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
+                data["id_kolam"] = $(
+                    `.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
 
                 $.post(`/pembagian-bibit/detail`, data)
                     .done(function(data, statusText, xhr) {
@@ -277,7 +280,7 @@
                         if (data.sukses != undefined) {
                             $(`#status${key}`).html(` (${data.sukses})`)
                             $(`#btnContent${key}`).remove()
-                            $(`#btnUpdate${key}`).attr('data-id',data.id)
+                            $(`#btnUpdate${key}`).attr('data-id', data.id)
                             $(`#btnUpdateContent${key}`).removeClass('d-none')
                             $(`#btnUpdateContent${key}`).removeClass('d-none')
                         }
@@ -322,9 +325,12 @@
                 let data = {
                     "_token": $('meta[name="csrf-token"]').attr('content'),
                 }
-                data["quantity"] = $(`input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
-                data["id_jaring"] = $(`.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
-                data["id_kolam"] = $(`.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
+                data["quantity"] = $(
+                    `input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
+                data["id_jaring"] = $(
+                    `.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
+                data["id_kolam"] = $(
+                    `.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
 
 
                 $.post(`/pembagian-bibit/${id}/update-detail`, data)

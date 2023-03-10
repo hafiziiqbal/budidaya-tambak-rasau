@@ -69,7 +69,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="inputQuantity" class="form-label">Jaring</label>
-                        <input type="text" class="form-control quantity" disabled value="{{ $item->jaring->nama }}">
+                        <input type="text" class="form-control quantity" disabled
+                            value="{{ $item->jaring->nama ?? '' }}">
                     </div>
                     <div class="mb-3">
                         <label for="inputQuantity" class="form-label">Kolam</label>
