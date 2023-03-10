@@ -20,9 +20,6 @@
                     <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
                         data-date-format="dd-mm-yyyy" data-provide="datepicker">>
                 </div>
-                @if ($errors->has('tanggal_beli'))
-                    <small class="text-danger">*{{ $errors->first('tanggal_beli') }}</small>
-                @endif
             </div>
 
             <div class="mb-3">
@@ -48,9 +45,7 @@
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
                 <input type="number" class="form-control" id="inputPotonganHarga" required name="potongan_harga"
                     value="{{ old('potongan_harga') }}">
-                @if ($errors->has('potongan_harga'))
-                    <small class="text-danger">*{{ $errors->first('potongan_harga') }}</small>
-                @endif
+
             </div>
             {{-- <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Netto</label>

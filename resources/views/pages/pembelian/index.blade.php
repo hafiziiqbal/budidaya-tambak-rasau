@@ -25,9 +25,9 @@
                         <th>No</th>
                         <th>Tanggal</th>
                         <th>Supplier</th>
-                        <th>Produk</th>
-                        <th>Quantity</th>
-                        <th>Stok Di Produk</th>
+                        <th>Total Bruto</th>
+                        <th>Potongan Harga</th>
+                        <th>Total Netto</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -59,24 +59,24 @@
                         },
                     },
                     {
-                        data: "header_beli.tgl_beli",
-                        name: "header_beli.tgl_beli",
+                        data: "tgl_beli",
+                        name: "tgl_beli",
                     },
                     {
-                        data: "header_beli.supplier.nama",
-                        name: "header_beli.supplier.nama",
+                        data: "supplier.nama",
+                        name: "supplier.nama",
                     },
                     {
-                        data: "produk.nama",
-                        name: "produk.nama",
+                        data: "total_bruto",
+                        name: "total_bruto",
                     },
                     {
-                        data: "quantity",
-                        name: "quantity",
+                        data: "potongan_harga",
+                        name: "potongan_harga",
                     },
                     {
-                        data: "quantity_stok",
-                        name: "quantity_stok",
+                        data: "total_netto",
+                        name: "total_netto",
                     },
                     {
                         data: "id",

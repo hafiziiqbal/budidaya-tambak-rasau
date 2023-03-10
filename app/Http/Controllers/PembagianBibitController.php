@@ -232,9 +232,9 @@ class PembagianBibitController extends Controller
         // validasi quantity
         $totalQuantityBibit = [];
         foreach ($headerPembagianBibit->with('detail_pembagian_bibit')->first()->detail_pembagian_bibit as $key => $value) {
-            if ($value->id != $request->id_header_pembagian_bibit) {
-                array_push($totalQuantityBibit, $value->quantity);
-            }
+            // if ($value->id != $request->id_header_pembagian_bibit) {
+            array_push($totalQuantityBibit, $value->quantity);
+            // }
         }
         array_push($totalQuantityBibit, $request->quantity);
         if (array_sum($totalQuantityBibit) > $detailBeli->quantity) {
@@ -270,6 +270,10 @@ class PembagianBibitController extends Controller
             if ($jaring->id_kolam != null) {
                 return response()->json([
                     'alert_jaring' => $jaring->nama . ' digunakan oleh data lain'
+                ]);
+            } else {
+                $jaring->update([
+                    'id_kolam' => $request->id_kolam
                 ]);
             }
         }
@@ -359,41 +363,88 @@ class PembagianBibitController extends Controller
 
     public function destroy($id)
     {
+        dd($id);
         // try {
-        $detailPembagianBibit = DetailPembagianBibit::find($id);
-        $jaring = MasterJaring::find($detailPembagianBibit->id_jaring);
-        $detailPembagianBibitRelation = $detailPembagianBibit::with([
-            'header_pembagian_bibit' => function ($query) {
-                $query->select('id', 'id_detail_beli',)->with(['detail_beli' => function ($query) {
-                    $query->select('id', 'id_produk');
-                }]);
-            }
-        ])->first();
+        // $detailPembagianBibit = DetailPembagianBibit::find($id);
+        // $jaring = MasterJaring::find($detailPembagianBibit->id_jaring);
+        // $detailPembagianBibitRelation = $detailPembagianBibit::with([
+        //     'header_pembagian_bibit' => function ($query) {
+        //         $query->select('id', 'id_detail_beli',)->with(['detail_beli' => function ($query) {
+        //             $query->select('id', 'id_produk');
+        //         }]);
+        //     }
+        // ])->first();
 
-        $produk = Produk::find($detailPembagianBibitRelation->header_pembagian_bibit->detail_beli->id_produk);
-        $newQuantityProduk = $produk->quantity + $detailPembagianBibit->quantity;
-        $produk->update([
-            'quantity' => $newQuantityProduk,
-        ]);
+        // $produk = Produk::find($detailPembagianBibitRelation->header_pembagian_bibit->detail_beli->id_produk);
+        // $newQuantityProduk = $produk->quantity + $detailPembagianBibit->quantity;
+        // $produk->update([
+        //     'quantity' => $newQuantityProduk,
+        // ]);
 
-        $detailBeli = DetailBeli::find($detailPembagianBibitRelation->header_pembagian_bibit->id_detail_beli);
-        $detailBeli->update([
-            'quantity_stok' => $newQuantityProduk,
-        ]);
-        $jaring->update([
-            'id_kolam' => null,
-        ]);
+        // $detailBeli = DetailBeli::find($detailPembagianBibitRelation->header_pembagian_bibit->id_detail_beli);
+        // $detailBeli->update([
+        //     'quantity_stok' => $newQuantityProduk,
+        // ]);
+        // $jaring->update([
+        //     'id_kolam' => null,
+        // ]);
 
-        $detailPembagianBibit->delete();
-        return redirect()->route('pembagian.bibit')->with(
-            'success',
-            'Berhasil Hapus Pembagian Bibit'
-        );
+        // $detailPembagianBibit->delete();
+        // return redirect()->route('pembagian.bibit')->with(
+        //     'success',
+        //     'Berhasil Hapus Pembagian Bibit'
+        // );
         // } catch (\Throwable $th) {
         //     return redirect('/')->withErrors([
         //         'error' => 'Terdapat Kesalahan'
         //     ]);
         // }
+    }
+
+    public function destroyDetail($id)
+    {
+        // // try {
+        $quantityPembagianOld =  DetailPembagianBibit::all();
+        $quantityPembagianBibitOld = [];
+        foreach ($quantityPembagianOld as $key => $value) {
+            array_push($quantityPembagianBibitOld, $value->quantity);
+        }
+        $detailPembagianBibit = DetailPembagianBibit::find($id);
+        $headerPembagianBibit = HeaderPembagianBibit::find($detailPembagianBibit->id_header_pembagian_bibit);
+        $detailBeli = DetailBeli::find($headerPembagianBibit->id_detail_beli);
+        $quantityPembagianBibit = [];
+
+        if ($detailPembagianBibit->id_jaring != null) {
+            $jaring = MasterJaring::find($detailPembagianBibit->id_jaring);
+            $jaring->update([
+                'id_kolam' => null
+            ]);
+        }
+
+
+        $detailPembagianBibit->delete();
+
+        $detailPembagianBibitAll = DetailPembagianBibit::all();
+
+        foreach ($detailPembagianBibitAll as $key => $value) {
+            array_push($quantityPembagianBibit, $value->quantity);
+        }
+
+        $quantityUpdate =  $detailBeli->quantity - array_sum($quantityPembagianBibit);
+
+        $produk = Produk::find($detailBeli->id_produk);
+
+        $quantityProduk = ($produk->quantity - ($detailBeli->quantity - array_sum($quantityPembagianBibitOld))) + $quantityUpdate;
+        $produk->update([
+            'quantity' => $quantityProduk,
+        ]);
+        $detailBeli->update([
+            'quantity_stok' => $quantityUpdate,
+        ]);
+
+        return response()->json([
+            'sukses' => 'Berhasil Hapus Data'
+        ]);
     }
 
     public function contoh()

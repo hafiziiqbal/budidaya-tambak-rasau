@@ -37,64 +37,102 @@ class PembelianController extends Controller
     public function store(Request $request)
     {
 
-        try {
-            $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
-            $detail = $request->detail_beli;
-            $subtotal = [];
-            $totalBruto = 0;
-            $headBeli =  HeaderBeli::create([
-                'tgl_beli' => $tglBeli,
-                'id_supplier' => $request->supplier,
-                'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
-            ]);
+        // return response()->json($request->all());   
+        // try {
+        $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
+        $totalBruto = [];
+        $headerBeli =  HeaderBeli::create([
+            'tgl_beli' => $tglBeli,
+            'id_supplier' => $request->supplier,
+            'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
+        ]);
 
-            foreach ($detail as $key => $value) {
-                $hargaTotal = $detail[$key]['harga_satuan'] * $detail[$key]['quantity'];
-                $percentage = $detail[$key]['diskon_persen'] / 100; // 10% expressed as a decimal
-                $diskonRupiah = $detail[$key]['diskon_rupiah'];
-                $discount = $hargaTotal * $percentage;
+        foreach ($request->detail_beli as $key =>  $valueArray) {
+            // ubah array ke objek
+            $value = (object) $valueArray;
 
-                if ($detail[$key]['diskon_persen'] == null || $detail[$key]['diskon_persen'] == '') {
-                    $detail[$key]['diskon_persen'] = 0;
-                }
-                if ($detail[$key]['diskon_rupiah'] == null ||   $detail[$key]['diskon_rupiah'] == '') {
-                    $detail[$key]['diskon_rupiah'] = 0;
-                }
-
-
-                if ($detail[$key]['diskon_persen'] != null || $detail[$key]['diskon_persen'] != '') {
-                    array_push($subtotal, $hargaTotal - $discount);
-                    $detail[$key]['subtotal'] = $hargaTotal - $discount;
-                } elseif ($detail[$key]['diskon_rupiah'] != null ||   $detail[$key]['diskon_rupiah'] != '') {
-                    array_push($subtotal, $hargaTotal - $diskonRupiah);
-                    $detail[$key]['subtotal'] = $hargaTotal - $diskonRupiah;
-                }
-
-                $detail[$key]['id_header_beli'] = $headBeli->id;
-                $detail[$key]['quantity_stok'] = $detail[$key]['quantity'];
-
-                Produk::where('id', $detail[$key]['id_produk'])->update([
-                    'quantity' => DB::raw("quantity+" . $detail[$key]['quantity']),
-                ]);
+            // menghitung subtotal
+            $subtotal = 0;
+            if ($value->diskon_persen == null) {
+                $subtotal = ($value->harga_satuan * $value->quantity) - $value->diskon_rupiah;
+            } else {
+                $subtotal = $value->harga_satuan * $value->quantity * ((100 / 10) - ($value->diskon_persen / 100));
             }
 
-            $totalBruto = array_sum($subtotal);
-            $totalNetto = $totalBruto - $headBeli->potongan_harga;
-            $headBeli->update([
-                'total_bruto' => $totalBruto,
-                'total_netto' => $totalNetto
-            ]);
-            DetailBeli::insert($detail);
+            // memasukkan subtotal ke total bruto
+            array_push($totalBruto, $subtotal);
 
-            return redirect()->route('pembelian')->with(
-                'success',
-                'Berhasil Tambah Pembelian'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
+            // memasukkan detail beli ke database
+            DetailBeli::create([
+                'id_header_beli' => $headerBeli->id,
+                'id_produk' => $value->id_produk,
+                'harga_satuan' => $value->harga_satuan,
+                'quantity' => $value->quantity,
+                'quantity_stok' => $value->quantity,
+                'diskon_persen' => $value->diskon_persen,
+                'diskon_rupiah' => $value->diskon_rupiah,
+                'subtotal' => $subtotal
+            ]);
+
+            // update quantity produk
+            Produk::where('id', $value->id_produk)->update([
+                'quantity' => DB::raw("quantity+" . $value->quantity),
             ]);
         }
+
+        $headerBeli->update([
+            'total_bruto' => array_sum($totalBruto),
+            'total_netto' => array_sum($totalBruto) - $request->potongan_harga,
+        ]);
+
+        return redirect()->route('pembelian')->with(
+            'success',
+            'Berhasil Tambah Pembelian'
+        );
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
+    }
+
+    public function edit($id)
+    {
+        $supplier = Supplier::all();
+        return view('pages.pembelian.edit')->with([
+            'title' => 'PEMBELIAN',
+            'id' => $id,
+            'supplier' => $supplier,
+            'transaksi_toogle' => 1
+        ]);
+    }
+
+    public function editJson($id)
+    {
+        $headerBeli = HeaderBeli::with(['detail_beli', 'supplier'])->first();
+        // 'data' => $headerBeli
+        //     'supplier' => $supplier
+    }
+
+    public function update(Request $request, $id)
+    {
+        // try {
+        $tglBeli = date('Y-m-d', strtotime($request->tgl_beli));
+        $headerBeli = HeaderBeli::find($id);
+        $headerBeli->update([
+            'tgl_beli' => $tglBeli,
+            'supplier' => $request->supplier,
+            'potongan_harga' => $request->potongan_harga,
+        ]);
+        return redirect()->route('pembelian')->with(
+            'success',
+            'Berhasil Perbarui Pembelian'
+        );
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
     }
 
 
@@ -102,13 +140,7 @@ class PembelianController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'quantity', 'quantity_stok', 'updated_at'])->with(['produk' => function ($query) {
-                    $query->select('id', 'nama');
-                }, 'header_beli' => function ($query) {
-                    $query->select('id', 'tgl_beli', 'id_supplier')->with(['supplier' => function ($query) {
-                        $query->select('id', 'nama');
-                    }]);
-                }])->orderBy('updated_at', 'desc')->get();
+                $data = HeaderBeli::with('supplier')->orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -135,88 +167,66 @@ class PembelianController extends Controller
         ]);
     }
 
-    public function edit($id)
-    {
-        $produk = Produk::all();
-        $pembelian = DetailBeli::with([
-            'produk' => function ($query) {
-                $query->select('id', 'id_kategori', 'nama')->with(['kategori' => function ($query) {
-                    $query->select('id', 'nama');
-                }]);
-            }, 'header_beli.supplier'
-        ])->where('id', $id)->first();
-        $cekPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $pembelian->id)->first();
-        if (!empty($cekPembagianBibit)) {
-            return redirect('pembelian')->withErrors([
-                'alert' => 'Data Ini Sudah Digunakan Di Tabel Bibit'
-            ]);
-        }
-        return view('pages.pembelian.edit')->with([
-            'title' => 'PEMBELIAN',
-            'pembelian' => $pembelian,
-            'produk' => $produk,
-            'transaksi_toogle' => 1
-        ]);
-    }
-
-    public function update(Request $request, $id)
-    {
-        try {
-            $pembelian = DetailBeli::find($id);
-
-            $headerBeli = HeaderBeli::find($pembelian->id_header_beli);
-            $produk = Produk::find($pembelian->id_produk);
-            $hargaTotal = $request->harga_satuan * $request->quantity;
-            $percentage = $request->diskon_persen / 100; // 10% expressed as a decimal
-            $diskonRupiah = $request->diskon_rupiah;
-            $discount = $hargaTotal * $percentage;
-            $subtotal = 0;
-            $newTotalBruto = 0;
-            $newTotalNetto = 0;
-            $newQuantityProduk = 0;
-
-            if ($request->diskon_persen == null || $request->diskon_persen == '') {
-                $request->merge(['diskon_persen' => 0]);
-            }
-            if ($request->diskon_rupiah == null || $request->diskon_rupiah == '') {
-                $request->merge(['diskon_rupiah' => 0]);
-            }
-
-            if ($request->diskon_persen != null || $request->diskon_persen != '') {
-                $subtotal = $hargaTotal - $discount;
-            } elseif ($request->diskon_rupiah != null || $request->diskon_rupiah != '') {
-                $subtotal = $hargaTotal - $diskonRupiah;
-            }
 
 
-            $newTotalBruto = ($headerBeli->total_bruto - $pembelian->subtotal) + $subtotal;
-            $newTotalNetto = $newTotalBruto - $headerBeli->potongan_harga;
+    // public function update(Request $request, $id)
+    // {
+    //     try {
+    //         $pembelian = DetailBeli::find($id);
 
-            $headerBeli->update([
-                'total_bruto' => $newTotalBruto,
-                'total_netto' => $newTotalNetto,
-            ]);
+    //         $headerBeli = HeaderBeli::find($pembelian->id_header_beli);
+    //         $produk = Produk::find($pembelian->id_produk);
+    //         $hargaTotal = $request->harga_satuan * $request->quantity;
+    //         $percentage = $request->diskon_persen / 100; // 10% expressed as a decimal
+    //         $diskonRupiah = $request->diskon_rupiah;
+    //         $discount = $hargaTotal * $percentage;
+    //         $subtotal = 0;
+    //         $newTotalBruto = 0;
+    //         $newTotalNetto = 0;
+    //         $newQuantityProduk = 0;
 
-            $newQuantityProduk = ($produk->quantity - $pembelian->quantity) + $request->quantity;
-            $produk->update([
-                'quantity' => $newQuantityProduk,
-            ]);
+    //         if ($request->diskon_persen == null || $request->diskon_persen == '') {
+    //             $request->merge(['diskon_persen' => 0]);
+    //         }
+    //         if ($request->diskon_rupiah == null || $request->diskon_rupiah == '') {
+    //             $request->merge(['diskon_rupiah' => 0]);
+    //         }
 
-            $request->request->add(['quantity_stok' => $request->quantity]);
+    //         if ($request->diskon_persen != null || $request->diskon_persen != '') {
+    //             $subtotal = $hargaTotal - $discount;
+    //         } elseif ($request->diskon_rupiah != null || $request->diskon_rupiah != '') {
+    //             $subtotal = $hargaTotal - $diskonRupiah;
+    //         }
 
 
-            $pembelian->update($request->all());
+    //         $newTotalBruto = ($headerBeli->total_bruto - $pembelian->subtotal) + $subtotal;
+    //         $newTotalNetto = $newTotalBruto - $headerBeli->potongan_harga;
 
-            return redirect()->route('pembelian')->with(
-                'success',
-                'Berhasil Perbarui Pembelian'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
-            ]);
-        }
-    }
+    //         $headerBeli->update([
+    //             'total_bruto' => $newTotalBruto,
+    //             'total_netto' => $newTotalNetto,
+    //         ]);
+
+    //         $newQuantityProduk = ($produk->quantity - $pembelian->quantity) + $request->quantity;
+    //         $produk->update([
+    //             'quantity' => $newQuantityProduk,
+    //         ]);
+
+    //         $request->request->add(['quantity_stok' => $request->quantity]);
+
+
+    //         $pembelian->update($request->all());
+
+    //         return redirect()->route('pembelian')->with(
+    //             'success',
+    //             'Berhasil Perbarui Pembelian'
+    //         );
+    //     } catch (\Throwable $th) {
+    //         return redirect('/')->withErrors([
+    //             'error' => 'Terdapat Kesalahan'
+    //         ]);
+    //     }
+    // }
 
     public function destroy($id)
     {

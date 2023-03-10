@@ -78,7 +78,8 @@
                 <div class="btn-update-content d-none">
                     <button class="btn btn-success btn-update-detail"><i class="fas fa-spinner fa-spin d-none"></i>
                         Perbarui</button>
-                    <button class="btn btn-danger">Hapus</button>
+                    <button class="btn btn-danger btn-delete-detail"><i class="fas fa-spinner fa-spin d-none"></i>
+                        Hapus</button>
                 </div>
             </div>
             <div class="card-body border">
@@ -116,14 +117,15 @@
             </div>
         </div>
         @foreach ($data->detail_pembagian_bibit as $key => $item)
-            <div class="mb-4 detail-pembagian">
+            <div class="mb-4 detail-pembagian" id="detailPembagian{{ $key }}">
                 <div class="card-header border d-flex justify-content-between align-items-center">
                     <span class="fw-bold">Pembagian Ke {{ $key + 1 }} <label class="text-success"
                             id="status{{ $key }}"></label></span>
                     <div>
                         <button class="btn btn-success btn-update-detail" data-key="{{ $key }}"
                             data-id="{{ $item->id }}"><i class="fas fa-spinner fa-spin d-none"></i> Perbarui</button>
-                        <button class="btn btn-danger">Hapus</button>
+                        <button class="btn btn-danger btn-delete-detail" data-id="{{ $item->id }}"
+                            data-key="{{ $key }}"> <i class="fas fa-spinner fa-spin d-none"></i>Hapus</button>
                     </div>
                 </div>
                 <div class="card-body border">
@@ -206,11 +208,15 @@
             let clone = element.clone()
             clone.removeClass('d-none');
             clone.find('input').val('')
+
             clone.find('.simpan-detail-baru').attr("data-key", item = item + 1);
+            clone.attr('id', `detailPembagian${item}`);
             clone.find('.simpan-detail-baru').attr("id", `btnSimpanDetail${item}`);
 
             clone.find('.btn-update-detail').attr("data-key", item);
             clone.find('.btn-update-detail').attr("id", `btnUpdate${item}`);
+            clone.find('.btn-delete-detail').attr("data-key", item);
+            clone.find('.btn-delete-detail').attr("id", `btnDelete${item}`);
             clone.find('.btn-content').attr("id", `btnContent${item}`);
             clone.find('.btn-update-content').attr("id", `btnUpdateContent${item}`);
 
@@ -275,13 +281,13 @@
                             thisButton.removeAttr('disabled')
                             thisButton.children().addClass('d-none')
                         }
-                        console.log(data);
+
 
                         if (data.sukses != undefined) {
                             $(`#status${key}`).html(` (${data.sukses})`)
                             $(`#btnContent${key}`).remove()
                             $(`#btnUpdate${key}`).attr('data-id', data.id)
-                            $(`#btnUpdateContent${key}`).removeClass('d-none')
+                            $(`#btnDelete${key}`).attr('data-id', data.id)
                             $(`#btnUpdateContent${key}`).removeClass('d-none')
                         }
 
@@ -370,9 +376,32 @@
                         }
                     });
             });
+
+
+            // hapus detail pembagian
+            $(".btn-delete-detail").click(function() {
+                $(this).attr('disabled', 'disabled')
+                $(this).children().removeClass('d-none')
+
+                let id = $(this).data('id');
+                let key = $(this).data('key')
+                let thisButton = $(this)
+
+                $.get(`/pembagian-bibit/delete/${id}/detail`)
+                    .done(function(data, statusText, xhr) {
+                        let status = statusText;
+                        if (status == 'success') {
+                            thisButton.removeAttr('disabled')
+                            thisButton.children().addClass('d-none')
+                        }
+
+                        if (data.sukses != undefined) {
+                            $(`#detailPembagian${key}`).remove()
+                        }
+                    })
+
+            })
         });
-
-
 
         // update detail pembagian
         $(".btn-update-detail").click(function() {
@@ -433,5 +462,29 @@
                     }
                 });
         });
+
+        // hapus detail pembagian
+        $(".btn-delete-detail").click(function() {
+            $(this).attr('disabled', 'disabled')
+            $(this).children().removeClass('d-none')
+
+            let id = $(this).data('id');
+            let key = $(this).data('key')
+            let thisButton = $(this)
+
+            $.get(`/pembagian-bibit/delete/${id}/detail`)
+                .done(function(data, statusText, xhr) {
+                    let status = statusText;
+                    if (status == 'success') {
+                        thisButton.removeAttr('disabled')
+                        thisButton.children().addClass('d-none')
+                    }
+
+                    if (data.sukses != undefined) {
+                        $(`#detailPembagian${key}`).remove()
+                    }
+                })
+
+        })
     </script>
 @endpush

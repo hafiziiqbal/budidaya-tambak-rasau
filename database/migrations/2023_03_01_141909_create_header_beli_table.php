@@ -17,9 +17,9 @@ return new class extends Migration
             $table->id();
             $table->date('tgl_beli');
             $table->foreignId('id_supplier')->constrained('supplier')->cascadeOnDelete();
-            $table->decimal('total_bruto')->nullable();
-            $table->decimal('potongan_harga');
-            $table->decimal('total_netto')->nullable();
+            $table->bigInteger('total_bruto')->nullable();
+            $table->bigInteger('potongan_harga');
+            $table->bigInteger('total_netto')->nullable();
             $table->timestamps();
         });
     }

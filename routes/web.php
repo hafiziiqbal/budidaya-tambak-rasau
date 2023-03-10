@@ -85,16 +85,23 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => 'pembelian'], function () {
+        Route::group(['prefix' => 'detail'], function () {
+        });
+
         Route::get('/', [PembelianController::class, 'index'])->name('pembelian');
+        Route::get('/{id}/edit', [PembelianController::class, 'edit'])->name('pembelian.edit');
+        Route::post('/', [PembelianController::class, 'store'])->name('pembelian.store');
+        Route::post('/{id}/edit', [PembelianController::class, 'update'])->name('pembelian.update');
+        Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
+
+
+
+
         Route::get('/contoh', [PembelianController::class, 'contoh'])->name('pembelian.contoh');
         Route::get('/{id}/show', [PembelianController::class, 'show'])->name('pembelian.show');
         Route::get('/create', [PembelianController::class, 'create'])->name('pembelian.create');
-        Route::get('/{id}/edit', [PembelianController::class, 'edit'])->name('pembelian.edit');
-        Route::get('/delete/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destory');
 
-        Route::post('/', [PembelianController::class, 'store'])->name('pembelian.store');
-        Route::post('/{id}/update', [PembelianController::class, 'update'])->name('pembelian.update');
-        Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
+        Route::get('/delete/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destory');
     });
 
     Route::group(['prefix' => 'produk'], function () {
@@ -137,6 +144,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [PembagianBibitController::class, 'edit'])->name('pembagian.bibit.edit');
         Route::get('/{id}/show', [PembagianBibitController::class, 'show'])->name('pembagian.bibit.show');
         Route::get('/delete/{id}', [PembagianBibitController::class, 'destroy'])->name('pembagian.bibit.destory');
+        Route::get('/delete/{id}/detail', [PembagianBibitController::class, 'destroyDetail'])->name('pembagian.bibit.destory.detail');
 
         Route::post('/', [PembagianBibitController::class, 'store'])->name('pembagian.bibit.store');
         Route::post('/detail', [PembagianBibitController::class, 'storeDetail'])->name('pembagian.bibit.store.detail');
