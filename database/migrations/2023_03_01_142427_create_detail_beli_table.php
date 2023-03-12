@@ -21,7 +21,7 @@ return new class extends Migration
             $table->decimal('quantity');
             $table->decimal('quantity_stok');
             $table->decimal('diskon_persen')->nullable();
-            $table->decimal('diskon_rupiah')->nullable();
+            $table->bigInteger('diskon_rupiah')->nullable();
             $table->decimal('subtotal');
             $table->timestamps();
         });

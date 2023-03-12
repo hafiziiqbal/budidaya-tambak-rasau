@@ -50,12 +50,14 @@ class PembelianController extends Controller
                 // ubah array ke objek
                 $value = (object) $valueArray;
 
-                // menghitung subtotal
+                // menghitung subtotal            
                 $subtotal = 0;
                 if ($value->diskon_persen == null) {
                     $subtotal = ($value->harga_satuan * $value->quantity) - $value->diskon_rupiah;
-                } else {
+                } elseif ($value->diskon_persen != null) {
                     $subtotal = $value->harga_satuan * $value->quantity * ((100 / 10) - ($value->diskon_persen / 100));
+                } else {
+                    $subtotal = $value->harga_satuan * $value->quantity;
                 }
 
                 // memasukkan subtotal ke total bruto
@@ -117,8 +119,6 @@ class PembelianController extends Controller
     public function update(Request $request, $id)
     {
         try {
-
-
             $tglBeli = date('Y-m-d', strtotime($request->tgl_beli));
             $totalBruto = [];
             $headerBeli = HeaderBeli::where('id', $id)->with('detail_beli')->first();
@@ -146,6 +146,56 @@ class PembelianController extends Controller
         }
     }
 
+    public function updateDetail(Request $request, $id)
+    {
+        $totalBruto = [];
+        $detailBeli = DetailBeli::all()->except($id);
+        // menghitung subtotal
+        $subtotal = 0;
+        if ($request->diskon_persen == null) {
+            $subtotal = ($request->harga_satuan * $request->quantity) - $request->diskon_rupiah;
+        } elseif ($request->diskon_persen != null) {
+            $subtotal = $request->harga_satuan * $request->quantity * ((100 / 10) - ($request->diskon_persen / 100));
+        } else {
+            $subtotal = $request->harga_satuan * $request->quantity;
+        }
+
+        // memasukkan subtotal ke total bruto
+        array_push($totalBruto, $subtotal);
+
+        foreach ($detailBeli as $key => $value) {
+            array_push($totalBruto, $value->subtotal);
+        }
+
+        // update beli ke database
+        $detailBeliUpdate = DetailBeli::find($id);
+        $quantityProdukOld = $detailBeliUpdate->quantity;
+        $detailBeliUpdate->update([
+            'harga_satuan' => $request->harga_satuan,
+            'quantity' => $request->quantity,
+            'quantity_stok' => $request->quantity,
+            'diskon_persen' => $request->diskon_persen,
+            'diskon_rupiah' => $request->diskon_rupiah,
+            'subtotal' => $subtotal
+        ]);
+
+        // update quantity produk
+        $produk = Produk::find($detailBeliUpdate->id_produk);
+        $jumlahProduk = ($produk->quantity - $quantityProdukOld) + $request->quantity;
+        $produk->update([
+            'quantity' => $jumlahProduk,
+        ]);
+
+        $headerBeli = HeaderBeli::find($detailBeliUpdate->id_header_beli);
+        $headerBeli->update([
+            'total_bruto' => array_sum($totalBruto),
+            'total_netto' => array_sum($totalBruto) - $headerBeli->potongan_harga,
+        ]);
+
+        return response()->json([
+            'success' => 'Data Berhasil di Perbarui'
+        ], 200);
+    }
 
     public function datatable(Request $request)
     {

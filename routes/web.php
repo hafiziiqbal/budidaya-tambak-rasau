@@ -85,9 +85,6 @@ Route::group(['middleware' => 'auth'], function () {
     });
 
     Route::group(['prefix' => 'pembelian'], function () {
-        Route::group(['prefix' => 'detail'], function () {
-        });
-
         Route::get('/', [PembelianController::class, 'index'])->name('pembelian');
         Route::get('/{id}/edit', [PembelianController::class, 'edit'])->name('pembelian.edit');
         Route::get('/{id}/edit-json', [PembelianController::class, 'editJson'])->name('pembelian.edit.json');
@@ -95,14 +92,15 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/{id}/edit', [PembelianController::class, 'update'])->name('pembelian.update');
         Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
 
-
-
-
         Route::get('/contoh', [PembelianController::class, 'contoh'])->name('pembelian.contoh');
         Route::get('/{id}/show', [PembelianController::class, 'show'])->name('pembelian.show');
         Route::get('/create', [PembelianController::class, 'create'])->name('pembelian.create');
 
         Route::get('/delete/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destory');
+
+        Route::group(['prefix' => 'detail'], function () {
+            Route::post('/{id}/edit', [PembelianController::class, 'updateDetail'])->name('pembelian.update.detail');
+        });
     });
 
     Route::group(['prefix' => 'produk'], function () {
