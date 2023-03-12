@@ -25,9 +25,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="inputDetailBeli" class="form-label">Tanggal Pembelian Bibit</label>
-                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Tanggal Pembelian Bibit"
-                    name="id_detail_beli">
+                <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
+                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
                     <option></option>
                     @foreach ($pembelian as $value)
                         @if ($value->produk->quantity > 0)
@@ -93,14 +92,13 @@
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Bibit</span>                                
+                                <span class="me-2 title">Detail Pembagian</span>                                
                             </div>
                             <button type="button" class="btn-close"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">
-                        
+                `<div class="card-body border">             
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>

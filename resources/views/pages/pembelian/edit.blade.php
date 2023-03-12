@@ -337,7 +337,7 @@
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
                         $(`#formDetail${index} .status-error-header`).removeClass('d-none')
                         $(`#formDetail${index} .status-error-header span`).html(response
-                            .success)
+                            .error)
                         setTimeout(function() {
                             $(`#formDetail${index} .status-error-header`).addClass(
                                 "d-none");

@@ -6,46 +6,40 @@
         <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
     </ol>
 
-    @include('components.alert')
-    <div id="headerPembelian" class="mb-5">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Pembagian Bibit</label>
-        </div>
-        <form action="{{ route('pembagian.bibit.update', $data->id) }}" method="POST">
-            @csrf
+    {{-- header beli --}}
+    <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
+        @csrf
+        <div id="headerPembagian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Pembagian</label>
+            </div>
+
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
+
             <div class="mb-3">
-                <label for="inputTanggalPembagian" class="form-label">Tanggal Pembagian</label>
+                <label for="inputNama" class="form-label">Tanggal Pembagian</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_pembagian" id="inputTanggalPembagian" class="form-control"
-                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker"
-                        value="{{ date('d-m-Y', strtotime($data->tgl_pembagian)) }}">>
+                    <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
                 </div>
-                @if ($errors->has('tgl_pembagian'))
-                    <small class="text-danger">*{{ $errors->first('tgl_pembagian') }}</small>
-                @endif
             </div>
 
             <div class="mb-3">
-                <label for="inputDetailBeli" class="form-label">Tanggal Pembelian Bibit</label>
-                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Tanggal Pembelian Bibit"
-                    name="id_detail_beli">
+                <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
+                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
                     <option></option>
-                    @foreach ($detailBeli as $value)
-                        @if ($value->produk->quantity > 0)
-                            <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
-                                @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                            </option>
-                        @endif
-                        @if ($value->id == $data->id_detail_beli)
-                            <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
-                                @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                            </option>
-                        @endif
+                    @foreach ($pembelian as $value)
+                        <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
+                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                        </option>
                     @endforeach
                 </select>
             </div>
-
             <div class="mb-3">
                 <label for="inputPanen" class="form-label">Sortir Kembali</label>
                 <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_panen">
@@ -57,118 +51,17 @@
                     @endforeach --}}
                 </select>
             </div>
-            <div class="mb-3">
-                <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">Perbarui</button>
-            </div>
-        </form>
-    </div>
 
+            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+                Perubahan</button>
+        </div>
+    </form>
     <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Detail Pembagian Bibit</label>
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Pembagian</label>
         </div>
-        <div class="mb-4 detail-pembagian d-none" id="detailPembagianFirst">
-            <div class="card-header border d-flex justify-content-between align-items-center">
-                <span class="fw-bold"><label class="pembagian"></label><label class="text-success"
-                        id="status"></label></span>
-                <div class="btn-content">
-                    <button class="btn btn-primary simpan-detail-baru me-2"> <i
-                            class="fas fa-spinner fa-spin d-none me-2"></i>Simpan</button>
-                </div>
-                <div class="btn-update-content d-none">
-                    <button class="btn btn-success btn-update-detail"><i class="fas fa-spinner fa-spin d-none"></i>
-                        Perbarui</button>
-                    <button class="btn btn-danger btn-delete-detail"><i class="fas fa-spinner fa-spin d-none"></i>
-                        Hapus</button>
-                </div>
-            </div>
-            <div class="card-body border">
-                <div class="mb-3">
-                    <label for="inputQuantity" class="form-label">Quantity</label>
-                    <input type="number" class="form-control quantity" id="inputQuantity" required>
-                    <label class="alert-quantity text-danger"></label>
-                </div>
-                <div class="mb-3">
-                    <label for="inputJaring" class="form-label">Pilih Jaring</label>
-                    <select class="form-select jaring" data-placeholder="Pilih Jaring">
-                        <option value="null">Lepas Jaring</option>
-                        @foreach ($jaring as $value)
-                            <option value="{{ $value->id }}">
-                                {{ $value->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <label class="alert-jaring text-danger"></label>
-
-                </div>
-
-                <div class="mb-3">
-                    <label for="inputKolam" class="form-label">Pilih Kolam</label>
-                    <select class="form-select kolam" data-placeholder="Pilih Kolam">
-                        <option></option>
-                        @foreach ($kolam as $value)
-                            <option value="{{ $value->id }}">
-                                {{ $value->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <label class="alert-kolam text-danger"></label>
-                </div>
-            </div>
-        </div>
-        @foreach ($data->detail_pembagian_bibit as $key => $item)
-            <div class="mb-4 detail-pembagian" id="detailPembagian{{ $key }}">
-                <div class="card-header border d-flex justify-content-between align-items-center">
-                    <span class="fw-bold">Pembagian Ke {{ $key + 1 }} <label class="text-success"
-                            id="status{{ $key }}"></label></span>
-                    <div>
-                        <button class="btn btn-success btn-update-detail" data-key="{{ $key }}"
-                            data-id="{{ $item->id }}"><i class="fas fa-spinner fa-spin d-none"></i> Perbarui</button>
-                        <button class="btn btn-danger btn-delete-detail" data-id="{{ $item->id }}"
-                            data-key="{{ $key }}"> <i class="fas fa-spinner fa-spin d-none"></i>Hapus</button>
-                    </div>
-                </div>
-                <div class="card-body border">
-                    <div class="mb-3">
-                        <label for="inputQuantity" class="form-label">Quantity</label>
-                        <input type="number" class="form-control quantity"
-                            name="detail_pembagian_bibit[{{ $key }}][quantity]" id="inputQuantity" required
-                            value="{{ $item->quantity }}">
-                        <label id="alertQuantity{{ $key }}" class="text-danger"></label>
-
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="inputJaring" class="form-label">Pilih Jaring</label>
-                        <select class="form-select jaring" data-placeholder="Pilih Jaring"
-                            name="detail_pembagian_bibit[{{ $key }}][id_jaring]">
-                            <option value="null">Lepas Jaring</option>
-                            @foreach ($jaring as $value)
-                                <option value="{{ $value->id }}">
-                                    {{ $value->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <label id="alertJaring{{ $key }}" class="text-danger"></label>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="inputKolam" class="form-label">Pilih Kolam</label>
-                        <select class="form-select kolam" data-placeholder="Pilih Kolam"
-                            name="detail_pembagian_bibit[{{ $key }}][id_kolam]">
-                            <option></option>
-                            @foreach ($kolam as $value)
-                                <option value="{{ $value->id }}">
-                                    {{ $value->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <label id="alertKolam{{ $key }}" class="text-danger"></label>
-                    </div>
-                </div>
-            </div>
-        @endforeach
-
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
     <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
     </button>
@@ -176,314 +69,368 @@
 
 @push('script')
     <script>
-        let detailPembagian = {!! $data->detail_pembagian_bibit !!}
-        let item = detailPembagian.length - 1;
+        let detailBagi
+        let number = 0
 
+        // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
-
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
         });
 
+        // load data header
+        function loadDataHeader() {
+            let idHeader = {!! $id !!}
+            $.ajax({
+                url: `/pembagian-bibit/${idHeader}/edit-json`,
+                dataType: 'json', // what to expect back from the server
+                cache: false,
+                async: false,
+                contentType: false,
+                processData: false,
+                type: 'GET',
 
-        // nilai default detail beli
-        $('#inputDetailBeli').val({!! $data->id_detail_beli !!});
-        $('#inputDetailBeli').trigger('change');
+                success: function(response) {
+                    detailBagi = response.detail_pembagian_bibit
+                    console.log(response);
+                    // default value detail beli
+                    $(`#inputDetailBeli`).val(response.id_detail_beli)
+                    $(`#inputDetailBeli`).trigger('change');
+                    $(`#inputDetailBeli`).select2("enable", false);
+                    $(`#inputPanen`).select2("enable", false);
 
-        // nilai default detail pembagian
-        detailPembagian.forEach((e, i) => {
-            $(`.jaring[name='detail_pembagian_bibit[${i}][id_jaring]']`).val(e.id_jaring == null ? 'null' : e
-                .id_jaring)
-            $(`.jaring[name='detail_pembagian_bibit[${i}][id_jaring]']`).trigger('change');
+                    // default tgl_beli                
+                    $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian.split("-").reverse().join("-"));
 
-            $(`.kolam[name='detail_pembagian_bibit[${i}][id_kolam]']`).val(e.id_kolam)
-            $(`.kolam[name='detail_pembagian_bibit[${i}][id_kolam]']`).trigger('change');
+                },
+                error: function(response) { // handle the error
+                    try {} catch (err) {
+
+                    }
+
+                },
+
+            })
+        }
+        loadDataHeader()
+
+        // handle form_header
+        $("#formHeader").on("submit", function(e) { //id of form 
+            console.log('masuk');
+            $('#btnSimpanHeader').attr('disabled', 'disabled')
+            $('#btnSimpanHeader').children().removeClass('d-none')
+
+            e.preventDefault();
+            let action = $(this).attr("action"); //get submit action from form
+            let method = $(this).attr("method"); // get submit method
+            let form_data = new FormData($(this)[0]); // convert form into formdata                    
+
+            $.ajax({
+                url: action,
+                dataType: 'json', // what to expect back from the server
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: form_data,
+                type: method,
+
+                success: function(response) {
+                    if (response.success != undefined) {
+                        $('#btnSimpanHeader').removeAttr('disabled')
+                        $('#btnSimpanHeader').children().addClass('d-none')
+                        $('.status-header').removeClass('d-none')
+                        $('.status-header span').html(response.success)
+                        setTimeout(function() {
+                            $(".status-header").addClass("d-none");
+                        }, 3000);
+                        loadDataHeader();
+                    }
+                },
+                error: function(response) { // handle the error            
+                    $('#btnSimpanHeader').removeAttr('disabled')
+                    $('#btnSimpanHeader').children().addClass('d-none')
+                    $('.status-error-header').removeClass('d-none')
+                    $('.status-error-header span').html(response.responseText)
+                    setTimeout(function() {
+                        $(".status-error-header").addClass("d-none");
+                    }, 3000);
+                    loadDataHeader();
+                },
+
+            })
+
+
         });
 
-        // tambah element detail pembagian
-        $("#btnTambahPembagian").click(function() {
-            let element = $('#detailPembagianFirst');
-            element.find('select').select2('destroy')
-            let clone = element.clone()
-            clone.removeClass('d-none');
-            clone.find('input').val('')
+        // membuat element detail bagi
+        function loadElementDetailBagi(item, index) {
+            let form = $(
+                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-bibit/detail/${item.id}/edit" class=" mb-5">
+                    <div class="card mb-4"></div>    
+                    </form>`
+            )
+            let cardHeader = $(
+                `<div class="card-header border d-flex justify-content-between align-items-center">
+                            <div class="fw-bold">
+                                <span class="me-2 title">Detail Pembagian</span>
+                                <label class="text-success fw-bold status-header d-none mb-2">
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                    <span></span>
+                                </label>
+                                <label class="text-danger fw-bold status-error-header d-none  mb-2">
+                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                    <span></span>
+                                </label>
+                            </div>
+                            <button type="button" class="btn-close d-none"  aria-label="Close"></button>
+                    </div>`
+            )
+            let cardBody = $(
+                `<div class="card-body border">        
+                    @csrf     
+                        <input type="hidden" name="id_header_pembagian_bibit" id="idHeader${index}" value="${item.id_header_pembagian_bibit}">
+                        <div class="mb-3">
+                            <label class="form-label">Quantity</label>
+                            <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
+                            <label class="error-quantity"></label>
+                        </div>
+                        <div class="mb-3 select-jaring">
+                            <label class="form-label">Pilih Jaring</label>
+                            <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="id_jaring" >
+                                <option></option>
+                                @foreach ($jaring as $value)
+                                    <option value="{{ $value->id }}">
+                                        {{ $value->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label class="error-jaring"></label>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Kolam</label>
+                            <select class="form-select" id="selectKolam${index}" data-placeholder="Pilih Kolam" name="id_kolam" >
+                                <option></option>
+                                @foreach ($kolam as $value)
+                                    <option value="{{ $value->id }}">
+                                        {{ $value->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <label class="error-kolam"></label>
+                        </div>       
+                        <div class="btn-update-content">
+                            <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
+                                <i class="fas fa-spinner fa-spin d-none"></i>
+                                Perbarui
+                            </button>
+                            <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
+                                <i class="fas fa-spinner fa-spin d-none"></i>
+                                Hapus
+                            </button>
+                        </div>
+                        <div class="btn-store-content d-none">
+                            <button type="submit" class="btn btn-primary" id="btnSaveDetail${index}">
+                                <i class="fas fa-spinner fa-spin d-none"></i>
+                                Simpan
+                            </button>
+                        </div>                 
+                    </div>`
+            )
 
-            clone.find('.simpan-detail-baru').attr("data-key", item = item + 1);
-            clone.attr('id', `detailPembagian${item}`);
-            clone.find('.simpan-detail-baru').attr("id", `btnSimpanDetail${item}`);
+            $('#detail').append(form)
+            $(`#formDetail${index} .card`).append(cardHeader, cardBody)
 
-            clone.find('.btn-update-detail').attr("data-key", item);
-            clone.find('.btn-update-detail').attr("id", `btnUpdate${item}`);
-            clone.find('.btn-delete-detail').attr("data-key", item);
-            clone.find('.btn-delete-detail').attr("id", `btnDelete${item}`);
-            clone.find('.btn-content').attr("id", `btnContent${item}`);
-            clone.find('.btn-update-content').attr("id", `btnUpdateContent${item}`);
-
-
-            clone.find('.alert-quantity').attr('id', `alertQuantity${item}`)
-            clone.find('.alert-jaring').attr('id', `alertJaring${item}`)
-            clone.find('.alert-kolam').attr('id', `alertKolam${item}`)
-            clone.find('#status').attr('id', `status${item}`)
-
-            clone.find('.btn-content').append(
-                '<button type="button" class="btn-close" aria-label="Close"></button>')
-            clone.find('label.pembagian').html(`Pembagian Ke ${item + 1}`)
-
-            $(`.jaring[name='detail_pembagian_bibit[${item}][id_jaring]']`).val('null')
-            $(`.jaring[name='detail_pembagian_bibit[${item}][id_jaring]']`).trigger('change');
-
-
-            clone.find('#inputQuantity').attr('name', `detail_pembagian_bibit[${item}][quantity]`);
-            clone.find('select.jaring').attr('name', `detail_pembagian_bibit[${item}][id_jaring]`);
-            clone.find('select.kolam').attr('name', `detail_pembagian_bibit[${item}][id_kolam]`);
-
-
-            $("#detail").append(clone);
-
+            // inisialisasi form select 2
             $(".form-select").select2({
                 theme: "bootstrap-5",
+                allowClear: true,
                 containerCssClass: "select2--medium",
                 dropdownCssClass: "select2--medium",
             });
 
+            $(`#selectJaring${index}`).on('change', function() {
+                // mengambil nilai opsi yang dipilih
+                let selectFirst = $(this);
+                let selectedValue = $(this).val();
 
-            $('.btn-close').click(function() {
-                $(this).parent().parent().parent().remove();
-
-            })
-
-            // simpan detail baru
-            $(`#btnSimpanDetail${item}`).on("click", function(e) {
-                // diisable button
-                $(this).attr('disabled', 'disabled')
-                $(this).children().removeClass('d-none')
-
-                let key = $(this).data('key')
-                let thisButton = $(this)
-
-                let data = {
-                    "_token": $('meta[name="csrf-token"]').attr('content'),
-                    "id_header_pembagian_bibit": {!! $data->id !!}
-                }
-
-                data["quantity"] = $(
-                    `input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
-                data["id_jaring"] = $(
-                    `.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
-                data["id_kolam"] = $(
-                    `.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
-
-                $.post(`/pembagian-bibit/detail`, data)
-                    .done(function(data, statusText, xhr) {
-                        let status = statusText;
-                        if (status == 'success') {
-                            thisButton.removeAttr('disabled')
-                            thisButton.children().addClass('d-none')
-                        }
-
-
-                        if (data.sukses != undefined) {
-                            $(`#status${key}`).html(` (${data.sukses})`)
-                            $(`#btnContent${key}`).remove()
-                            $(`#btnUpdate${key}`).attr('data-id', data.id)
-                            $(`#btnDelete${key}`).attr('data-id', data.id)
-                            $(`#btnUpdateContent${key}`).removeClass('d-none')
-                        }
-
-                        // jika ada alert jaring
-                        if (data.alert_jaring != undefined) {
-                            $(`#alertJaring${key}`).html('*' + data.alert_jaring)
-
-                        } else {
-                            $(`#alertJaring${key}`).html('')
-
-                        }
-
-                        // jika ada alert quantity
-                        if (data.alert_quantity != undefined) {
-                            $(`#alertQuantity${key}`).html('*' + data.alert_quantity)
-                        } else {
-                            $(`#alertQuantity${key}`).html('')
-                        }
-
-                        // jika ada alert kolam
-                        if (data.alert_kolam != undefined) {
-                            $(`#alertKolam${key}`).html('*' + data.alert_kolam)
-                        } else {
-                            $(`#alertKolam${key}`).html('')
-                        }
-                    });
-            });
-
-            $(".btn-update-detail").click(function() {
-                // diisable button
-                $(this).attr('disabled', 'disabled')
-                $(this).children().removeClass('d-none')
-
-
-                let id = $(this).data('id');
-                let key = $(this).data('key')
-                let thisButton = $(this)
-
-                $(`[id^=status]`).html('')
-
-                let data = {
-                    "_token": $('meta[name="csrf-token"]').attr('content'),
-                }
-                data["quantity"] = $(
-                    `input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
-                data["id_jaring"] = $(
-                    `.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`).val();
-                data["id_kolam"] = $(
-                    `.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
-
-
-                $.post(`/pembagian-bibit/${id}/update-detail`, data)
-                    .done(function(data, statusText, xhr) {
-                        let status = statusText;
-                        if (status == 'success') {
-                            thisButton.removeAttr('disabled')
-                            thisButton.children().addClass('d-none')
-                        }
-
-                        if (data.sukses != undefined) {
-                            $(`#status${key}`).html(` (${data.sukses})`)
-                            $(`btnUpdate${key}`).attr('data-id', data.id)
-                        }
-
-                        // jika ada alert jaring
-                        if (data.alert_jaring != undefined) {
-                            $(`#alertJaring${key}`).html('*' + data.alert_jaring)
-
-                        } else {
-                            $(`#alertJaring${key}`).html('')
-
-                        }
-
-                        // jika ada alert quantity
-                        if (data.alert_quantity != undefined) {
-                            $(`#alertQuantity${key}`).html('*' + data.alert_quantity)
-                        } else {
-                            $(`#alertQuantity${key}`).html('')
-                        }
-
-                        // jika ada alert kolam
-                        if (data.alert_kolam != undefined) {
-                            $(`#alertKolam${key}`).html('*' + data.alert_kolam)
-                        } else {
-                            $(`#alertKolam${key}`).html('')
-                        }
-                    });
-            });
-
-
-            // hapus detail pembagian
-            $(".btn-delete-detail").click(function() {
-                $(this).attr('disabled', 'disabled')
-                $(this).children().removeClass('d-none')
-
-                let id = $(this).data('id');
-                let key = $(this).data('key')
-                let thisButton = $(this)
-
-                $.get(`/pembagian-bibit/delete/${id}/detail`)
-                    .done(function(data, statusText, xhr) {
-                        let status = statusText;
-                        if (status == 'success') {
-                            thisButton.removeAttr('disabled')
-                            thisButton.children().addClass('d-none')
-                        }
-
-                        if (data.sukses != undefined) {
-                            $(`#detailPembagian${key}`).remove()
-                        }
-                    })
-
-            })
-        });
-
-        // update detail pembagian
-        $(".btn-update-detail").click(function() {
-            // diisable button
-            $(this).attr('disabled', 'disabled')
-            $(this).children().removeClass('d-none')
-
-
-            let id = $(this).data('id');
-            let key = $(this).data('key')
-            let thisButton = $(this)
-
-            $(`[id^=status]`).html('')
-
-            let data = {
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-            }
-            data["quantity"] = $(`input[name="detail_pembagian_bibit[${$(this).data('key')}][quantity]"]`).val();
-            data["id_jaring"] = $(`.jaring[name='detail_pembagian_bibit[${$(this).data('key')}][id_jaring]']`)
-                .val();
-            data["id_kolam"] = $(`.kolam[name='detail_pembagian_bibit[${$(this).data('key')}][id_kolam]']`).val()
-
-
-            $.post(`/pembagian-bibit/${id}/update-detail`, data)
-                .done(function(data, statusText, xhr) {
-                    let status = statusText;
-                    if (status == 'success') {
-                        thisButton.removeAttr('disabled')
-                        thisButton.children().addClass('d-none')
-                    }
-
-                    if (data.sukses != undefined) {
-                        $(`#status${key}`).html(` (${data.sukses})`)
-                        $(`btnUpdate${key}`).attr('data-id', data.id)
-                    }
-
-                    // jika ada alert jaring
-                    if (data.alert_jaring != undefined) {
-                        $(`#alertJaring${key}`).html('*' + data.alert_jaring)
-
-                    } else {
-                        $(`#alertJaring${key}`).html('')
-
-                    }
-
-                    // jika ada alert quantity
-                    if (data.alert_quantity != undefined) {
-                        $(`#alertQuantity${key}`).html('*' + data.alert_quantity)
-                    } else {
-                        $(`#alertQuantity${key}`).html('')
-                    }
-
-                    // jika ada alert kolam
-                    if (data.alert_kolam != undefined) {
-                        $(`#alertKolam${key}`).html('*' + data.alert_kolam)
-                    } else {
-                        $(`#alertKolam${key}`).html('')
+                // validasi nilai opsi
+                $('select.select-jaring').not(this).each(function() {
+                    // jika nilai opsi sudah dipilih di element select2 lain
+                    if ($(this).val() == selectedValue && $(this).val() != '') {
+                        // menampilkan alert
+                        alert(`Jaring ini sudah digunakan`);
+                        // menghapus nilai opsi yang dipilih di element select2 baru
+                        $(this).val('').trigger('change.select2');
+                        return false
                     }
                 });
+            });
+
+            $(`#selectJaring${index}`).val(item.id_jaring)
+            $(`#selectJaring${index}`).trigger('change');
+            $(`#selectKolam${index}`).val(item.id_kolam)
+            $(`#selectKolam${index}`).trigger('change');
+
+
+            // handle sumbit
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+                e.preventDefault();
+                $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
+                $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
+                $(`#btnDeleteDetail${index}`).attr('disabled', 'disabled')
+
+                let action = $(this).attr("action"); //get submit action from form
+                let method = $(this).attr("method"); // get submit method
+                let form_data = new FormData($(this)[0]); // convert form into formdata        
+
+
+                $.ajax({
+                    url: action,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: method,
+
+                    success: function(response) {
+                        console.log(response);
+                        if (response.success != undefined) {
+                            $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                            $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                            $(`#btnSaveDetail${index}`).removeAttr('disabled')
+                            $(`#btnSaveDetail${index}`).children().addClass('d-none')
+                            $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                            $(`#formDetail${index} .status-header`).removeClass('d-none')
+                            $(`#formDetail${index} .status-header span`).html(response
+                                .success)
+                            setTimeout(function() {
+                                $(`#formDetail${index} .status-header`).addClass(
+                                    "d-none");
+                            }, 3000);
+                            loadDataHeader();
+                        }
+
+                        if (response.error != undefined) {
+                            $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                            $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                            $(`#btnSaveDetail${index}`).removeAttr('disabled')
+                            $(`#btnSaveDetail${index}`).children().addClass('d-none')
+                            $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                            $(`#formDetail${index} .status-error-header`).removeClass('d-none')
+                            $(`#formDetail${index} .status-error-header span`).html(response
+                                .error)
+                            setTimeout(function() {
+                                $(`#formDetail${index} .status-error-header`).addClass(
+                                    "d-none");
+                            }, 3000);
+                            loadDataHeader();
+                        }
+
+                        if (response.save_detail != undefined) {
+                            $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                            $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                            $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                            $(`#btnDeleteDetail${index}`).children().addClass('d-none')
+                            $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
+                            $(`#formDetail${index} .btn-store-content`).addClass('d-none');
+                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index}`).attr('action',
+                                `/pembelian/detail/${response.id}/edit`)
+                            $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+                        }
+                    },
+                    error: function(response) { // handle the error            
+                        $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                        $(`#btnSaveDetail${index}`).removeAttr('disabled')
+                        $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                        $(`#btnSaveDetail${index}`).children().addClass('d-none')
+                        $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
+                        $(`#formDetail${index} .status-error-header span`).html(response
+                            .error)
+                        setTimeout(function() {
+                            $(`#formDetail${index} .status-error-header`).addClass(
+                                "d-none");
+                        }, 3000);
+                        loadDataHeader();
+                    },
+
+                })
+            });
+
+            $(`#btnDeleteDetail${index}`).click(function(e) {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: `/pembagian-bibit/detail/delete/${id}`,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'GET',
+
+                    success: function(response) {
+                        if (response.success != undefined) {
+                            $(`#formDetail${index}`).remove();
+                            $(`.info-delete`).html(response
+                                .success)
+                            setTimeout(function() {
+                                $(`.info-delete`).html(
+                                    "");
+                            }, 3000);
+                            loadDataHeader();
+                        }
+
+                    },
+                    error: function(response) { // handle the error                                    
+                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
+                        $(`#formDetail${index} .status-error-header span`).html(response
+                            .success)
+                        setTimeout(function() {
+                            $(`#formDetail${index} .status-error-header`).addClass(
+                                "d-none");
+                        }, 3000);
+                        loadDataHeader();
+                    },
+
+                })
+            })
+        }
+
+        number = detailBagi.length;
+        detailBagi.forEach((item, index) => {
+            loadElementDetailBagi(item, index)
         });
 
-        // hapus detail pembagian
-        $(".btn-delete-detail").click(function() {
-            $(this).attr('disabled', 'disabled')
-            $(this).children().removeClass('d-none')
+        // tambah element detail
+        $('#btnTambahPembagian').click(function() {
+            number = number + 1
+            idHeader = {!! $id !!}
+            loadElementDetailBagi({
+                id_jaring: null,
+                id_kolam: null
+            }, number)
 
-            let id = $(this).data('id');
-            let key = $(this).data('key')
-            let thisButton = $(this)
+            // hapus semua nilai input
+            $(':input', `#formDetail${number}`)
+                .not(':button, :submit, :reset, :hidden')
+                .val('')
+                .prop('checked', false)
+                .prop('selected', false);
 
-            $.get(`/pembagian-bibit/delete/${id}/detail`)
-                .done(function(data, statusText, xhr) {
-                    let status = statusText;
-                    if (status == 'success') {
-                        thisButton.removeAttr('disabled')
-                        thisButton.children().addClass('d-none')
-                    }
+            $(`#idHeader${number}`).val(idHeader);
+            $(`#formDetail${number} .card-body`).append(
+                `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
+            $(`#formDetail${number}`).attr('action', '/pembagian-bibit/detail')
+            $(`#formDetail${number} .btn-update-content`).addClass('d-none');
+            $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
+            $(`#formDetail${number} .btn-close`).removeClass('d-none');
 
-                    if (data.sukses != undefined) {
-                        $(`#detailPembagian${key}`).remove()
-                    }
-                })
+
+            $(`#formDetail${number} .btn-close`).click(function() {
+                $(this).parent().parent().parent().remove();
+            })
 
         })
     </script>

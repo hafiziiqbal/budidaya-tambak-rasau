@@ -127,40 +127,24 @@ class PembagianBibitController extends Controller
     public function destroy($id)
     {
         // try {
-        $detailPembagianBibit = DetailPembagianBibit::find($id);
-        $jaring = MasterJaring::find($detailPembagianBibit->id_jaring);
-        $detailPembagianBibitRelation = $detailPembagianBibit::with([
-            'header_pembagian_bibit' => function ($query) {
-                $query->select('id', 'id_detail_beli',)->with(['detail_beli' => function ($query) {
-                    $query->select('id', 'id_produk');
-                }]);
-            }
-        ])->first();
+        $headerPembagian = HeaderPembagianBibit::find($id);
+        // $detail = DetailPembagianBibit::where
+        $detailPembagianBibit = DetailPembagianBibit::where('id_header_pembagian_bibit', $headerPembagian->id)->get();
+        
+        $detailBeli = DetailBeli::where('id_header_beli', $id)->get();
 
-        $produk = Produk::find($detailPembagianBibitRelation->header_pembagian_bibit->detail_beli->id_produk);
-        $newQuantityProduk = $produk->quantity + $detailPembagianBibit->quantity;
-        $produk->update([
-            'quantity' => $newQuantityProduk,
-        ]);
+        foreach ($detailBeli as $key => $value) {
+            Produk::find($value->id_produk)->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+        }
 
-        $detailBeli = DetailBeli::find($detailPembagianBibitRelation->header_pembagian_bibit->id_detail_beli);
-        $detailBeli->update([
-            'quantity_stok' => $newQuantityProduk,
-        ]);
-        $jaring->update([
-            'id_kolam' => null,
-        ]);
+        $headerPembagian->delete();
 
-        $detailPembagianBibit->delete();
-        return redirect()->route('pembagian.bibit')->with(
+        return redirect()->route('pembelian')->with(
             'success',
-            'Berhasil Hapus Pembagian Bibit'
+            'Berhasil Hapus Pembelian'
         );
-        // } catch (\Throwable $th) {
-        //     return redirect('/')->withErrors([
-        //         'error' => 'Terdapat Kesalahan'
-        //     ]);
-        // }
     }
 
     public function contoh()
