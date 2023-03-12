@@ -43,10 +43,8 @@ class PembagianBibitController extends Controller
 
     public function create()
     {
-        // $bibit = Produk::select(['id', 'nama', 'quantity'])->where('id_kategori', 2)->where('quantity', '>', 0.00)->get();
         $jaring = MasterJaring::where('id_kolam', null)->get();
-
-        $kolam = MasterKolam::select(['id', 'nama'])->get();
+        $kolam = MasterKolam::all();
 
         $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity'])->with(['produk' => function ($query) {
             $query->select('id', 'nama', 'quantity');
@@ -54,14 +52,10 @@ class PembagianBibitController extends Controller
             $query->select('id', 'tgl_beli');
         }])->orderBy('id_header_beli', 'asc')->get();
 
-        // return response()->json($pembelian);
-
-
         return view('pages.pembagian_bibit.create')->with([
             'title' => 'PEMBAGIAN BIBIT',
             'jaring' => $jaring,
             'kolam' => $kolam,
-            // 'bibit' => $bibit,
             'pembelian' => $pembelian
         ]);
     }
@@ -300,41 +294,83 @@ class PembagianBibitController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
-            $detail = $request->detail_pembagian_bibit;
-            $detailBeli = DetailBeli::select('id', 'id_produk', 'quantity_stok')->where('id', $request->id_detail_beli)->first();
+        // return response()->json($request->id_detail_beli);
+        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
 
-            $headPembagian =  HeaderPembagianBibit::create([
-                'tgl_pembagian' => $tglPembagian,
-                'id_detail_beli' => $request->id_detail_beli,
-                'id_detail_panen' => $request->id_panen,
-            ]);
+        // cek jaring -------------------------------------------------------
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            $kolam = MasterKolam::find($value->id_kolam);
+            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
+                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->where('id_kolam', $value->id_kolam)
+                ->first();
 
-            foreach ($detail as $key => $value) {
-                $detail[$key]['id_header_pembagian_bibit'] = $headPembagian->id;
-                Produk::where('id', $detailBeli->id_produk)->update([
-                    'quantity' => DB::raw("quantity-" . $detail[$key]['quantity']),
-                ]);
-                $detailBeli->update([
-                    'quantity_stok' => DB::raw("quantity_stok-" . $detail[$key]['quantity']),
-                ]);
-                MasterJaring::where('id', $detail[$key]['id_jaring'])->update([
-                    'id_kolam' => $detail[$key]['id_kolam'],
+            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+            if ($batasJaring >= 1 && $value->id_jaring == null) {
+                return response()->json([
+                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
                 ]);
             }
+        }
+        // end cek jaring -------------------------------------------------------
 
-            DetailPembagianBibit::insert($detail);
+        // cek quantity ----------------------------------------------------------
+        // hitung total quantity dari request
+        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
 
-            return redirect()->route('pembagian.bibit')->with(
-                'success',
-                'Berhasil Membagikan Bibit'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
+        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
+        $quantityStok = DetailBeli::find($request->id_detail_beli)->quantity_stok;
+
+        // jika total quantity melebihi quantity_stok
+        if ($totalQuantity > $quantityStok) {
+            return response()->json([
+                'error' => 'Total quantity melebihi quantity stok yang ada'
             ]);
         }
+        // cek quantity ----------------------------------------------------------
+
+        // save
+        $headBagi =  HeaderPembagianBibit::create([
+            'tgl_pembagian' => $tglPembagian,
+            'id_detail_beli' => $request->id_detail_beli,
+            'id_detail_panen' => $request->id_panen,
+        ]);
+
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $headBagi->id,
+                'quantity' => $value->quantity,
+                'id_jaring' => $value->id_jaring,
+                'id_kolam' => $value->id_kolam
+            ]);
+
+            // Kurangi nilai quantity_stok pada tabel pembelian
+            $detailBeli = DetailBeli::find($headBagi->id_detail_beli);
+            $detailBeli->update([
+                'quantity_stok' => DB::raw("quantity_stok-" . $value->quantity),
+            ]);
+
+            // Kurangi nilai quantity pada tabel produk
+            Produk::find($detailBeli->id_produk)->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam == null) {
+                    $jaring->update([
+                        'id_kolam' => $value->id_kolam
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
+        ]);
     }
 
     public function edit($id)

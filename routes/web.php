@@ -92,7 +92,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/{id}/edit', [PembelianController::class, 'update'])->name('pembelian.update');
         Route::post('/datatable', [PembelianController::class, 'datatable'])->name('pembelian.datatable');
 
-        Route::get('/contoh', [PembelianController::class, 'contoh'])->name('pembelian.contoh');
+        // Route::get('/contoh', [PembelianController::class, 'contoh'])->name('pembelian.contoh');
         Route::get('/{id}/show', [PembelianController::class, 'show'])->name('pembelian.show');
         Route::get('/create', [PembelianController::class, 'create'])->name('pembelian.create');
 

@@ -33,28 +33,12 @@
                     @endforeach
                 </select>
             </div>
-            {{-- <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Bruto</label>
-                <input type="number" class="form-control" id="inputBruto" required name="bruto"
-                    value="{{ old('bruto') }}" readonly>
-                @if ($errors->has('bruto'))
-                    <small class="text-danger">*{{ $errors->first('bruto') }}</small>
-                @endif
-            </div> --}}
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="number" class="form-control" id="inputPotonganHarga" required name="potongan_harga"
+                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga"
                     value="{{ old('potongan_harga') }}">
-
             </div>
-            {{-- <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Netto</label>
-                <input type="number" class="form-control" id="inputNetto" required name="netto"
-                    value="{{ old('netto') }}" readonly>
-                @if ($errors->has('netto'))
-                    <small class="text-danger">*{{ $errors->first('netto') }}</small>
-                @endif
-            </div> --}}
+
 
         </div>
 
