@@ -62,79 +62,11 @@
         </div>
     </form>
     <div id="detail">
+
         <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
             <label class="fw-bold">Detail Pembelian</label>
         </div>
-        {{-- <form name="form_detail" method="POST" action="" class="d-none form-detail first mb-5">
-            @csrf
-            <div class="mb-4">
-                <div class="card-header border d-flex justify-content-between align-items-center">
-                    <div class="fw-bold">
-                        <span class="me-2 title"></span>
-                        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check"
-                                aria-hidden="true"></i>
-                            <span></span>
-                        </label>
-                        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i
-                                class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                            <span></span>
-                        </label>
-                    </div>
-                    <div class="btn-content d-none">
-                        <button class="btn btn-primary simpan-detail-baru me-2"> <i
-                                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan</button>
-                    </div>
-                </div>
-                <div class="card-body border">
-                    <div class="mb-3">
-                        <label class="form-label">Pilih Produk</label>
-                        <select class="form-select produk" data-placeholder="Pilih Produk">
-                            <option></option>
-                            @foreach ($produk as $value)
-                                <option value="{{ $value->id }}">
-                                    {{ $value->nama }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Harga Satuan</label>
-                        <input type="text" class="form-control mata-uang harga-satuan">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Quantity</label>
-                        <input type="text" class="form-control quantity">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Quantity Stok</label>
-                        <input type="text" class="form-control quantity-stok" disabled>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Diskon Persen</label>
-                        <input type="text" class="form-control diskon-persen">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label ">Diskon Rupiah</label>
-                        <input type="text" class="form-control diskon-rupiah mata-uang">
-                    </div>
-
-                    <div class="btn-update-content d-none">
-                        <button type="button" class="btn btn-success btn-update-detail"><i
-                                class="fas fa-spinner fa-spin d-none"></i>
-                            Perbarui</button>
-                        <button type="button" class="btn btn-danger btn-delete-detail"><i
-                                class="fas fa-spinner fa-spin d-none"></i>
-                            Hapus</button>
-                    </div>
-                </div>
-
-            </div>
-        </form> --}}
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
     <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
     </button>
@@ -143,6 +75,8 @@
 @push('script')
     <script>
         let detailBeli
+        let number = 0
+
         // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
@@ -251,17 +185,16 @@
         });
 
         // membuat element detail beli
-        function loadElementDetailBeli() {
-            detailBeli.forEach((item, index) => {
-                let form = $(
-                    `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembelian/detail/${item.id}/edit" class=" mb-5">
+        function loadElementDetailBeli(item, index) {
+            let form = $(
+                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembelian/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
                     </form>`
-                )
-                let cardHeader = $(
-                    `<div class="card-header border d-flex justify-content-between align-items-center">
+            )
+            let cardHeader = $(
+                `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Beli ${index+1}</span>
+                                <span class="me-2 title">Detail Beli</span>
                                 <label class="text-success fw-bold status-header d-none mb-2">
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
@@ -271,15 +204,15 @@
                                     <span></span>
                                 </label>
                             </div>
+                            <button type="button" class="btn-close d-none"  aria-label="Close"></button>
                     </div>`
-                )
-
-                let cardBody = $(
-                    `<div class="card-body border">
+            )
+            let cardBody = $(
+                `<div class="card-body border">
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Pilih Produk</label>
-                            <select class="form-select produk${index}" data-placeholder="Pilih Produk">
+                            <select class="form-select produk${index}" data-placeholder="Pilih Produk" name="id_produk" required>
                                 <option></option>
                                 @foreach ($produk as $value)
                                     <option value="{{ $value->id }}">
@@ -290,13 +223,13 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Harga Satuan</label>
-                            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}">
+                            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}">
+                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
                         </div>
-                        <div class="mb-3">
+                        <div class="mb-3 quantity_stok">
                             <label class="form-label">Quantity Stok</label>
                             <input type="text" class="form-control quantity-stok" disabled value="${item.quantity_stok}">
                         </div>
@@ -314,92 +247,184 @@
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Perbarui
                             </button>
-                            <button type="button" class="btn btn-danger" id="btnDeleteDetail${index}">
+                            <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
                             </button>
                         </div>
+                        <div class="btn-store-content d-none">
+                            <button type="submit" class="btn btn-primary" id="btnSaveDetail${index}">
+                                <i class="fas fa-spinner fa-spin d-none"></i>
+                                Simpan
+                            </button>
+                        </div>
                     </div>`
-                )
+            )
 
-                $('#detail').append(form)
-                $(`#formDetail${index} .card`).append(cardHeader, cardBody)
+            $('#detail').append(form)
+            $(`#formDetail${index} .card`).append(cardHeader, cardBody)
 
-                // inisialisasi form select 2
-                $(".form-select").select2({
-                    theme: "bootstrap-5",
-                    containerCssClass: "select2--medium",
-                    dropdownCssClass: "select2--medium",
-                });
-                $(`.produk${index}`).val(item.id_produk.toString())
-                $(`.produk${index}`).trigger('change');
-                $(`.produk${index}`).select2("enable", false)
-
-                // handle sumbit
-                $(`#formDetail${index}`).on("submit", function(e) { //id of form 
-                    e.preventDefault();
-                    $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
-                    $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
-                    $(`#btnDeleteDetail${index}`).attr('disabled', 'disabled')
-
-                    let action = $(this).attr("action"); //get submit action from form
-                    let method = $(this).attr("method"); // get submit method
-                    let form_data = new FormData($(this)[0]); // convert form into formdata        
-
-                    // hilangkan karakter RP dan titik
-                    form_data.set('harga_satuan', $(`#formDetail${index} input[name='harga_satuan']`).val()
-                        .replace(/[^0-9]/g, ''));
-                    form_data.set('diskon_rupiah', $(`#formDetail${index} input[name='diskon_rupiah']`)
-                        .val().replace(/[^0-9]/g, ''));
-
-                    $.ajax({
-                        url: action,
-                        dataType: 'json', // what to expect back from the server
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        data: form_data,
-                        type: method,
-
-                        success: function(response) {
-                            console.log(response);
-                            if (response.success != undefined) {
-                                $(`#btnUpdateDetail${index}`).removeAttr('disabled')
-                                $(`#btnUpdateDetail${index}`).children().addClass('d-none')
-                                $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                                $(`#formDetail${index} .status-header`).removeClass('d-none')
-                                $(`#formDetail${index} .status-header span`).html(response
-                                    .success)
-                                setTimeout(function() {
-                                    $(`#formDetail${index} .status-header`).addClass(
-                                        "d-none");
-                                }, 3000);
-                                loadDataHeader();
-
-                            }
-                        },
-                        error: function(response) { // handle the error            
-                            // $('#btnSimpanHeader').removeAttr('disabled')
-                            // $('#btnSimpanHeader').children().addClass('d-none')
-                            // $('.status-error-header').removeClass('d-none')
-                            // $('.status-error-header span').html(response.responseText)
-                            // setTimeout(function() {
-                            //     $(".status-error-header").addClass("d-none");
-                            // }, 3000);
-                            // loadDataHeader();
-                        },
-
-                    })
-
-
-                });
+            // inisialisasi form select 2
+            $(".form-select").select2({
+                theme: "bootstrap-5",
+                containerCssClass: "select2--medium",
+                dropdownCssClass: "select2--medium",
             });
+
+            $(`.produk${index}`).val(item.id_produk)
+            $(`.produk${index}`).trigger('change');
+            $(`.produk${index}`).select2("enable", false);
+
+
+            // handle sumbit
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+                e.preventDefault();
+                $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
+                $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
+                $(`#btnDeleteDetail${index}`).attr('disabled', 'disabled')
+
+                let action = $(this).attr("action"); //get submit action from form
+                let method = $(this).attr("method"); // get submit method
+                let form_data = new FormData($(this)[0]); // convert form into formdata        
+
+                // hilangkan karakter RP dan titik
+                form_data.set('harga_satuan', $(`#formDetail${index} input[name='harga_satuan']`).val()
+                    .replace(/[^0-9]/g, ''));
+                form_data.set('diskon_rupiah', $(`#formDetail${index} input[name='diskon_rupiah']`)
+                    .val().replace(/[^0-9]/g, ''));
+
+                $.ajax({
+                    url: action,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: form_data,
+                    type: method,
+
+                    success: function(response) {
+                        console.log(response);
+                        if (response.success != undefined) {
+                            $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                            $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                            $(`#btnSaveDetail${index}`).removeAttr('disabled')
+                            $(`#btnSaveDetail${index}`).children().addClass('d-none')
+                            $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                            $(`#formDetail${index} .status-header`).removeClass('d-none')
+                            $(`#formDetail${index} .status-header span`).html(response
+                                .success)
+                            setTimeout(function() {
+                                $(`#formDetail${index} .status-header`).addClass(
+                                    "d-none");
+                            }, 3000);
+                            loadDataHeader();
+                        }
+
+                        if (response.save_detail != undefined) {
+                            $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
+                            $(`#formDetail${index} .btn-store-content`).addClass('d-none');
+                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index}`).attr('action',
+                                `/pembelian/detail/${response.id}/edit`)
+                            $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+                        }
+                    },
+                    error: function(response) { // handle the error            
+                        $(`#btnUpdateDetail${index}`).removeAttr('disabled')
+                        $(`#btnSaveDetail${index}`).removeAttr('disabled')
+                        $(`#btnUpdateDetail${index}`).children().addClass('d-none')
+                        $(`#btnSaveDetail${index}`).children().addClass('d-none')
+                        $(`#btnDeleteDetail${index}`).removeAttr('disabled')
+                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
+                        $(`#formDetail${index} .status-error-header span`).html(response
+                            .success)
+                        setTimeout(function() {
+                            $(`#formDetail${index} .status-error-header`).addClass(
+                                "d-none");
+                        }, 3000);
+                        loadDataHeader();
+                    },
+
+                })
+            });
+
+            $(`#btnDeleteDetail${index}`).click(function(e) {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: `/pembelian/detail/delete/${id}`,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'GET',
+
+                    success: function(response) {
+                        if (response.success != undefined) {
+                            $(`#formDetail${index}`).remove();
+                            $(`.info-delete`).html(response
+                                .success)
+                            setTimeout(function() {
+                                $(`.info-delete`).html(
+                                    "");
+                            }, 3000);
+                            loadDataHeader();
+                        }
+
+                    },
+                    error: function(response) { // handle the error                                    
+                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
+                        $(`#formDetail${index} .status-error-header span`).html(response
+                            .success)
+                        setTimeout(function() {
+                            $(`#formDetail${index} .status-error-header`).addClass(
+                                "d-none");
+                        }, 3000);
+                        loadDataHeader();
+                    },
+
+                })
+            })
         }
-        loadElementDetailBeli()
+
+        number = detailBeli.length;
+        detailBeli.forEach((item, index) => {
+            loadElementDetailBeli(item, index)
+        });
+
+        // tambah element detail
+        $('#btnTambahPembagian').click(function() {
+            number = number + 1
+            idHeader = {!! $id !!}
+            loadElementDetailBeli({
+                id_produk: null
+            }, number)
+
+            // hapus semua nilai input
+            $(':input', `#formDetail${number}`)
+                .not(':button, :submit, :reset, :hidden')
+                .val('')
+                .prop('checked', false)
+                .prop('selected', false);
+
+            $(`.produk${number}`).removeAttr('disabled');
+            $(`#formDetail${number} .card-body`).append(
+                `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
+            $(`#formDetail${number}`).attr('action', '/pembelian/detail')
+            $(`#formDetail${number} .btn-update-content`).addClass('d-none');
+            $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
+            $(`#formDetail${number} .btn-close`).removeClass('d-none');
+            $(`#formDetail${number} .quantity_stok`).remove()
 
 
-
-
+            $(`#formDetail${number} .btn-close`).click(function() {
+                $(this).parent().parent().parent().remove();
+            })
+            $('input.mata-uang').priceFormat({
+                prefix: 'Rp ',
+                centsLimit: 0,
+                thousandsSeparator: '.'
+            });
+        })
 
 
         // format mata uang

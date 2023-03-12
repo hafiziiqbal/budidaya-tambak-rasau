@@ -19,7 +19,7 @@ class ProdukSeeder extends Seeder
             [
                 'id_kategori' => 2,
                 'nama' => 'Nila',
-                'quantity' => 10,
+                'quantity' => 0,
             ],
         );
 
@@ -27,7 +27,15 @@ class ProdukSeeder extends Seeder
             [
                 'id_kategori' => 2,
                 'nama' => 'Lele',
-                'quantity' => 10,
+                'quantity' => 0,
+            ],
+        );
+
+        Produk::updateOrCreate(
+            [
+                'id_kategori' => 1,
+                'nama' => 'Pakan Grade A',
+                'quantity' => 0,
             ],
         );
     }

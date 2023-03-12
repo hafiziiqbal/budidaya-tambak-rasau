@@ -99,7 +99,9 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/delete/{id}', [PembelianController::class, 'destroy'])->name('pembelian.destory');
 
         Route::group(['prefix' => 'detail'], function () {
+            Route::post('/', [PembelianController::class, 'storeDetail'])->name('pembelian.store.detail');
             Route::post('/{id}/edit', [PembelianController::class, 'updateDetail'])->name('pembelian.update.detail');
+            Route::get('/delete/{id}', [PembelianController::class, 'destroyDetail'])->name('pembelian.destory.detail');
         });
     });
 

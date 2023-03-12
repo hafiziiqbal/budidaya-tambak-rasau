@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('detail_beli', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_header_beli')->constrained('header_beli');
+            $table->foreignId('id_header_beli')->constrained('header_beli')->onDelete('cascade');
             $table->foreignId('id_produk')->constrained('produk');
             $table->bigInteger('harga_satuan');
             $table->decimal('quantity');
             $table->decimal('quantity_stok');
             $table->decimal('diskon_persen')->nullable();
             $table->bigInteger('diskon_rupiah')->nullable();
-            $table->decimal('subtotal');
+            $table->bigInteger('subtotal');
             $table->timestamps();
         });
     }

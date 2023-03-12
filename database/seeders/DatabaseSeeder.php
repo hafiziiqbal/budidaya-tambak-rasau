@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             ProdukSeeder::class,
             KolamSeeder::class,
             JaringSeeder::class,
-            HeaderBeliSeeder::class,
-            DetailBeliSeeder::class,
+            // HeaderBeliSeeder::class,
+            // DetailBeliSeeder::class,
         ]);
     }
 }
