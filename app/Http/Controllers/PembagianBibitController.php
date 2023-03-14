@@ -371,25 +371,37 @@ class PembagianBibitController extends Controller
 
     public function destroy($id)
     {
-        $headerPembagian = HeaderPembagianBibit::find($id);
-        $detailPembagianBibit = DetailPembagianBibit::where('id_header_pembagian_bibit', $headerPembagian->id)->get();
-        $totalQuantityDetailPembagian =  collect($detailPembagianBibit)->sum('quantity');
+        // Mencari semua record dari tabel detail_pembagian_bibit yang terkait dengan header_pembagian_bibit yang akan dihapus
+        $details = DB::table('detail_pembagian_bibit')
+            ->where('id_header_pembagian_bibit', $id)
+            ->get();
+        $headerPembagianBibit = HeaderPembagianBibit::where('id', $id)->with('detail_beli')->first();
 
-        $detailBeliUpdate = DetailBeli::find($headerPembagian->id_detail_beli);
-        $quantityStokOld = $detailBeliUpdate->quantity_stok;
-        $detailBeliUpdate->update([
-            'quantity_stok' => $detailBeliUpdate->quantity - $totalQuantityDetailPembagian,
-        ]);
+        // Memperbarui tabel detail_beli dan produk
+        foreach ($details as $detail) {
+            DB::table('detail_beli')
+                ->where('id', $headerPembagianBibit->id_detail_beli)
+                ->increment('quantity_stok', $detail->quantity);
 
-        $produk = Produk::find($detailBeliUpdate->id_produk);
-        $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeliUpdate->quantity_stok;
-        $produk->update([
-            'quantity' => $quantityProduk,
-        ]);
-        foreach ($detailPembagianBibit as $key => $value) {
-            $value->delete();
+            DB::table('produk')
+                ->where('id', $headerPembagianBibit->detail_beli->id_produk)
+                ->increment('quantity', $detail->quantity);
         }
-        $headerPembagian->delete();
+
+        // Mengubah column id_kolam pada tabel jaring menjadi null
+        DB::table('master_jaring')
+            ->whereIn('id', $details->pluck('id_jaring'))
+            ->update(['id_kolam' => null]);
+
+        // Menghapus semua record dari tabel detail_pembagian_bibit yang terkait dengan header_pembagian_bibit yang akan dihapus
+        DB::table('detail_pembagian_bibit')
+            ->where('id_header_pembagian_bibit', $id)
+            ->delete();
+
+        // Menghapus record dari tabel header_pembagian_bibit yang sesuai dengan parameter $id
+        DB::table('header_pembagian_bibit')
+            ->where('id', $id)
+            ->delete();
 
         return redirect()->route('pembagian.bibit')->with(
             'success',

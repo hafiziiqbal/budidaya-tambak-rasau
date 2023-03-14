@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembagian Bibit</h1>
+    <h1 class="mt-4">Edit Pembagian Pakan</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
-        <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
+        <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
+        <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
     </ol>
 
     {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
+    <form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
         @csrf
         <div id="headerPembagian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
@@ -27,29 +27,6 @@
                     <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
                         data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
                 </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
-                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
-                    <option></option>
-                    @foreach ($pembelian as $value)
-                        <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="inputPanen" class="form-label">Sortir Kembali</label>
-                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_panen">
-                    <option></option>
-                    {{-- @foreach ($pembelian as $value)
-                        <option value="{{ $value->id }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                        </option>
-                    @endforeach --}}
-                </select>
             </div>
 
             <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
@@ -83,7 +60,7 @@
         function loadDataHeader() {
             let idHeader = {!! $id !!}
             $.ajax({
-                url: `/pembagian-bibit/${idHeader}/edit-json`,
+                url: `/pembagian-pakan/${idHeader}/edit-json`,
                 dataType: 'json', // what to expect back from the server
                 cache: false,
                 async: false,
@@ -92,16 +69,12 @@
                 type: 'GET',
 
                 success: function(response) {
-                    detailBagi = response.detail_pembagian_bibit
+                    detailBagi = response.detail_pembagian_pakan
                     console.log(response);
-                    // default value detail beli
-                    $(`#inputDetailBeli`).val(response.id_detail_beli)
-                    $(`#inputDetailBeli`).trigger('change');
-                    $(`#inputDetailBeli`).select2("enable", false);
-                    $(`#inputPanen`).select2("enable", false);
 
                     // default tgl_beli                
-                    $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian.split("-").reverse().join("-"));
+                    $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian_pakan.split("-").reverse().join(
+                        "-"));
 
                 },
                 error: function(response) { // handle the error
@@ -166,7 +139,7 @@
         // membuat element detail bagi
         function loadElementDetailBagi(item, index) {
             let form = $(
-                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-bibit/detail/${item.id}/edit" class=" mb-5">
+                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-pakan/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
                     </form>`
             )
@@ -189,36 +162,34 @@
             let cardBody = $(
                 `<div class="card-body border">        
                     @csrf     
-                        <input type="hidden" name="id_header_pembagian_bibit" id="idHeader${index}" value="${item.id_header_pembagian_bibit}">
+                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">                        
+                        <div class="mb-3 select-pakan">
+                            <label class="form-label">Produk Pakan</label>
+                            <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="id_detail_beli" required>
+                                <option></option>
+                                @foreach ($produkPakan as $value)
+                                    <option value="{{ $value->id }}">
+                                        {{ $value->produk->nama }}
+                                    </option>
+                                @endforeach
+                            </select>                            
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Pilih Tong</label>
+                            <select class="form-select" id="selectTong${index}" data-placeholder="Pilih Tong" name="id_tong" >
+                                <option></option>
+                                @foreach ($tong as $value)
+                                    <option value="{{ $value->id }}">
+                                        {{ $value->nama }}
+                                    </option>
+                                @endforeach
+                            </select>                            
+                        </div>       
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
                             <label class="error-quantity"></label>
                         </div>
-                        <div class="mb-3 select-jaring">
-                            <label class="form-label">Pilih Jaring</label>
-                            <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="id_jaring" >
-                                <option></option>
-                                @foreach ($jaring as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label class="error-jaring"></label>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Kolam</label>
-                            <select class="form-select" id="selectKolam${index}" data-placeholder="Pilih Kolam" name="id_kolam" >
-                                <option></option>
-                                @foreach ($kolam as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label class="error-kolam"></label>
-                        </div>       
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
@@ -249,28 +220,11 @@
                 dropdownCssClass: "select2--medium",
             });
 
-            $(`#selectJaring${index}`).on('change', function() {
-                // mengambil nilai opsi yang dipilih
-                let selectFirst = $(this);
-                let selectedValue = $(this).val();
-
-                // validasi nilai opsi
-                $('select.select-jaring').not(this).each(function() {
-                    // jika nilai opsi sudah dipilih di element select2 lain
-                    if ($(this).val() == selectedValue && $(this).val() != '') {
-                        // menampilkan alert
-                        alert(`Jaring ini sudah digunakan`);
-                        // menghapus nilai opsi yang dipilih di element select2 baru
-                        $(this).val('').trigger('change.select2');
-                        return false
-                    }
-                });
-            });
-
-            $(`#selectJaring${index}`).val(item.id_jaring)
-            $(`#selectJaring${index}`).trigger('change');
-            $(`#selectKolam${index}`).val(item.id_kolam)
-            $(`#selectKolam${index}`).trigger('change');
+            $(`#selectPakan${index}`).val(item.id_detail_beli)
+            $(`#selectPakan${index}`).select2("enable", false);
+            $(`#selectPakan${index}`).trigger('change');
+            $(`#selectTong${index}`).val(item.id_tong)
+            $(`#selectTong${index}`).trigger('change');
 
 
             // handle sumbit
@@ -297,6 +251,7 @@
                     success: function(response) {
                         console.log(response);
                         if (response.success != undefined) {
+                            $(`#selectPakan${index}`).select2("enable", false);
                             $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                             $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
@@ -337,7 +292,7 @@
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
                             $(`#formDetail${index} .btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
-                                `/pembelian/detail/${response.id}/edit`)
+                                `/pembagian-pakan/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },
@@ -363,7 +318,7 @@
             $(`#btnDeleteDetail${index}`).click(function(e) {
                 let id = $(this).data('id');
                 $.ajax({
-                    url: `/pembagian-bibit/detail/delete/${id}`,
+                    url: `/pembagian-pakan/detail/delete/${id}`,
                     dataType: 'json', // what to expect back from the server
                     cache: false,
                     contentType: false,
@@ -419,10 +374,11 @@
                 .prop('checked', false)
                 .prop('selected', false);
 
+            $(`#selectPakan${number}`).removeAttr('disabled');
             $(`#idHeader${number}`).val(idHeader);
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
-            $(`#formDetail${number}`).attr('action', '/pembagian-bibit/detail')
+            $(`#formDetail${number}`).attr('action', '/pembagian-pakan/detail')
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-close`).removeClass('d-none');
