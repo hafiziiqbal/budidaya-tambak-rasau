@@ -13,10 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('master_tong', function (Blueprint $table) {
+        Schema::create('header_pembagian_pakan', function (Blueprint $table) {
             $table->id();
-            $table->text('id_kolam');
-            $table->string('nama');
+            $table->date('tgl_pembagian_pakan');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('master_tong');
+        Schema::dropIfExists('header_pembagian_pakan');
     }
 };

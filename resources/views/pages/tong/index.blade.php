@@ -14,7 +14,6 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Kolam</th>
-                <th>Jaring</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -50,10 +49,7 @@
                         data: "kolam.nama",
                         name: "kolam.nama",
                     },
-                    {
-                        data: "jaring.nama",
-                        name: "jaring.nama",
-                    },
+
                     {
                         data: "id",
                         render: function(id) {

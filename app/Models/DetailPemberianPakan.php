@@ -5,21 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class MasterTong extends Model
+class DetailPemberianPakan extends Model
 {
     use HasFactory;
-    protected $table = 'master_tong';
+    protected $table = 'detail_pemberian_pakan';
 
     protected $fillable = [
-        'id_kolam',
-        'nama',
+        'id_detail_pembagian_pakan',
+        'id_detail_pembagian_bibit',
+        'quantity',
     ];
 
     protected $hidden = [
         'created_at'
-    ];
-
-    protected $casts = [
-        'id_kolam' => 'array',
     ];
 }

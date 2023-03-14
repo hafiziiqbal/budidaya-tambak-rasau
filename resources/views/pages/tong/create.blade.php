@@ -20,36 +20,54 @@
         </div>
         <div class="mb-3">
             <label for="selectKolam" class="form-label">Kolam</label>
-            <select class="form-select" id="selectKolam" data-placeholder="Pilih Kolam" name="id_kolam">
+            <div class="row">
+                @foreach ($kolam as $key => $value)
+                    <div class="col-6 col-sm-4">
+
+                        <div class="card p-2 border rounded my-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="{{ $value->id }}"
+                                    id="flexCheck{{ $key }}" style="cursor: pointer"
+                                    name="id_kolam[{{ $key }}]">
+                                <label class="form-check-label" for="flexCheck{{ $key }}" style="cursor: pointer">
+                                    {{ $value->nama }}
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+                @endforeach
+
+            </div>
+            {{-- <select class="form-select" id="selectKolam" data-placeholder="Pilih Kolam" name="id_kolam">
                 <option></option>
                 @foreach ($kolam as $value)
                     <option value="{{ $value->id }}">
                         {{ $value->nama }}
                     </option>
                 @endforeach
-            </select>
+            </select> --}}
         </div>
-        <div class="mb-3">
-            <label for="selectJaring" class="form-label">Jaring</label>
-            <select class="form-select" id="selectJaring" data-placeholder="Pilih Kolam" name="id_jaring">
-                <option></option>
-                @foreach ($jaring as $value)
-                    <option value="{{ $value->id }}">
-                        {{ $value->nama }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+
         <button type="submit" class="btn btn-primary  w-100">Simpan</button>
     </form>
 @endsection
 
 @push('script')
     <script>
-        $(".form-select").select2({
-            theme: "bootstrap-5",
-            containerCssClass: "select2--medium",
-            dropdownCssClass: "select2--medium",
+        $('#selectKolam').click(function(e) {
+            // Cek apakah element yang diklik adalah row di dalam tabel
+            console.log(e.target.tagName);
+            // if (e.target.tagName === "TD") {
+            //     // Jika iya, maka ambil isi dari row tersebut
+            //     var row = e.target.parentNode.cells;
+            //     var isiRow = "";
+            //     for (var i = 0; i < row.length; i++) {
+            //         isiRow += row[i].textContent + " ";
+            //     }
+            //     // Tampilkan isi row pada alert
+            //     alert("Isi row yang diklik: " + isiRow);
+            // }
         });
     </script>
 @endpush

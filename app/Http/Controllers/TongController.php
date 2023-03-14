@@ -22,7 +22,7 @@ class TongController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = MasterTong::with(['kolam', 'jaring'])->orderBy('updated_at', 'desc')->get();
+                $data = MasterTong::all()->orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -35,11 +35,9 @@ class TongController extends Controller
     public function create()
     {
         $kolam = MasterKolam::all();
-        $jaring = MasterJaring::all();
         return view('pages.tong.create')->with([
             'title' => 'TAMBAH TONG',
             'kolam' => $kolam,
-            'jaring' => $jaring,
             'masterdata_toogle' => 1
         ]);
     }
@@ -51,7 +49,6 @@ class TongController extends Controller
             MasterTong::create([
                 'nama' => $request->nama,
                 'id_kolam' => $request->id_kolam,
-                'id_jaring' => $request->id_jaring,
             ]);
 
             return redirect()->route('tong')->with(

@@ -74,6 +74,11 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                             Pembagian Bibit
                         </a>
+                        <a class="nav-link {{ $title == 'PEMBAGIAN PAKAN' || $title == 'TAMBAH PEMBAGIAN PAKAN' || $title == 'EDIT PEMBAGIAN PAKAN' ? 'active' : '' }}"
+                            href="{{ route('pembagian.pakan') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Pembagian Pakan
+                        </a>
 
 
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>

@@ -50,7 +50,9 @@ class PembagianBibitController extends Controller
             $query->select('id', 'nama', 'quantity');
         }, 'header_beli' => function ($query) {
             $query->select('id', 'tgl_beli');
-        }])->orderBy('id_header_beli', 'asc')->get();
+        }])->whereHas('produk', function ($query) {
+            $query->where('id_kategori', '=', 2);
+        })->orderBy('id_header_beli', 'asc')->get();
 
         return view('pages.pembagian_bibit.create')->with([
             'title' => 'PEMBAGIAN BIBIT',
