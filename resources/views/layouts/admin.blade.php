@@ -85,6 +85,11 @@
                             <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                             Pemberian Pakan
                         </a>
+                        <a class="nav-link {{ $title == 'PANEN' || $title == 'TAMBAH PANEN' || $title == 'EDIT PANEN' ? 'active' : '' }}"
+                            href="{{ route('panen') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Panen
+                        </a>
 
 
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>

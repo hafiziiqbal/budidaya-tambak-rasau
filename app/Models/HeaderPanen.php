@@ -12,8 +12,7 @@ class HeaderPanen extends Model
     protected $table = 'header_panen';
 
     protected $fillable = [
-        'tgl_panen',
-        'status'
+        'tgl_panen'
     ];
 
     protected $hidden = [

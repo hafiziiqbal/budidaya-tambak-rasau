@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('header_panen', function (Blueprint $table) {
             $table->id();
             $table->date('tgl_panen');
-            $table->tinyInteger('status');
+            
             $table->timestamps();
         });
     }

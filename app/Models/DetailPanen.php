@@ -13,8 +13,8 @@ class DetailPanen extends Model
 
     protected $fillable = [
         'id_header_panen',
+        'status',
         'id_detail_pembagian_bibit',
-        'id_produk',
         'nama_kolam',
         'posisi_kolam',
         'nama_jaring',

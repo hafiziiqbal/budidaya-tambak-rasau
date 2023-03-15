@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('detail_panen', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_header_panen')->constrained('header_panen');
+            $table->tinyInteger('status');
             $table->foreignId('id_detail_pembagian_bibit')->constrained('detail_pembagian_bibit');
-            $table->foreignId('id_produk')->constrained('produk');
             $table->string('nama_kolam');
             $table->string('posisi_kolam');
             $table->string('nama_jaring')->nullable();
