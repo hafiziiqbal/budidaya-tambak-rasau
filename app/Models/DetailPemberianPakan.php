@@ -19,4 +19,9 @@ class DetailPemberianPakan extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function detail_beli()
+    {
+        return $this->belongsTo(DetailBeli::class, 'id_detail_beli');
+    }
 }

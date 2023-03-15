@@ -45,10 +45,11 @@ class TongController extends Controller
 
     public function store(Request $request)
     {
+
         try {
             MasterTong::create([
                 'nama' => $request->nama,
-                'id_kolam' => $request->id_kolam,
+                'id_kolam' => array_values($request->id_kolam),
             ]);
 
             return redirect()->route('tong')->with(

@@ -80,6 +80,12 @@
                             Pembagian Pakan
                         </a>
 
+                        <a class="nav-link {{ $title == 'PMEBERIAN PAKAN' || $title == 'TAMBAH PMEBERIAN PAKAN' || $title == 'EDIT PMEBERIAN PAKAN' ? 'active' : '' }}"
+                            href="{{ route('pemberian.pakan') }}">
+                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                            Pemberian Pakan
+                        </a>
+
 
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>
                         <a class="nav-link {{ $title == 'PRODUK' || $title == 'TAMBAH PRODUK' || $title == 'EDIT PRODUK' ? 'active' : '' }}"
