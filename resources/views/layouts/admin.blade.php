@@ -114,7 +114,13 @@
                                     href="{{ route('pembelian') }}">Pembelian</a>
 
                             </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PENJUALAN' || $title == 'TAMBAH PENJUALAN' || $title == 'EDIT PENJUALAN' ? 'active' : '' }}"
+                                    href="{{ route('jual') }}">Penjualan</a>
+
+                            </nav>
                         </div>
+
 
 
                         <div class="sb-sidenav-menu-heading">Database Kami</div>

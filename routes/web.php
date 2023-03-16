@@ -11,6 +11,7 @@ use App\Http\Controllers\PembagianBibitController;
 use App\Http\Controllers\PembagianPakanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PemberianPakanController;
+use App\Http\Controllers\PenjualanController;
 use App\Http\Controllers\Produk\PakanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
@@ -209,6 +210,25 @@ Route::group(['middleware' => 'auth'], function () {
         // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
 
         Route::post('/', [PanenController::class, 'store'])->name('panen.store');
+        // Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
+        // Route::post('/datatable', [PemberianPakanController::class, 'datatable'])->name('pemberian.pakan.datatable');
+
+        // Route::group(['prefix' => 'detail'], function () {
+        //     Route::post('/', [PemberianPakanController::class, 'storeDetail'])->name('pemberian.pakan.store.detail');
+        //     Route::post('/{id}/edit', [PemberianPakanController::class, 'updateDetail'])->name('pemberian.pakan.update.detail');
+        //     Route::get('/delete/{id}', [PemberianPakanController::class, 'destroyDetail'])->name('pemberian.pakan.destory.detail');
+        // });
+    });
+
+    Route::group(['prefix' => 'penjualan'], function () {
+        Route::get('/', [PenjualanController::class, 'index'])->name('jual');
+        Route::get('/create', [PenjualanController::class, 'create'])->name('jual.create');
+        // Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
+        // Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
+        // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');
+        // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
+
+        Route::post('/', [PenjualanController::class, 'store'])->name('jual.store');
         // Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
         // Route::post('/datatable', [PemberianPakanController::class, 'datatable'])->name('pemberian.pakan.datatable');
 
