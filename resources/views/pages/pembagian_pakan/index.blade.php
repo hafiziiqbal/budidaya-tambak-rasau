@@ -54,6 +54,7 @@
                             var produkList =
                                 '<select name="produk" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Pakan ▼</option>';
                             $.each(data, function(index, value) {
+
                                 produkList += '<option disabled value="' + value.detail_beli
                                     .produk
                                     .nama + '">' + value.detail_beli.produk.nama + ' | ' +

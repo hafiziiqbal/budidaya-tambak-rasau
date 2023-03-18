@@ -27,7 +27,7 @@
             let table = $('#tblPembagianPakan').DataTable({
                 responsive: true,
                 ajax: {
-                    url: "/pembagian-pakan/datatable",
+                    url: "/panen/datatable",
                     type: "POST",
                     beforeSend: function(xhr, type) {
                         if (!type.crossDomain) {
@@ -43,41 +43,30 @@
                         },
                     },
                     {
-                        data: 'tgl_pembagian_pakan',
-                        name: 'tgl_pembagian_pakan'
+                        data: 'tgl_panen',
+                        name: 'tgl_panen'
                     },
                     {
-                        data: 'detail_pembagian_pakan',
-                        name: 'detail_pembagian_pakan',
+                        data: 'detail_panen',
+                        name: 'detail_panen',
                         render: function(data, type, row, meta) {
-                            var produkList =
-                                '<select name="produk" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Pakan ▼</option>';
+                            console.log(data);
+                            var panenList =
+                                '<select name="bibit" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Panen ▼</option>';
                             $.each(data, function(index, value) {
-                                produkList += '<option disabled value="' + value.detail_beli
-                                    .produk
-                                    .nama + '">' + value.detail_beli.produk.nama + ' | ' +
-                                    value.quantity +
-                                    '</option>';
+                                panenList += '<option disabled>' + value
+                                    .detail_pembagian_bibit.header_pembagian_bibit
+                                    .detail_beli.produk
+                                    .nama + ' : ' + value.quantity + ' (' + value
+                                    .nama_kolam + (value.nama_jaring == null ? '' :
+                                        ` & ${value.nama_jaring}`) +
+                                    ')</option>';
                             });
-                            produkList += '</select>';
-                            return produkList;
+                            panenList += '</select>';
+                            return panenList;
                         }
                     },
                     {
-                        data: 'detail_pembagian_pakan',
-                        name: 'detail_pembagian_pakan',
-                        render: function(data, type, row, meta) {
-                            var tongList =
-                                '<select name="tong" class="form-control"><option value="" class="fst-italic" selected data-default>Daftar Tong ▼</option>';
-                            $.each(data, function(index, value) {
-                                tongList += '<option disabled value="' + value.tong
-                                    .nama + '">' + value.tong.nama +
-                                    '</option>';
-                            });
-                            tongList += '</select>';
-                            return tongList;
-                        }
-                    }, {
                         data: "id",
                         render: function(id) {
                             let show =

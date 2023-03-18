@@ -8,6 +8,7 @@ use App\Models\HeaderPanen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailPembagianBibit;
+use Yajra\DataTables\Facades\DataTables;
 
 class PanenController extends Controller
 {
@@ -17,6 +18,21 @@ class PanenController extends Controller
             'title' => 'PANEN',
         ]);
     }
+
+    public function datatable(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = HeaderPanen::with(['detail_panen.detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->orderBy('updated_at', 'desc')->get();
+                return DataTables::of($data)->addIndexColumn()->make(true);
+            }
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
 
 
     public function create()
@@ -117,5 +133,14 @@ class PanenController extends Controller
         return response()->json([
             'success' => 'Berhasil Tambah Data'
         ]);
+    }
+
+    public function contoh()
+    {
+        // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
+        $data = HeaderPanen::with(['detail_panen.detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->orderBy('updated_at', 'desc')->get();
+        return response()->json(
+            $data
+        );
     }
 }

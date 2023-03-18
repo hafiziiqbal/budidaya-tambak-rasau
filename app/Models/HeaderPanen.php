@@ -18,4 +18,9 @@ class HeaderPanen extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function detail_panen()
+    {
+        return $this->hasMany(DetailPanen::class, 'id_header_panen', 'id');
+    }
 }

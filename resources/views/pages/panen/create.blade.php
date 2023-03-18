@@ -74,7 +74,7 @@
             let cardBody = $(
                 `<div class="card-body border">                                     
                         <div class="mb-3 select-pakan">
-                            <label class="form-label">Pilih Pakan</label>
+                            <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="detail[${index}][id_detail_pembagian_bibit]" >
                                 <option></option>
                                 @foreach ($pembagianBibit as $value)

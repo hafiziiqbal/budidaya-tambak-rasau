@@ -25,4 +25,14 @@ class DetailPanen extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function detail_pembagian_bibit()
+    {
+        return $this->belongsTo(DetailPembagianBibit::class, 'id_detail_pembagian_bibit');
+    }
+
+    public function header_panen()
+    {
+        return $this->belongsTo(HeaderPanen::class, 'id_header_panen');
+    }
 }
