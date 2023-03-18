@@ -188,7 +188,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
         Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
         // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');
-        // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
+        Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
 
         Route::post('/', [PemberianPakanController::class, 'store'])->name('pemberian.pakan.store');
         Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');

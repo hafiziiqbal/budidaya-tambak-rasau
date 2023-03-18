@@ -14,8 +14,7 @@
             <tr>
                 <th>No</th>
                 <th>Tanggal</th>
-                <th>Produk</th>
-                <th>Tong</th>
+                <th>Panen</th>
                 <th>Aksi</th>
             </tr>
         </thead>

@@ -129,6 +129,22 @@ class PemberianPakanController extends Controller
         );
     }
 
+    public function destroy($id)
+    {
+        $detailPemberianPakan = DetailPemberianPakan::findOrFail($id);
+        $detailPembagianPakan = DetailPembagianPakan::findOrFail($detailPemberianPakan->id_detail_pembagian_pakan);
+
+        $detailPembagianPakan->quantity += $detailPemberianPakan->quantity;
+        $detailPembagianPakan->save();
+
+        $detailPemberianPakan->delete();
+
+        return redirect()->route('pemberian.pakan')->with(
+            'success',
+            'Berhasil Hapus Data'
+        );
+    }
+
 
     public function contoh()
     {
