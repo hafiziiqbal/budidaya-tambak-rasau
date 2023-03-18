@@ -20,8 +20,13 @@ class DetailPemberianPakan extends Model
         'created_at'
     ];
 
-    public function detail_beli()
+    public function detail_pembagian_pakan()
     {
-        return $this->belongsTo(DetailBeli::class, 'id_detail_beli');
+        return $this->belongsTo(DetailPembagianPakan::class, 'id_detail_pembagian_pakan');
+    }
+
+    public function detail_pembagian_bibit()
+    {
+        return $this->belongsTo(DetailPembagianBibit::class, 'id_detail_pembagian_bibit');
     }
 }

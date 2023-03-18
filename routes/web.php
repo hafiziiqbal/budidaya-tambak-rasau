@@ -185,14 +185,14 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [PemberianPakanController::class, 'index'])->name('pemberian.pakan');
         Route::get('/create', [PemberianPakanController::class, 'create'])->name('pemberian.pakan.create');
         Route::get('/pembagian-bibit-by-tong/{id}', [PemberianPakanController::class, 'getBagiBibitByTong']);
-        // Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
-        // Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
+        Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
+        Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
         // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');
         // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
 
-        // Route::post('/', [PemberianPakanController::class, 'store'])->name('pemberian.pakan.store');
-        // Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
-        // Route::post('/datatable', [PemberianPakanController::class, 'datatable'])->name('pemberian.pakan.datatable');
+        Route::post('/', [PemberianPakanController::class, 'store'])->name('pemberian.pakan.store');
+        Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
+        Route::post('/datatable', [PemberianPakanController::class, 'datatable'])->name('pemberian.pakan.datatable');
 
         // Route::group(['prefix' => 'detail'], function () {
         //     Route::post('/', [PemberianPakanController::class, 'storeDetail'])->name('pemberian.pakan.store.detail');
@@ -223,6 +223,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'penjualan'], function () {
         Route::get('/', [PenjualanController::class, 'index'])->name('jual');
         Route::get('/create', [PenjualanController::class, 'create'])->name('jual.create');
+        Route::get('/cek-stok/{id}/{quantity}', [PenjualanController::class, 'cekStok'])->name('jual.cek.stok');
         // Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
         // Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
         // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');

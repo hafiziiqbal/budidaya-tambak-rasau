@@ -1,21 +1,22 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Pembagian Pakan</h1>
+    <h1 class="mt-4">Pemberian Pakan</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Pembagian Pakan</li>
+        <li class="breadcrumb-item active">Pemberian Pakan</li>
     </ol>
 
     <a href="{{ route('pemberian.pakan.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
         Data</a>
     @include('components.alert')
 
-    <table id="tblPembagianPakan" class="table table-striped table-bordered nowrap" style="width:100%">
+    <table id="tblPemberianPakan" class="table table-striped table-bordered nowrap" style="width:100%">
         <thead>
             <tr>
                 <th>No</th>
-                <th>Tanggal</th>
-                <th>Produk</th>
                 <th>Tong</th>
+                <th>Bibit</th>
+                <th>Pakan</th>
+                <th>Quantity</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -25,10 +26,10 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            let table = $('#tblPembagianPakan').DataTable({
+            let table = $('#tblPemberianPakan').DataTable({
                 responsive: true,
                 ajax: {
-                    url: "/pembagian-pakan/datatable",
+                    url: "/pemberian-pakan/datatable",
                     type: "POST",
                     beforeSend: function(xhr, type) {
                         if (!type.crossDomain) {
@@ -44,47 +45,28 @@
                         },
                     },
                     {
-                        data: 'tgl_pembagian_pakan',
-                        name: 'tgl_pembagian_pakan'
+                        data: 'detail_pembagian_pakan.tong.nama',
+                        name: 'detail_pembagian_pakan.tong.nama'
                     },
                     {
-                        data: 'detail_pembagian_pakan',
-                        name: 'detail_pembagian_pakan',
-                        render: function(data, type, row, meta) {
-                            var produkList =
-                                '<select name="produk" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Pakan ▼</option>';
-                            $.each(data, function(index, value) {
-                                produkList += '<option disabled value="' + value.detail_beli
-                                    .produk
-                                    .nama + '">' + value.detail_beli.produk.nama + ' | ' +
-                                    value.quantity +
-                                    '</option>';
-                            });
-                            produkList += '</select>';
-                            return produkList;
-                        }
+                        data: 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk.nama',
+                        name: 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk.nama'
                     },
                     {
-                        data: 'detail_pembagian_pakan',
-                        name: 'detail_pembagian_pakan',
-                        render: function(data, type, row, meta) {
-                            var tongList =
-                                '<select name="tong" class="form-control"><option value="" class="fst-italic" selected data-default>Daftar Tong ▼</option>';
-                            $.each(data, function(index, value) {
-                                tongList += '<option disabled value="' + value.tong
-                                    .nama + '">' + value.tong.nama +
-                                    '</option>';
-                            });
-                            tongList += '</select>';
-                            return tongList;
-                        }
-                    }, {
+                        data: 'detail_pembagian_pakan.detail_beli.produk.nama',
+                        name: 'detail_pembagian_pakan.detail_beli.produk.nama'
+                    },
+                    {
+                        data: 'quantity',
+                        name: 'quantity'
+                    },
+                    {
                         data: "id",
                         render: function(id) {
                             let show =
                                 `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                             let edit =
-                                `<a title="Edit Data" href="/pembagian-pakan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                                `<a title="Edit Data" href="/pemberian-pakan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
                                 `<a title="Hapus Data" href="/pembagian-pakan/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
                             return show + edit + deletebtn

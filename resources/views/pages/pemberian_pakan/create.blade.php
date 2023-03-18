@@ -10,17 +10,6 @@
     <form id="formPembagian" name="form_pembagian" action="{{ route('pemberian.pakan.store') }}" method="POST">
         @csrf
 
-
-        <div class="mb-3">
-            <label for="inputTanggalPembagian" class="form-label">Tanggal Pembagian</label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tgl_pembagian" id="inputTanggalPembagian" class="form-control"
-                    aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
-            </div>
-
-        </div>
-
         <div class="mb-3">
             <label for="inputAlamat" class="form-label">Pembagian Pakan</label>
             <select class="form-select" id="selectBagiPakan" data-placeholder="Pilih Pembagaian Pakan"

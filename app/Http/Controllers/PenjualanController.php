@@ -31,6 +31,21 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
-        
+    }
+
+    public function cekStok($id, $quantity)
+    {
+        $produk = Produk::find($id);
+        if ($quantity > $produk->quantity) {
+            return response()->json([
+                'error' => 'Quantity Melebihi Stok',
+
+            ]);
+        } else {
+            return response()->json([
+                'success' => 'Quantity Pas',
+
+            ]);
+        }
     }
 }
