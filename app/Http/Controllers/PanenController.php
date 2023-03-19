@@ -122,9 +122,9 @@ class PanenController extends Controller
         }
 
         foreach ($produk as $item) {
-            $produkExists = Produk::where('nama',  'LIKE ?', '%' . $item['nama'] . '%')->where('id_kategori', 3)->first();
+            $produkExists = Produk::where('nama',  $item['nama'])->where('id_kategori', 3)->first();
             if ($produkExists) {
-                DB::table('produk')->where('nama', 'LIKE ?', '%' . $item['nama'] . '%')->where('id_kategori', 3)->increment('quantity', $item['quantity']);
+                DB::table('produk')->where('nama',  $item['nama'])->where('id_kategori', 3)->increment('quantity', $item['quantity']);
             } else {
                 Produk::create($item);
             }
@@ -132,6 +132,58 @@ class PanenController extends Controller
 
         return response()->json([
             'success' => 'Berhasil Tambah Data'
+        ]);
+    }
+
+    public function storeDetail(Request $request)
+    {
+
+
+        // validate total quantity against detail_pembagian_bibit
+        $detailPembagianBibit = DB::table('detail_pembagian_bibit')->where('id', $request->id_detail_pembagian_bibit)->first();
+        if ($request->quantity > $detailPembagianBibit->quantity) {
+            return response()->json([
+                'error' => "Total Quantity Melebihi Quantity Pembagian"
+            ]);
+        }
+
+        // Kurangi quantity pada tabel detail_pembagian_bibit sesuai dengan quantity pada request
+        $id_detail_pembagian_bibit = $request->id_detail_pembagian_bibit;
+        $quantity = $request->quantity;
+
+        $detail_pembagian_bibit = DetailPembagianBibit::where('id', $id_detail_pembagian_bibit)->with(['kolam', 'jaring', 'header_pembagian_bibit.detail_beli.produk'])->first();
+        $detail_pembagian_bibit->quantity -= $quantity;
+        $detail_pembagian_bibit->save();
+
+        $detailPanen = DetailPanen::create([
+            'id_header_panen' => $request->id_header_panen,
+            'status' => $request->status,
+            'quantity' => $quantity,
+            'id_detail_pembagian_bibit' => $request->id_detail_pembagian_bibit,
+            'nama_kolam' => $detail_pembagian_bibit->kolam->nama,
+            'posisi_kolam' => $detail_pembagian_bibit->kolam->posisi,
+            'nama_jaring' => $detail_pembagian_bibit->jaring == null ? null : $detail_pembagian_bibit->jaring->nama,
+            'posisi_jaring' => $detail_pembagian_bibit->jaring == null ? null : $detail_pembagian_bibit->jaring->posisi,
+        ]);
+
+        // Masukkan data ke dalam tabel produk
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id',  $id_detail_pembagian_bibit)->first();
+
+        $produkExists = Produk::where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->first();
+        if ($produkExists) {
+            DB::table('produk')->where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->increment('quantity', $quantity);
+        } else {
+            Produk::create([
+                'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
+                'quantity' => $quantity,
+                'id_kategori' => 3
+            ]);
+        }
+
+        return response()->json([
+            'sukses' => 'Berhasil Tambah Data',
+            'save_detail' => true,
+            'id' => $detailPanen->id
         ]);
     }
 
@@ -186,6 +238,7 @@ class PanenController extends Controller
         $detail_pembagian_bibit = DB::table('detail_pembagian_bibit')
             ->where('id', $id_detail_pembagian_bibit)
             ->first();
+
         $old_quantity_detail_pembagian_bibit = $detail_pembagian_bibit->quantity;
         $new_quantity_detail_pembagian_bibit = $old_quantity_detail_pembagian_bibit + ($old_quantity + $total_quantity_same_id_detail_pembagian_bibit) - ($request->quantity + $total_quantity_same_id_detail_pembagian_bibit);
 
@@ -201,6 +254,14 @@ class PanenController extends Controller
                 ->update([
                     'quantity' => $new_quantity_detail_pembagian_bibit,
                 ]);
+
+            $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $id_detail_pembagian_bibit)->first();
+            $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
+            $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 3)->first();
+
+            $produkExists->update([
+                'quantity' => ($produkExists->quantity - ($old_quantity + $total_quantity_same_id_detail_pembagian_bibit)) + ($request->quantity + $total_quantity_same_id_detail_pembagian_bibit)
+            ]);
 
             return response()->json([
                 'success' => 'Berhasil Ubah Data'

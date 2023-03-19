@@ -161,7 +161,7 @@
             let cardBody = $(
                 `<div class="card-body border">        
                     @csrf     
-                        <input type="hidden" name="id_header_pakan" id="idHeader${index}" value="${item.id_header_panen}">                        
+                        <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">                        
                         <div class="mb-3 select-ikan">
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="id_detail_pembagian_bibit" >
@@ -261,7 +261,7 @@
                                     "d-none");
                             }, 3000);
                             loadDataHeader();
-                            $("#detail").empty();
+
 
                         }
 
@@ -290,7 +290,7 @@
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
                             $(`#formDetail${index} .btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
-                                `/pembagian-pakan/detail/${response.id}/edit`)
+                                `/panen/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },
@@ -316,7 +316,7 @@
             $(`#btnDeleteDetail${index}`).click(function(e) {
                 let id = $(this).data('id');
                 $.ajax({
-                    url: `/pembagian-pakan/detail/delete/${id}`,
+                    url: `/panen/detail/delete/${id}`,
                     dataType: 'json', // what to expect back from the server
                     cache: false,
                     contentType: false,
@@ -376,7 +376,7 @@
             $(`#idHeader${number}`).val(idHeader);
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
-            $(`#formDetail${number}`).attr('action', '/pembagian-pakan/detail')
+            $(`#formDetail${number}`).attr('action', '/panen/detail')
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-close`).removeClass('d-none');
