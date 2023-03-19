@@ -72,7 +72,7 @@
                             let show =
                                 `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                             let edit =
-                                `<a title="Edit Data" href="/pembagian-pakan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                                `<a title="Edit Data" href="/panen/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
                                 `<a title="Hapus Data" href="/pembagian-pakan/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
                             return show + edit + deletebtn

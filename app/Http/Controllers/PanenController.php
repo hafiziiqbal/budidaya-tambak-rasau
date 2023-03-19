@@ -135,6 +135,83 @@ class PanenController extends Controller
         ]);
     }
 
+    public function edit($id)
+    {
+
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->get();
+
+
+        return view('pages.panen.edit')->with([
+            'title' => 'EDIT PANEN',
+            'pembagianBibit' => $pembagianBibit,
+            'id' => $id,
+        ]);
+    }
+
+    public function editJson($id)
+    {
+        $data = HeaderPanen::with(['detail_panen.detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->where('id', $id)->first();
+        return response()->json($data);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $tglPanen = date('Y-m-d', strtotime($request->tgl_panen));
+        HeaderPanen::where('id', $id)->update([
+            'tgl_panen' => $tglPanen
+        ]);
+
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
+        ]);
+    }
+
+    public function updateDetail(Request $request, $id)
+    {
+
+        $id_detail_pembagian_bibit = DetailPanen::find($id)->id_detail_pembagian_bibit;
+        $new_quantity = $request->quantity;
+        $old_quantity = DB::table('detail_panen')
+            ->where('id', $id)
+            ->value('quantity');
+        $same_id_detail_panen = DB::table('detail_panen')
+            ->where('id_detail_pembagian_bibit', $id_detail_pembagian_bibit)
+            ->where('id', '!=', $id)
+            ->get();
+        $total_quantity_same_id_detail_pembagian_bibit = 0;
+        foreach ($same_id_detail_panen as $data) {
+            $total_quantity_same_id_detail_pembagian_bibit += $data->quantity;
+        }
+
+        $detail_pembagian_bibit = DB::table('detail_pembagian_bibit')
+            ->where('id', $id_detail_pembagian_bibit)
+            ->first();
+        $old_quantity_detail_pembagian_bibit = $detail_pembagian_bibit->quantity;
+        $new_quantity_detail_pembagian_bibit = $old_quantity_detail_pembagian_bibit + ($old_quantity + $total_quantity_same_id_detail_pembagian_bibit) - ($request->quantity + $total_quantity_same_id_detail_pembagian_bibit);
+
+        if ($new_quantity_detail_pembagian_bibit >= 0) {
+            DB::table('detail_panen')
+                ->where('id', $id)
+                ->update([
+                    'quantity' => $new_quantity,
+                    'status' => $request->status,
+                ]);
+            DB::table('detail_pembagian_bibit')
+                ->where('id', $id_detail_pembagian_bibit)
+                ->update([
+                    'quantity' => $new_quantity_detail_pembagian_bibit,
+                ]);
+
+            return response()->json([
+                'success' => 'Berhasil Ubah Data'
+            ]);
+        } else {
+            return response()->json([
+                'error' => 'Quantity tidak boleh melebihi stok bibit'
+            ]);
+        }
+    }
+
     public function contoh()
     {
         // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();

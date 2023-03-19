@@ -205,19 +205,19 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [PanenController::class, 'index'])->name('panen');
         Route::get('/create', [PanenController::class, 'create'])->name('panen.create');
         Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
-        // Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
-        // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');
+        Route::get('/{id}/edit', [PanenController::class, 'edit'])->name('panen.pakan.edit');
+        Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.pakan.edit.json');
         // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
 
         Route::post('/', [PanenController::class, 'store'])->name('panen.store');
-        // Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
+        Route::post('/{id}/update', [PanenController::class, 'update'])->name('panen.update');
         Route::post('/datatable', [PanenController::class, 'datatable'])->name('panen.datatable');
 
-        // Route::group(['prefix' => 'detail'], function () {
-        //     Route::post('/', [PemberianPakanController::class, 'storeDetail'])->name('pemberian.pakan.store.detail');
-        //     Route::post('/{id}/edit', [PemberianPakanController::class, 'updateDetail'])->name('pemberian.pakan.update.detail');
-        //     Route::get('/delete/{id}', [PemberianPakanController::class, 'destroyDetail'])->name('pemberian.pakan.destory.detail');
-        // });
+        Route::group(['prefix' => 'detail'], function () {
+            Route::post('/', [PanenController::class, 'storeDetail'])->name('panen.store.detail');
+            Route::post('/{id}/edit', [PanenController::class, 'updateDetail'])->name('panen.update.detail');
+            Route::get('/delete/{id}', [PanenController::class, 'destroyDetail'])->name('panen.destory.detail');
+        });
     });
 
     Route::group(['prefix' => 'penjualan'], function () {

@@ -1,17 +1,17 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembagian Pakan</h1>
+    <h1 class="mt-4">Edit Panen</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
-        <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
+        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+        <li class="breadcrumb-item active">Edit Pakan</li>
     </ol>
 
     {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
+    <form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
         @csrf
         <div id="headerPembagian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Pembagian</label>
+                <label class="fw-bold">Header Panen</label>
             </div>
 
             <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
@@ -21,10 +21,10 @@
                 <span></span></label>
 
             <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Pembagian</label>
+                <label for="inputNama" class="form-label">Tanggal Panen</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
+                    <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
                         data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
                 </div>
             </div>
@@ -36,17 +36,17 @@
     </form>
     <div id="detail">
         <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Pembagian</label>
+            <label class="fw-bold">Detail Panen</label>
         </div>
         <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPanen"><i class="fa fa-plus"></i> Tambah
     </button>
 @endsection
 
 @push('script')
     <script>
-        let detailBagi
+        let detailPanen
         let number = 0
 
         // inisialisasi form select 2
@@ -60,7 +60,7 @@
         function loadDataHeader() {
             let idHeader = {!! $id !!}
             $.ajax({
-                url: `/pembagian-pakan/${idHeader}/edit-json`,
+                url: `/panen/${idHeader}/edit-json`,
                 dataType: 'json', // what to expect back from the server
                 cache: false,
                 async: false,
@@ -69,11 +69,10 @@
                 type: 'GET',
 
                 success: function(response) {
-                    detailBagi = response.detail_pembagian_pakan
-                    console.log(response);
+                    detailPanen = response.detail_panen
 
                     // default tgl_beli                
-                    $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian_pakan.split("-").reverse().join(
+                    $(`input[name='tgl_panen']`).val(response.tgl_panen.split("-").reverse().join(
                         "-"));
 
                 },
@@ -90,7 +89,7 @@
 
         // handle form_header
         $("#formHeader").on("submit", function(e) { //id of form 
-            console.log('masuk');
+
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
 
@@ -136,17 +135,17 @@
 
         });
 
-        // membuat element detail bagi
+        // membuat element detail panen
         function loadElementDetailBagi(item, index) {
             let form = $(
-                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-pakan/detail/${item.id}/edit" class=" mb-5">
+                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/panen/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
                     </form>`
             )
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Pembagian</span>
+                                <span class="me-2 title">Detail Panen</span>
                                 <label class="text-success fw-bold status-header d-none mb-2">
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
@@ -162,34 +161,31 @@
             let cardBody = $(
                 `<div class="card-body border">        
                     @csrf     
-                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">                        
-                        <div class="mb-3 select-pakan">
-                            <label class="form-label">Produk Pakan</label>
-                            <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="id_detail_beli" required>
+                        <input type="hidden" name="id_header_pakan" id="idHeader${index}" value="${item.id_header_panen}">                        
+                        <div class="mb-3 select-ikan">
+                            <label class="form-label">Pilih Ikan</label>
+                            <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="id_detail_pembagian_bibit" >
                                 <option></option>
-                                @foreach ($produkPakan as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->produk->nama }}
+                                @foreach ($pembagianBibit as $value)
+                                    <option value="{{ $value->id }}" data-hide="{{ $value->quantity > 0 ? 'false' : 'true' }}">
+                                        {{ $value->header_pembagian_bibit->detail_beli->produk->nama }}
                                     </option>
                                 @endforeach
                             </select>                            
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Pilih Tong</label>
-                            <select class="form-select" id="selectTong${index}" data-placeholder="Pilih Tong" name="id_tong" >
-                                <option></option>
-                                @foreach ($tong as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
-                                    </option>
-                                @endforeach
+                        </div>  
+                        <div class="mb-3 select-status">
+                            <label class="form-label">Pilih Status</label>
+                            <select class="form-select select-status" id="selectStatus${index}" data-placeholder="Pilih Status" name="status" >
+                                <option value="-1">Mati</option>
+                                <option value="0">Sortir</option>
+                                <option value="1">Ikan</option>                                
                             </select>                            
-                        </div>       
+                        </div>                        
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
+                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
                             <label class="error-quantity"></label>
-                        </div>
+                        </div>    
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
@@ -220,11 +216,11 @@
                 dropdownCssClass: "select2--medium",
             });
 
-            $(`#selectPakan${index}`).val(item.id_detail_beli)
-            $(`#selectPakan${index}`).select2("enable", false);
-            $(`#selectPakan${index}`).trigger('change');
-            $(`#selectTong${index}`).val(item.id_tong)
-            $(`#selectTong${index}`).trigger('change');
+            $(`#selectIkan${index}`).val(item.id_detail_pembagian_bibit)
+            $(`#selectIkan${index}`).select2("enable", false);
+            $(`#selectIkan${index}`).trigger('change');
+            $(`#selectStatus${index}`).val(item.status)
+            $(`#selectStatus${index}`).trigger('change');
 
 
             // handle sumbit
@@ -251,7 +247,7 @@
                     success: function(response) {
                         console.log(response);
                         if (response.success != undefined) {
-                            $(`#selectPakan${index}`).select2("enable", false);
+                            $(`#selectIkan${index}`).select2("enable", false);
                             $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                             $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
@@ -265,6 +261,8 @@
                                     "d-none");
                             }, 3000);
                             loadDataHeader();
+                            $("#detail").empty();
+
                         }
 
                         if (response.error != undefined) {
@@ -353,13 +351,13 @@
             })
         }
 
-        number = detailBagi.length;
-        detailBagi.forEach((item, index) => {
+        number = detailPanen.length;
+        detailPanen.forEach((item, index) => {
             loadElementDetailBagi(item, index)
         });
 
         // tambah element detail
-        $('#btnTambahPembagian').click(function() {
+        $('#btnTambahPanen').click(function() {
             number = number + 1
             idHeader = {!! $id !!}
             loadElementDetailBagi({
@@ -374,7 +372,7 @@
                 .prop('checked', false)
                 .prop('selected', false);
 
-            $(`#selectPakan${number}`).removeAttr('disabled');
+            $(`#selectIkan${number}`).removeAttr('disabled');
             $(`#idHeader${number}`).val(idHeader);
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
