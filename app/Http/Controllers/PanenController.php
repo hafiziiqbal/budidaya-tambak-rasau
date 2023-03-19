@@ -273,6 +273,66 @@ class PanenController extends Controller
         }
     }
 
+    public function destroy($id)
+    {
+        // Mencari semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus
+        $details = DetailPanen::where('id_header_panen', $id)->get();
+
+
+
+        // Memperbarui tabel detail_beli dan produk
+        foreach ($details as $detail) {
+            $detailPembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])
+                ->where('id', $detail->id_detail_pembagian_bibit);
+            $detailPembagianBibit->increment('quantity', $detail->quantity);
+
+            $produkExists = Produk::where('nama', $detailPembagianBibit->first()->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->first();
+            $produkExists->decrement('quantity', $detail->quantity);
+        }
+
+        // Menghapus semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus
+        DB::table('detail_panen')
+            ->where('id_header_panen', $id)
+            ->delete();
+
+        // Menghapus record dari tabel header_pembagian_pakan yang sesuai dengan parameter $id
+        DB::table('header_panen')
+            ->where('id', $id)
+            ->delete();
+
+        return redirect()->route('panen')->with(
+            'success',
+            'Berhasil Hapus Panen'
+        );
+    }
+
+
+    public function destroyDetail($id)
+    {
+        // Mendapatkan data detail_pembagian_pakan berdasarkan $id
+        $detailPanen = DetailPanen::find($id);
+
+        // Menyimpan nilai quantity dari detail_pembagian_pakan yang akan dihapus
+        $quantity = $detailPanen->quantity;
+
+
+        // Memperbarui nilai column quantity pada tabel detail_pembagian_bibit
+        $detailPanen->detail_pembagian_bibit->increment('quantity', $quantity);
+
+        // Memperbarui nilai column quantity pada tabel produk
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detailPanen->id_detail_pembagian_bibit)->first();
+        $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
+        $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 3)->first();
+        $produkExists->decrement('quantity', $quantity);
+
+        // Menghapus data detail_pembagian_pakan
+        $detailPanen->delete();
+
+        return response()->json([
+            'success' => 'Data Berhasil di Hapus'
+        ], 200);
+    }
+
     public function contoh()
     {
         // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
