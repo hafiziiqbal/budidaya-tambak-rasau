@@ -1,17 +1,17 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembelian</h1>
+    <h1 class="mt-4">Edit Jual</h1>
     <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembelian') }}">Pembelian</a></li>
-        <li class="breadcrumb-item active">Edit Pembelian</li>
+        <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
+        <li class="breadcrumb-item active">Edit Jual</li>
     </ol>
 
     {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembelian.update', $id) }}" name="form_header">
+    <form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
         @csrf
         <div id="headerPembelian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Pembelian</label>
+                <label class="fw-bold">Header Jual</label>
             </div>
 
             <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
@@ -21,40 +21,35 @@
                 <span></span></label>
 
             <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Beli</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_beli" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="selectSupplier" class="form-label">Supplier</label>
-                <select class="form-select" id="selectSupplier" data-placeholder="Pilih Supplier" name="supplier">
+                <label for="selectCustomer" class="form-label">Customer</label>
+                <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
                     <option></option>
-
-                    @foreach ($supplier as $supplier)
-                        <option value="{{ $supplier->id }}">
-                            {{ $supplier->nama }}
+                    @foreach ($customer as $value)
+                        <option value="{{ $value->id }}">
+                            {{ $value->nama }}
                         </option>
                     @endforeach
                 </select>
             </div>
             <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Bruto</label>
-                <input type="text" class="form-control mata-uang" id="inputBruto" value="" disabled>
-
+                <label for="inputTotalBruto" class="form-label">Total Bruto</label>
+                <input type="number" class="form-control" id="inputTotalBruto" name="total_bruto" readonly>
             </div>
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="text" class="form-control number mata-uang" id="inputPotonganHarga" required
-                    name="potongan_harga" value="">
+                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga">
             </div>
             <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Netto</label>
-                <input type="text" class="form-control mata-uang" id="inputNetto" value="" disabled>
-
+                <label for="inputTotalNetto" class="form-label">Total Netto</label>
+                <input type="number" class="form-control" id="inputTotalNetto" name="total_netto" readonly>
+            </div>
+            <div class="mb-3">
+                <label for="inputPay" class="form-label">Bayar</label>
+                <input type="number" class="form-control" id="inputPay" name="pay">
+            </div>
+            <div class="mb-3">
+                <label for="inputChange" class="form-label">Kembali</label>
+                <input type="number" class="form-control" id="inputChange" name="change" readonly>
             </div>
             <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
                     class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
@@ -64,7 +59,7 @@
     <div id="detail">
 
         <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Pembelian</label>
+            <label class="fw-bold">Detail Jual</label>
         </div>
         <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
@@ -74,7 +69,7 @@
 
 @push('script')
     <script>
-        let detailBeli
+        let detailJual
         let number = 0
 
         // inisialisasi form select 2
@@ -88,7 +83,7 @@
         function loadDataHeader() {
             let idHeader = {!! $id !!}
             $.ajax({
-                url: `/pembelian/${idHeader}/edit-json`,
+                url: `/penjualan/${idHeader}/edit-json`,
                 dataType: 'json', // what to expect back from the server
                 cache: false,
                 async: false,
@@ -97,28 +92,27 @@
                 type: 'GET',
 
                 success: function(response) {
-                    detailBeli = response.detail_beli
+                    detailJual = response.detail_jual
                     // default value supplier
-                    $(`#selectSupplier`).val(response.id_supplier)
-                    $(`#selectSupplier`).trigger('change');
-
-                    // default tgl_beli                
-                    $(`input[name='tgl_beli']`).val(response.tgl_beli.split("-").reverse().join("-"));
+                    $(`#selectCustomer`).val(response.id_customer)
+                    $(`#selectCustomer`).trigger('change');
 
                     // default total bruto
-                    $(`#inputBruto`).val(response.total_bruto);
+                    $(`#inputTotalBruto`).val(response.total_bruto);
 
                     // default potongan harga
-                    $(`input[name='potongan_harga']`).val(response.potongan_harga);
+                    $(`#inputPotonganHarga`).val(response.potongan_harga);
 
                     // default total netto
-                    $(`#inputNetto`).val(response.total_netto);
+                    $(`#inputTotalNetto`).val(response.total_netto);
 
-                    $('input.mata-uang').priceFormat({
-                        prefix: 'Rp ',
-                        centsLimit: 0,
-                        thousandsSeparator: '.'
-                    });
+                    // pay
+                    $(`#inputPay`).val(response.pay);
+
+                    // pay
+                    $(`#inputChange`).val(response.change);
+
+
 
                 },
                 error: function(response) { // handle the error
@@ -185,9 +179,9 @@
         });
 
         // membuat element detail beli
-        function loadElementDetailBeli(item, index) {
+        function loadElementDetailJual(item, index) {
             let form = $(
-                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembelian/detail/${item.id}/edit" class=" mb-5">
+                `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/penjualan/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
                     </form>`
             )
@@ -226,22 +220,17 @@
                             <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
                         </div>
                         <div class="mb-3">
+                            <label class="form-label">Diskon</label>
+                            <input type="text" class="form-control diskon" name="diskon" value="${item.diskon}" required>                    
+                        </div>                       
+                        <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
-                        </div>
-                        <div class="mb-3 quantity_stok">
-                            <label class="form-label">Quantity Stok</label>
-                            <input type="text" class="form-control quantity-stok" disabled value="${item.quantity_stok}">
-                        </div>
+                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>                                                
+                        </div>                       
                         <div class="mb-3">
-                            <label class="form-label">Diskon Persen</label>
-                            <input type="text" class="form-control diskon-persen" name="diskon_persen" value="${item.diskon_persen ?? ''}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label ">Diskon Rupiah</label>
-                            <input type="text" class="form-control diskon-rupiah mata-uang" name="diskon_rupiah" value="${item.diskon_rupiah ?? ''}">
-                        </div>
-
+                            <label class="form-label">Subtotal</label>
+                            <input type="text" class="form-control subtotal" name="subtotal" value="${item.sub_total}" required readonly>                    
+                        </div>                       
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
@@ -287,12 +276,6 @@
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
 
-                // hilangkan karakter RP dan titik
-                form_data.set('harga_satuan', $(`#formDetail${index} input[name='harga_satuan']`).val()
-                    .replace(/[^0-9]/g, ''));
-                form_data.set('diskon_rupiah', $(`#formDetail${index} input[name='diskon_rupiah']`)
-                    .val().replace(/[^0-9]/g, ''));
-
                 $.ajax({
                     url: action,
                     dataType: 'json', // what to expect back from the server
@@ -305,6 +288,7 @@
                     success: function(response) {
                         console.log(response);
                         if (response.success != undefined) {
+
                             $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                             $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
@@ -313,11 +297,17 @@
                             $(`#formDetail${index} .status-header`).removeClass('d-none')
                             $(`#formDetail${index} .status-header span`).html(response
                                 .success)
+                            loadDataHeader();
+                            $('#detail').empty();
+                            detailJual.forEach((item, index) => {
+                                loadElementDetailJual(item, index)
+                            });
                             setTimeout(function() {
                                 $(`#formDetail${index} .status-header`).addClass(
                                     "d-none");
+
                             }, 3000);
-                            loadDataHeader();
+
                         }
 
                         if (response.save_detail != undefined) {
@@ -351,7 +341,7 @@
             $(`#btnDeleteDetail${index}`).click(function(e) {
                 let id = $(this).data('id');
                 $.ajax({
-                    url: `/pembelian/detail/delete/${id}`,
+                    url: `/penjualan/detail/delete/${id}`,
                     dataType: 'json', // what to expect back from the server
                     cache: false,
                     contentType: false,
@@ -368,6 +358,10 @@
                                     "");
                             }, 3000);
                             loadDataHeader();
+                            $('#detail').empty();
+                            detailJual.forEach((item, index) => {
+                                loadElementDetailJual(item, index)
+                            });
                         }
 
                     },
@@ -386,16 +380,16 @@
             })
         }
 
-        number = detailBeli.length;
-        detailBeli.forEach((item, index) => {
-            loadElementDetailBeli(item, index)
+        number = detailJual.length;
+        detailJual.forEach((item, index) => {
+            loadElementDetailJual(item, index)
         });
 
         // tambah element detail
         $('#btnTambahPembagian').click(function() {
             number = number + 1
             idHeader = {!! $id !!}
-            loadElementDetailBeli({
+            loadElementDetailJual({
                 id_produk: null
             }, number)
 
@@ -408,8 +402,8 @@
 
             $(`.produk${number}`).removeAttr('disabled');
             $(`#formDetail${number} .card-body`).append(
-                `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
-            $(`#formDetail${number}`).attr('action', '/pembelian/detail')
+                `<input type="hidden" value="${idHeader}" name="id_header_jual">`)
+            $(`#formDetail${number}`).attr('action', '/penjualan/detail')
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-close`).removeClass('d-none');
@@ -419,19 +413,7 @@
             $(`#formDetail${number} .btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
-            $('input.mata-uang').priceFormat({
-                prefix: 'Rp ',
-                centsLimit: 0,
-                thousandsSeparator: '.'
-            });
+
         })
-
-
-        // format mata uang
-        $('input.mata-uang').priceFormat({
-            prefix: 'Rp ',
-            centsLimit: 0,
-            thousandsSeparator: '.'
-        });
     </script>
 @endpush

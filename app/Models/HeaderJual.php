@@ -25,4 +25,14 @@ class HeaderJual extends Model
     protected $hidden = [
         'created_at'
     ];
+
+    public function detail_jual()
+    {
+        return $this->hasMany(DetailJual::class, 'id_header_jual');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(MasterCustomer::class, 'id_customer');
+    }
 }

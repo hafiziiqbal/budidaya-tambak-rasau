@@ -19,15 +19,15 @@
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
-            <table id="tblPembelian" class="table table-striped table-bordered nowrap" style="width:100%">
+            <table id="tblPenjualan" class="table table-striped table-bordered nowrap" style="width:100%">
                 <thead>
                     <tr>
                         <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Supplier</th>
-                        <th>Total Bruto</th>
-                        <th>Potongan Harga</th>
+                        <th>Invoice</th>
+                        <th>Customer</th>
                         <th>Total Netto</th>
+                        <th>Pay</th>
+                        <th>Change</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -40,10 +40,10 @@
 @push('script')
     <script>
         $(document).ready(function() {
-            let table = $('#tblPembelian').DataTable({
+            let table = $('#tblPenjualan').DataTable({
                 responsive: true,
                 ajax: {
-                    url: "/pembelian/datatable",
+                    url: "/penjualan/datatable",
                     type: "POST",
                     beforeSend: function(xhr, type) {
                         if (!type.crossDomain) {
@@ -59,32 +59,28 @@
                         },
                     },
                     {
-                        data: "tgl_beli",
-                        name: "tgl_beli",
+                        data: "invoice",
+                        name: "invoice",
                     },
                     {
-                        data: "supplier.nama",
-                        name: "supplier.nama",
-                    },
-                    {
-                        data: "total_bruto",
-                        name: "total_bruto",
-                    },
-                    {
-                        data: "potongan_harga",
-                        name: "potongan_harga",
+                        data: "customer.nama",
+                        name: "customer.nama",
                     },
                     {
                         data: "total_netto",
                         name: "total_netto",
                     },
                     {
+                        data: "pay",
+                        name: "pay",
+                    },
+                    {
                         data: "id",
                         render: function(id) {
                             let show =
-                                `<a title="Info Pembelian" href="/pembelian/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
+                                `<a title="Info Data" href="/pembelian/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                             let edit =
-                                `<a title="Edit Data" href="/pembelian/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                                `<a title="Edit Data" href="/penjualan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
                                 `<a title="Hapus Data" href="/pembelian/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
                             return show + edit + deletebtn

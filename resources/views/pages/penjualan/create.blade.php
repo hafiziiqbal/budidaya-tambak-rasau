@@ -7,7 +7,7 @@
     </ol>
 
 
-    <form action="{{ route('jual.store') }}" method="POST">
+    <form id="formJual" action="{{ route('jual.store') }}" method="POST">
         @csrf
         <div id="headerPembelian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
@@ -138,7 +138,7 @@
                 hitungTotalNetto();
             })
 
-            cekQuantityProduk()
+
 
             // Mengikat event listener untuk perubahan pada input detail
             $("input[name^='detail']").on('input', function() {
@@ -156,8 +156,6 @@
 
                 // Menghitung kembalian
                 hitungKembalian();
-
-                cekQuantityProduk(index);
 
             });
 
@@ -181,7 +179,7 @@
         }
 
         // handle sumbit
-        $(`#formPembagian`).on("submit", function(e) { //id of form 
+        $(`#formJual`).on("submit", function(e) { //id of form 
             e.preventDefault();
             $(`#btnSimpan`).attr('disabled', 'disabled')
             $(`#btnSimpan`).children().removeClass('d-none')
@@ -218,9 +216,7 @@
                     }
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
-
-                        {{ Session::flash('success', 'Berhasil Bagikan Pakan') }}
-                        window.location.href = "{{ route('pembagian.pakan') }}";
+                        window.location.href = "{{ route('jual') }}";
 
                     }
                 },
@@ -305,9 +301,6 @@
             // Menghitung kembalian
             hitungKembalian();
 
-            cekQuantityProduk(index);
-
-
         });
 
 
@@ -326,90 +319,5 @@
             // Menghitung kembalian
             hitungKembalian();
         });
-
-
-        function cekQuantityProduk(index) {
-
-            let quantity = $("input[name='detail[" + index + "][quantity]']").val() != '' ? parseFloat($(
-                "input[name='detail[" + index + "][quantity]']").val()) : 0;
-
-            let id_produk = $(`#selectProduk${index}`).val();
-
-
-
-            var values = $('.select-produk').map(function() {
-                let item = $(this).data('index');
-                console.log(item);
-                return $(this).val();
-            }).get();
-
-            var uniqueValues = [...new Set(values)];
-            if (uniqueValues.length == 1) {
-                total = 0;
-                $('.input-quantity').each(function() {
-                    total += parseInt($(this).val());
-                });
-                $('#total').text(total);
-            } else {
-                $('#total').text('Nilai dari semua Select2 berbeda');
-            }
-
-            if (quantity > 0 && (id_produk ?? 0) > 0) {
-
-                $.ajax({
-                    url: '/penjualan/cek-stok/' + id_produk + '/' + quantity,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $(`#errorQuantity${index}`).html('');
-                        if (data.error != undefined) {
-                            $(`#errorQuantity${index}`).html(data.error);
-                        }
-                        if (data.success != undefined) {
-                            $(`#errorQuantity${index}`).html('');
-                            // // Reset nilai kuantitas menjadi nilai sebelumnya
-                            // $(this).val($(this).data('oldValue'));
-                        }
-                    }
-                });
-            }
-
-
-            // $(document).on('change', 'input[name^="detail"][name$="[quantity]"]', function() {
-
-            //     // Mendapatkan nilai ID produk dan kuantitas
-            //     var id_produk = $(this).siblings('select[name$="[id_produk]"]').val();
-            //     var quantity = $(this).val();
-
-            //     // Mencari semua input yang memiliki ID produk yang sama
-            //     var inputs = $('select[name^="detail"][name$="[id_produk]"][value="' + id_produk + '"]');
-
-            //     // Jumlahkan kuantitas dari semua input yang memiliki ID produk yang sama
-            //     var total_quantity = 0;
-            //     inputs.each(function() {
-            //         total_quantity += parseInt($(this).siblings('input[name$="[quantity]"]').val());
-            //     });
-            //     console.log(id_produk);
-
-            //     // Tampilkan pesan kesalahan jika kuantitas melebihi stok
-            //     if (total_quantity > 0) {
-
-            //         // $.ajax({
-            //         //     url: '/cek-stok/' + id_produk + '/' + total_quantity,
-            //         //     type: 'GET',
-            //         //     dataType: 'json',
-            //         //     success: function(data) {
-            //         //         if (data.status == 'error') {
-            //         //             alert(data.message);
-            //         //             // Reset nilai kuantitas menjadi nilai sebelumnya
-            //         //             $(this).val($(this).data('oldValue'));
-            //         //         }
-            //         //     }
-            //         // });
-            //     }
-            // });
-        }
-
-        cekQuantityProduk()
     </script>
 @endpush
