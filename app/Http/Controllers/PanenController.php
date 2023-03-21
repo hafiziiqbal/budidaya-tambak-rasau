@@ -33,8 +33,6 @@ class PanenController extends Controller
         }
     }
 
-
-
     public function create()
     {
         $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])
@@ -331,6 +329,18 @@ class PanenController extends Controller
         return response()->json([
             'success' => 'Data Berhasil di Hapus'
         ], 200);
+    }
+
+    public function show($id)
+    {
+
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->get();
+
+        return view('pages.panen.show')->with([
+            'title' => 'EDIT PANEN',
+            'pembagianBibit' => $pembagianBibit,
+            'id' => $id,
+        ]);
     }
 
     public function contoh()

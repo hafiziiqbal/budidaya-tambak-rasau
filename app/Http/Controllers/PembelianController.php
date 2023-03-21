@@ -267,16 +267,13 @@ class PembelianController extends Controller
     public function show($id)
     {
 
-        $pembelian = DetailBeli::with([
-            'produk' => function ($query) {
-                $query->select('id', 'id_kategori', 'nama')->with(['kategori' => function ($query) {
-                    $query->select('id', 'nama');
-                }]);
-            }, 'header_beli.supplier'
-        ])->where('id', $id)->first();
+        $supplier = Supplier::all();
+        $produk = Produk::all();
         return view('pages.pembelian.show')->with([
             'title' => 'PEMBELIAN',
-            'pembelian' => $pembelian,
+            'id' => $id,
+            'supplier' => $supplier,
+            'produk' => $produk,
             'transaksi_toogle' => 1
         ]);
     }

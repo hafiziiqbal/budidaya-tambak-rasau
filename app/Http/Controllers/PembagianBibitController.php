@@ -103,7 +103,6 @@ class PembagianBibitController extends Controller
         }
     }
 
-
     public function updateDetail(Request $request, $id)
     {
         // cek jaring dan kolam
@@ -170,7 +169,6 @@ class PembagianBibitController extends Controller
             'success' => 'Berhasil Ubah Data'
         ]);
     }
-
 
     public function storeDetail(Request $request)
     {

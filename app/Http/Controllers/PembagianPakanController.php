@@ -20,6 +20,25 @@ class PembagianPakanController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $produkPakan = DetailBeli::with('produk')
+            ->whereHas('produk', function ($query) {
+                $query->where('id_kategori', '=', 1);
+            })->get();
+
+        $tong =  DB::table('master_tong')
+            ->select('master_tong.*')
+            ->get();
+
+        return view('pages.pembagian_pakan.show')->with([
+            'title' => 'EDIT PEMBAGIAN PAKAN',
+            'produkPakan' => $produkPakan,
+            'tong' => $tong,
+            'id' => $id,
+        ]);
+    }
+
     public function datatable(Request $request)
     {
         try {
@@ -367,7 +386,6 @@ class PembagianPakanController extends Controller
             'success' => 'Data Berhasil di Hapus'
         ], 200);
     }
-
 
     public function contoh()
     {

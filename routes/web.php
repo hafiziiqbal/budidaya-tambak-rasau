@@ -169,6 +169,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [PembagianPakanController::class, 'edit'])->name('pembagian.pakan.edit');
         Route::get('/{id}/edit-json', [PembagianPakanController::class, 'editJson'])->name('pembagian.pakan.edit.json');
         Route::get('/delete/{id}', [PembagianPakanController::class, 'destroy'])->name('pembagian.pakan.destory');
+        Route::get('/{id}/show', [PembagianPakanController::class, 'show'])->name('pembagian.pakan.show');
 
         Route::post('/', [PembagianPakanController::class, 'store'])->name('pembagian.pakan.store');
         Route::post('/{id}/update', [PembagianPakanController::class, 'update'])->name('pembagian.pakan.update');
@@ -202,6 +203,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [PanenController::class, 'edit'])->name('panen.pakan.edit');
         Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.edit.json');
         Route::get('/delete/{id}', [PanenController::class, 'destroy'])->name('panen.destory');
+        Route::get('/{id}/show', [PanenController::class, 'show'])->name('panen.show');
 
         Route::post('/', [PanenController::class, 'store'])->name('panen.store');
         Route::post('/{id}/update', [PanenController::class, 'update'])->name('panen.update');

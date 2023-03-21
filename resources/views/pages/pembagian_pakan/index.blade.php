@@ -83,7 +83,7 @@
                         data: "id",
                         render: function(id) {
                             let show =
-                                `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
+                                `<a title="Info Pembelian" href="/pembagian-pakan/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                             let edit =
                                 `<a title="Edit Data" href="/pembagian-pakan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
