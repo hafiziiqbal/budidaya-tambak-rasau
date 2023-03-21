@@ -193,12 +193,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [PemberianPakanController::class, 'store'])->name('pemberian.pakan.store');
         Route::post('/{id}/update', [PemberianPakanController::class, 'update'])->name('pemberian.pakan.update');
         Route::post('/datatable', [PemberianPakanController::class, 'datatable'])->name('pemberian.pakan.datatable');
-
-        // Route::group(['prefix' => 'detail'], function () {
-        //     Route::post('/', [PemberianPakanController::class, 'storeDetail'])->name('pemberian.pakan.store.detail');
-        //     Route::post('/{id}/edit', [PemberianPakanController::class, 'updateDetail'])->name('pemberian.pakan.update.detail');
-        //     Route::get('/delete/{id}', [PemberianPakanController::class, 'destroyDetail'])->name('pemberian.pakan.destory.detail');
-        // });
     });
 
     Route::group(['prefix' => 'panen'], function () {
@@ -223,10 +217,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'penjualan'], function () {
         Route::get('/', [PenjualanController::class, 'index'])->name('jual');
         Route::get('/create', [PenjualanController::class, 'create'])->name('jual.create');
-        // Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
         Route::get('/{id}/edit', [PenjualanController::class, 'edit'])->name('jual.pakan.edit');
-        Route::get('/{id}/edit-json', [PenjualanController::class, 'editJson'])->name('jual.pakan.edit.json');
-        // Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
+        Route::get('/{id}/edit-json', [PenjualanController::class, 'editJson'])->name('jual.edit.json');
+        Route::get('/delete/{id}', [PenjualanController::class, 'destroy'])->name('jual.destory');
 
         Route::post('/', [PenjualanController::class, 'store'])->name('jual.store');
         Route::post('/{id}/update', [PenjualanController::class, 'update'])->name('jual.update');

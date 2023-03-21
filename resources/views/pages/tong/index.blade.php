@@ -42,12 +42,22 @@
                         },
                     },
                     {
-                        data: "nama",
-                        name: "nama",
+                        data: "tong_nama",
+                        name: "tong_nama",
                     },
                     {
-                        data: "kolam.nama",
-                        name: "kolam.nama",
+                        data: "kolam",
+                        render: function(data, type, row, meta) {
+                            var produkList =
+                                '<select name="kolam" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Kolam ▼</option>';
+                            $.each(data, function(index, value) {
+
+                                produkList += '<option disabled>' + value +
+                                    '</option>';
+                            });
+                            produkList += '</select>';
+                            return produkList;
+                        }
                     },
 
                     {

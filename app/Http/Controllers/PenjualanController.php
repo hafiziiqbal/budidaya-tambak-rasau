@@ -232,6 +232,26 @@ class PenjualanController extends Controller
         return response()->json($headerJual);
     }
 
+    public function destroy($id)
+    {
+        $headerJual = HeaderJual::find($id);
+        $detailJual = DetailJual::where('id_header_jual', $id);
+
+        foreach ($detailJual->get() as $key => $value) {
+            Produk::find($value->id_produk)->update([
+                'quantity' => DB::raw("quantity+" . $value->quantity),
+            ]);
+            $detailJual->delete();
+        }
+
+        $headerJual->delete();
+
+        return redirect()->route('jual')->with(
+            'success',
+            'Berhasil Hapus Penjualan'
+        );
+    }
+
     public function destroyDetail($id)
     {
 

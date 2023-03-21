@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\MasterJaring;
 use App\Models\MasterTong;
 use App\Models\MasterKolam;
+use App\Models\MasterJaring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class TongController extends Controller
@@ -22,7 +23,33 @@ class TongController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = MasterTong::all()->orderBy('updated_at', 'desc')->get();
+
+                $tongs = DB::table('master_tong')
+                    ->join('master_kolam', function ($join) {
+                        $join->on('master_tong.id_kolam', 'LIKE', DB::raw("CONCAT('%', master_kolam.id, '%')"));
+                    })
+                    ->select('master_tong.id', 'master_tong.nama as tong_nama', 'master_kolam.nama as kolam_nama')
+                    ->get();
+
+                $data = [];
+
+                foreach ($tongs as $tong) {
+                    $found = false;
+                    foreach ($data as &$formatted) {
+                        if ($formatted['id'] === $tong->id) {
+                            $formatted['kolam'][] = $tong->kolam_nama;
+                            $found = true;
+                            break;
+                        }
+                    }
+                    if (!$found) {
+                        $data[] = [
+                            'id' => $tong->id,
+                            'tong_nama' => $tong->tong_nama,
+                            'kolam' => [$tong->kolam_nama],
+                        ];
+                    }
+                }
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -65,14 +92,20 @@ class TongController extends Controller
 
     public function edit($id)
     {
-        $jaring = MasterJaring::all();
         $kolam = MasterKolam::all();
         $tong = MasterTong::find($id);
+
+        $checkboxes = [];
+
+        // Looping untuk mengisi nilai pada variabel checkbox
+        foreach ($kolam as $value) {
+            $checkboxes[$value->id] = in_array($value->id, $tong->id_kolam);
+        }
         return view('pages.tong.edit')->with([
             'title' => 'EDIT KOLAM',
-            'jaring' => $jaring,
             'kolam' => $kolam,
             'tong' => $tong,
+            'checkboxes' => $checkboxes,
             'masterdata_toogle' => 1
         ]);
     }
@@ -83,8 +116,7 @@ class TongController extends Controller
             $tong = MasterTong::find($id);
             $tong->update([
                 'nama' => $request->nama,
-                'id_kolam' => $request->id_kolam,
-                'id_jaring' => $request->id_jaring,
+                'id_kolam' => array_values($request->id_kolam),
             ]);
 
             return redirect()->route('tong')->with(
@@ -113,5 +145,37 @@ class TongController extends Controller
                 'error' => 'Terdapat Kesalahan'
             ]);
         }
+    }
+
+    public function contoh()
+    {
+        $tongs = DB::table('master_tong')
+            ->join('master_kolam', function ($join) {
+                $join->on('master_tong.id_kolam', 'LIKE', DB::raw("CONCAT('%', master_kolam.id, '%')"));
+            })
+            ->select('master_tong.id', 'master_tong.nama as tong_nama', 'master_kolam.nama as kolam_nama')
+            ->get();
+
+        $data = [];
+
+        foreach ($tongs as $tong) {
+            $found = false;
+            foreach ($data as &$formatted) {
+                if ($formatted['id'] === $tong->id) {
+                    $formatted['kolam'][] = $tong->kolam_nama;
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $data[] = [
+                    'id' => $tong->id,
+                    'tong_nama' => $tong->tong_nama,
+                    'kolam' => [$tong->kolam_nama],
+                ];
+            }
+        }
+
+        return response()->json($data);
     }
 }

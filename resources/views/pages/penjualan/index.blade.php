@@ -82,7 +82,7 @@
                             let edit =
                                 `<a title="Edit Data" href="/penjualan/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
-                                `<a title="Hapus Data" href="/pembelian/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
+                                `<a title="Hapus Data" href="/penjualan/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
                             return show + edit + deletebtn
                         },
                     },
