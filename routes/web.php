@@ -220,6 +220,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit', [PenjualanController::class, 'edit'])->name('jual.pakan.edit');
         Route::get('/{id}/edit-json', [PenjualanController::class, 'editJson'])->name('jual.edit.json');
         Route::get('/delete/{id}', [PenjualanController::class, 'destroy'])->name('jual.destory');
+        Route::get('/{id}/show', [PenjualanController::class, 'show'])->name('jual.show');
 
         Route::post('/', [PenjualanController::class, 'store'])->name('jual.store');
         Route::post('/{id}/update', [PenjualanController::class, 'update'])->name('jual.update');

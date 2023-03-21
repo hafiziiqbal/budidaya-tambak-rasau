@@ -261,8 +261,9 @@
             });
 
             $(`.produk${index}`).val(item.id_produk)
-            $(`.produk${index}`).trigger('change');
             $(`.produk${index}`).select2("enable", false);
+            $(`.produk${index}`).trigger('change');
+
 
 
             // handle sumbit

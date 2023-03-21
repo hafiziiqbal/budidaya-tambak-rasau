@@ -138,7 +138,7 @@ class PenjualanController extends Controller
 
     public function edit($id)
     {
-        $produk = Produk::where('id_kategori', 3)->where('quantity', '>', 0)->get();
+        $produk = Produk::where('id_kategori', 3)->get();
         $customer = MasterCustomer::all();
         return view('pages.penjualan.edit')->with([
             'title' => 'PENJUALAN',
@@ -280,5 +280,18 @@ class PenjualanController extends Controller
         return response()->json([
             'success' => 'Data Berhasil di Hapus'
         ], 200);
+    }
+
+    public function show($id)
+    {
+        $produk = Produk::where('id_kategori', 3)->get();
+        $customer = MasterCustomer::all();
+        return view('pages.penjualan.show')->with([
+            'title' => 'PENJUALAN',
+            'id' => $id,
+            'customer' => $customer,
+            'produk' => $produk,
+            'transaksi_toogle' => 1
+        ]);
     }
 }
