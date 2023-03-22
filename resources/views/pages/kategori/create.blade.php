@@ -9,18 +9,18 @@
 
     <form action="{{ route('kategori.store') }}" method="POST">
         @csrf
-
         <div class="mb-3">
             <label for="inputNama" class="form-label">Nama Kategori</label>
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
             @if ($errors->has('nama'))
-                <small class="text-danger">*{{ $errors->first('name') }}</small>
+                <small class="text-danger">*{{ $errors->first('nama') }}</small>
             @endif
         </div>
         <div class="mb-3">
             <label for="inputDeskripsi" class="form-label">Deskripsi</label>
-            <textarea class="form-control" id="inputDeskripsi" rows="3" placeholder="Masukkan Deskripsi" name="deskripsi">{{ old('nama') }}</textarea>
+            <textarea class="form-control" id="inputDeskripsi" rows="3" placeholder="Masukkan Deskripsi" name="deskripsi"
+                required>{{ old('deskripsi') }}</textarea>
             @if ($errors->has('deskripsi'))
                 <small class="text-danger">*{{ $errors->first('deskripsi') }}</small>
             @endif

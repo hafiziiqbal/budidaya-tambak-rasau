@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProdukRequest;
 use App\Models\Produk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class ProdukController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(ProdukRequest $request)
     {
         try {
             Produk::create([
@@ -70,7 +71,7 @@ class ProdukController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(ProdukRequest $request, $id)
     {
         try {
             $produk = Produk::find($id);

@@ -8,6 +8,7 @@
 
     <div class="mb-3">
         <label class="form-label">Pilih Kategori Produk</label>
+
         <select class="form-select" id="selectKategori" data-placeholder="Pilih Produk">
             <option></option>
             @foreach ($kategori as $produk)
@@ -15,6 +16,9 @@
                 </option>
             @endforeach
         </select>
+        @if ($errors->has('id_kategori'))
+            <small class="text-danger">*{{ $errors->first('id_kategori') }}</small>
+        @endif
     </div>
 
     <form action="{{ route('produk.store') }}" method="POST">
@@ -22,14 +26,16 @@
         <input type="hidden" name="id_kategori" required>
         <div class="mb-3">
             <label for="inputNama" class="form-label">Nama</label>
+
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
             @if ($errors->has('nama'))
-                <small class="text-danger">*{{ $errors->first('name') }}</small>
+                <small class="text-danger">*{{ $errors->first('nama') }}</small>
             @endif
         </div>
         <div class="mb-3">
-            <label for="inputQuantity" id="labelQuantity" class="form-label">Quantity (Kg)</label>
+            <label for="inputQuantity" id="labelQuantity" class="form-label">Quantity <span
+                    class="text-small fst-italic text-secondary">Bibit & Ikan(ekor/pcs) - Pakan(kg)</span></label>
             <input type="number" class="form-control" id="inputQuantity" required name="quantity"
                 value="{{ old('quantity') }}" step="0.01">
             @if ($errors->has('quantity'))
@@ -61,22 +67,20 @@
                 $("input[name='id_kategori']").val($("#selectKategori").val());
             }
 
-
-
-            if (getCookie('kategori') == 1) {
-                $('#labelQuantity').html('Quantity (Kg)')
-            } else {
-                $('#labelQuantity').html('Quantity (ekor/pcs)')
-            }
+            // if (getCookie('kategori') == 1) {
+            //     $('#labelQuantity').html('Quantity (Kg)')
+            // } else {
+            //     $('#labelQuantity').html('Quantity (ekor/pcs)')
+            // }
             $('#selectKategori').on('change', function(e) {
                 let optionSelected = $("option:selected", this);
                 idKategori = this.value;
                 document.cookie = `kategori=${idKategori};path=/produk;`;
-                if (idKategori == 1) {
-                    $('#labelQuantity').html('Quantity (Kg)')
-                } else {
-                    $('#labelQuantity').html('Quantity (ekor/pcs)')
-                }
+                // if (idKategori == 1) {
+                //     $('#labelQuantity').html('Quantity (Kg)')
+                // } else {
+                //     $('#labelQuantity').html('Quantity (ekor/pcs)')
+                // }
                 $("input[name='id_kategori']").val($("#selectKategori").val());
             });
 

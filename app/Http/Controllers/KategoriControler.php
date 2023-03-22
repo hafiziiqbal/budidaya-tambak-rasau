@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Produk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
+use App\Http\Requests\KategoriRequest;
 use Yajra\DataTables\Facades\DataTables;
 
 class KategoriControler extends Controller
@@ -38,7 +40,7 @@ class KategoriControler extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(KategoriRequest $request)
     {
         try {
             Kategori::create([
@@ -67,7 +69,7 @@ class KategoriControler extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(KategoriRequest $request, $id)
     {
         try {
             $kategori = Kategori::find($id);
@@ -90,6 +92,12 @@ class KategoriControler extends Controller
     public function destroy($id)
     {
         try {
+            $produk = Produk::where('id_kategori', $id)->first();
+            if ($produk) {
+                return redirect('kategori')->withErrors([
+                    'error' => 'Kategori Digunakan Oleh Data Produk'
+                ]);
+            }
             $kategori = Kategori::find($id);
             $kategori->delete();
             return redirect()->route('kategori')->with(

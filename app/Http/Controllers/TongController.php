@@ -149,33 +149,33 @@ class TongController extends Controller
 
     public function contoh()
     {
-        $tongs = DB::table('master_tong')
-            ->join('master_kolam', function ($join) {
-                $join->on('master_tong.id_kolam', 'LIKE', DB::raw("CONCAT('%', master_kolam.id, '%')"));
-            })
-            ->select('master_tong.id', 'master_tong.nama as tong_nama', 'master_kolam.nama as kolam_nama')
-            ->get();
+        // $tongs = DB::table('master_tong')
+        //     ->join('master_kolam', function ($join) {
+        //         $join->on('master_tong.id_kolam', 'LIKE', DB::raw("CONCAT('%', master_kolam.id, '%')"));
+        //     })
+        //     ->select('master_tong.id', 'master_tong.nama as tong_nama', 'master_kolam.nama as kolam_nama')
+        //     ->get();
 
-        $data = [];
+        // $data = [];
 
-        foreach ($tongs as $tong) {
-            $found = false;
-            foreach ($data as &$formatted) {
-                if ($formatted['id'] === $tong->id) {
-                    $formatted['kolam'][] = $tong->kolam_nama;
-                    $found = true;
-                    break;
-                }
-            }
-            if (!$found) {
-                $data[] = [
-                    'id' => $tong->id,
-                    'tong_nama' => $tong->tong_nama,
-                    'kolam' => [$tong->kolam_nama],
-                ];
-            }
-        }
-
+        // foreach ($tongs as $tong) {
+        //     $found = false;
+        //     foreach ($data as &$formatted) {
+        //         if ($formatted['id'] === $tong->id) {
+        //             $formatted['kolam'][] = $tong->kolam_nama;
+        //             $found = true;
+        //             break;
+        //         }
+        //     }
+        //     if (!$found) {
+        //         $data[] = [
+        //             'id' => $tong->id,
+        //             'tong_nama' => $tong->tong_nama,
+        //             'kolam' => [$tong->kolam_nama],
+        //         ];
+        //     }
+        // }
+        $data = MasterTong::all();
         return response()->json($data);
     }
 }

@@ -377,6 +377,7 @@ class PembagianBibitController extends Controller
 
         // Memperbarui tabel detail_beli dan produk
         foreach ($details as $detail) {
+            $detailPembagianBibit = DetailPembagianBibit::find($detail->id);
             DB::table('detail_beli')
                 ->where('id', $headerPembagianBibit->id_detail_beli)
                 ->increment('quantity_stok', $detail->quantity);
@@ -391,7 +392,7 @@ class PembagianBibitController extends Controller
             ->whereIn('id', $details->pluck('id_jaring'))
             ->update(['id_kolam' => null]);
 
-        // Menghapus semua record dari tabel detail_pembagian_bibit yang terkait dengan header_pembagian_bibit yang akan dihapus
+        // // Menghapus semua record dari tabel detail_pembagian_bibit yang terkait dengan header_pembagian_bibit yang akan dihapus
         DB::table('detail_pembagian_bibit')
             ->where('id_header_pembagian_bibit', $id)
             ->delete();

@@ -98,24 +98,24 @@ class JaringController extends Controller
 
     public function destroy($id)
     {
-        try {
-            $tong = MasterTong::where('id_jaring', $id)->first();
-            if ($tong != '') {
-                return redirect('jaring')->withErrors([
-                    'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
-                ]);
-            }
-
-            $jaring = MasterJaring::find($id);
-            $jaring->delete();
-            return redirect()->route('jaring')->with(
-                'success',
-                'Berhasil Hapus Jaring'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
+        // try {
+        $tong = MasterKolam::where('id_jaring', $id)->first();
+        if ($tong != '') {
+            return redirect('jaring')->withErrors([
+                'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
             ]);
         }
+
+        $jaring = MasterJaring::find($id);
+        $jaring->delete();
+        return redirect()->route('jaring')->with(
+            'success',
+            'Berhasil Hapus Jaring'
+        );
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
     }
 }
