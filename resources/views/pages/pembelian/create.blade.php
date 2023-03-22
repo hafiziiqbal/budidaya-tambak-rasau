@@ -18,7 +18,7 @@
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker">>
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker">
                 </div>
             </div>
 

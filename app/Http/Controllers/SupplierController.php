@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUpdateSupplierRequest;
+use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
@@ -39,7 +40,7 @@ class SupplierController extends Controller
         ]);
     }
 
-    public function store(StoreUpdateSupplierRequest $request)
+    public function store(SupplierRequest $request)
     {
         try {
             Supplier::create([
@@ -69,7 +70,7 @@ class SupplierController extends Controller
         ]);
     }
 
-    public function update(StoreUpdateSupplierRequest $request, $id)
+    public function update(SupplierRequest $request, $id)
     {
         try {
             $supplier = Supplier::find($id);

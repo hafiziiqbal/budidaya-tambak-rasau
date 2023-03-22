@@ -7,16 +7,7 @@
 
     <a href="{{ route('pembelian.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Data</a>
     @include('components.alert')
-    <ul class="nav nav-tabs mt-3" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
-                role="tab" aria-controls="detail" aria-selected="true">Detail Beli</button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button"
-                role="tab" aria-controls="profile" aria-selected="false">Header Beli</button>
-        </li>
-    </ul>
+
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
             <table id="tblPembelian" class="table table-striped table-bordered nowrap" style="width:100%">
