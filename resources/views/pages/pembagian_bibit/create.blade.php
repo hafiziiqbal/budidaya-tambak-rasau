@@ -1,14 +1,43 @@
 @extends('layouts.admin')
 @section('content')
+    <div class="position-fixed top-1 end-0 p-3" style="z-index: 11">
+        <button type="button" class="btn btn-danger btn-circle " title="info penggunaan data" id="infoDataBtn"><i
+                class="fa fa-info"></i>
+        </button>
+        <div id="infoData" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+            <div class="toast-header">
+                <div class="rounded me-2 bg-danger p-3"></div>
+                <strong class="me-auto">Info Penggunaan Data</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <div class="mb-2" id="infoDetailBeli">
+                    <strong>Sisa Quantity <span class="fst-italic">(Tabel Detail Beli)</span></strong>
+                    <br>
+                    <label>0.00</label>
+                </div>
+                <div class="mb-2" id="infoProduk">
+                    <strong>Sisa Quantity <span class="fst-italic">(Tabel Produk)</span></strong>
+                    <br>
+                    <label>0.00</label>
+                </div>
+                <div class="mb-2" id="infoDetailPanen">
+                    <strong>Sisa Quantity <span class="fst-italic">(Sortir)</span></strong>
+                    <br>
+                    <label>0.00</label>
+                </div>
+            </div>
+        </div>
+    </div>
     <h1 class="mt-4">Tambah Pembagian Bibit</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
         <li class="breadcrumb-item active">Tambah Pembagian Bibit</li>
     </ol>
 
+
     <form id="formPembagian" name="form_pembagian" action="{{ route('pembagian.bibit.store') }}" method="POST">
         @csrf
-
         <div id="headerPembelian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembagian Bibit</label>
@@ -16,11 +45,12 @@
             <div class="mb-3">
                 <input type="hidden" name="type" value="store-all">
                 <label for="inputTanggalPembagian" class="form-label">Tanggal Pembagian</label>
-                <div class="input-group mb-3">
+                <div class="input-group">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tgl_pembagian" id="inputTanggalPembagian" class="form-control"
-                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
+                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">
                 </div>
+                <small class="text-danger" id="errorTglBagi"></small>
             </div>
             <div class="mb-3">
                 <label class="form-label">Pilih Pembagian</label>
@@ -36,44 +66,44 @@
                 </div>
             </div>
             <div class="mb-3" id="bibitContainer">
-                <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
-                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
+                <label for="selectDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
+                <select class="form-select" id="selectDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
                     <option></option>
                     @foreach ($pembelian as $value)
                         @if ($value->produk->quantity > 0)
-                            <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
+                            <option value="{{ $value->id }}" data-bibitquantity="{{ $value->quantity_stok }}"
+                                data-produkquantity="{{ $value->produk->quantity }}">
                                 @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
                             </option>
                         @endif
                     @endforeach
                 </select>
+                <small class="text-danger" id="errorDetailBibit"></small>
             </div>
 
             <div class="mb-3 d-none" id="sortirContainer">
-                <label for="inputPanen" class="form-label">Sortir Kembali</label>
-                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
+                <label for="selectDetailPanen" class="form-label">Sortir Kembali</label>
+                <select class="form-select" id="selectDetailPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
                     <option></option>
                     @foreach ($sortir as $value)
-                        <option value="{{ $value->id }}">
+                        <option value="{{ $value->id }}" data-sortirquantity="{{ $value->quantity }}">
                             @DateIndo($value->header_panen->tgl_panen){{ ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
                         </option>
                     @endforeach
                 </select>
+                <small class="text-danger" id="errorDetailPanen"></small>
             </div>
-
-
         </div>
 
         <div id="detail">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Detail Pembagian</label>
             </div>
-
-            <div class="error-element">
-
+            <div id="alertGeneral">
+                @include('components.alert')
             </div>
-
-
+            <div class="error-element">
+            </div>
         </div>
         <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
         </button>
@@ -87,6 +117,25 @@
 @push('script')
     <script>
         let index = 0;
+        let bibitQuantity = 0
+        let produkQuantity = 0
+
+        let toastTrigger = $('#infoDataBtn')
+        let toastLiveExample = $('#infoData')
+        if (toastTrigger) {
+            toastTrigger.on('click', function() {
+                $(this).addClass('d-none')
+                var toast = new bootstrap.Toast(toastLiveExample)
+                toast.show()
+            })
+        }
+        $('#infoData .btn-close').on('click', function() {
+            setTimeout(
+                function() {
+                    toastTrigger.removeClass('d-none');
+                }, 200);
+        })
+
 
         // inisialisasi form select 2
         $(".form-select").select2({
@@ -94,6 +143,21 @@
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
         });
+
+        bibitQuantity = parseFloat($(`#selectDetailBeli`).find(':selected').data('bibitquantity') ?? 0)
+        produkQuantity = parseFloat($(`#selectDetailBeli`).find(':selected').data('produkquantity') ?? 0)
+
+        function setToast() {
+            $('#infoDetailBeli label').html(bibitQuantity)
+            $('#infoProduk label').html(produkQuantity)
+        }
+        setToast()
+        $(`#selectDetailBeli`).on('change', function() {
+            bibitQuantity = parseFloat($(`#selectDetailBeli`).find(':selected').data('bibitquantity') ?? 0)
+            produkQuantity = parseFloat($(`#selectDetailBeli`).find(':selected').data('produkquantity') ?? 0)
+            setToast()
+        });
+
 
         $('input[type=radio][name=jenis_pembagian]').change(function() {
             if (this.value == 'sortir') {
@@ -122,8 +186,8 @@
                 `<div class="card-body border">             
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
-                            <label class="error-quantity"></label>
+                            <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>                            
+                            <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3 select-jaring">
                             <label class="form-label">Pilih Jaring</label>
@@ -135,7 +199,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <label class="error-jaring"></label>
+                            <small class="text-danger" id="errorJaring${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Kolam</label>
@@ -147,7 +211,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <label class="error-kolam"></label>
+                            <small class="text-danger" id="errorKolam${index}"></small>
                         </div>                        
                     </div>`
             )
@@ -163,29 +227,31 @@
                 dropdownCssClass: "select2--medium",
             });
 
-            $(`#selectJaring${index}`).on('change', function() {
-                // mengambil nilai opsi yang dipilih
-                let selectFirst = $(this);
-                let selectedValue = $(this).val();
-
-                // validasi nilai opsi
-                $('select.select-jaring').not(this).each(function() {
-                    // jika nilai opsi sudah dipilih di element select2 lain
-                    if ($(this).val() == selectedValue && $(this).val() != '') {
-                        // menampilkan alert
-                        alert(`Jaring ini sudah digunakan`);
-                        // menghapus nilai opsi yang dipilih di element select2 baru
-                        $(this).val('').trigger('change.select2');
-                        return false
-                    }
-                });
-            });
-
             $(`#detailBibit${index} .btn-close`).click(function() {
                 $(this).parent().parent().remove();
             })
 
+            $('body').on('change', '.quantity', function() {
+                // inisialisasi variabel total
+                var total = 0;
+
+                // ulangi semua elemen dengan class yang sama
+                $('.quantity').each(function() {
+                    // tambahkan nilai input ke total
+                    total += parseInt($(this).val());
+                });
+
+
+                $('#infoDetailBeli label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
+                    bibitQuantity - total))
+
+                $('#infoProduk label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
+                    bibitQuantity - total))
+            });
+
         }
+
+
 
         // handle sumbit
         $(`#formPembagian`).on("submit", function(e) { //id of form 
@@ -225,15 +291,44 @@
                     }
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
-
-                        {{ Session::flash('success', 'Berhasil Bagikan Bibit') }}
                         window.location.href = "{{ route('pembagian.bibit') }}";
 
                     }
                 },
-                error: function(response) { // handle the error            
-                    $(`#btnSimpan`).remove('disabled')
+                error: function(response) { // handle the error      
+                    let errors = response.responseJSON.errors
+                    $("small[id^='error']").html('');
+                    $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
+
+                    if (errors.general) {
+                        $(`#alertGeneral #alertNotifError`).removeClass('d-none');
+                        $(`#alertGeneral #alertNotifError span`).html(errors.general);
+                        $(`#alertGeneral`).append(`@include('components.alert')`);
+                    }
+
+                    if (errors.tgl_pembagian) {
+                        $(`#errorTglBagi`).html(`*${errors.tgl_pembagian}`)
+                    }
+                    if (errors.id_detail_beli) {
+                        $(`#errorDetailBibit`).html(`*${errors.id_detail_beli}`)
+                    }
+                    if (errors.id_detail_panen) {
+                        $(`#errorDetailPanen`).html(`*${errors.id_detail_panen}`)
+                    }
+
+                    for (let x = 0; x < index + 1; x++) {
+                        if (`detail.${x}.quantity` in errors) {
+                            $(`#errorQuantity${x}`).html(`*${errors[`detail.${x}.quantity`]}`)
+                        }
+                        if (`detail.${x}.id_jaring` in errors) {
+                            $(`#errorJaring${x}`).html(`*${errors[`detail.${x}.id_jaring`]}`)
+                        }
+                        if (`detail.${x}.id_kolam` in errors) {
+                            $(`#errorKolam${x}`).html(`*${errors[`detail.${x}.id_kolam`]}`)
+                        }
+                    }
+
                 },
 
             })

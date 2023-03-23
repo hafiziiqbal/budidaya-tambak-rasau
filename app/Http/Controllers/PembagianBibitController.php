@@ -49,7 +49,7 @@ class PembagianBibitController extends Controller
         $kolam = MasterKolam::all();
         $detailSortir = DetailPanen::where('status', 0)->with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
 
-        $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity'])->with(['produk' => function ($query) {
+        $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity', 'quantity_stok'])->with(['produk' => function ($query) {
             $query->select('id', 'nama', 'quantity');
         }, 'header_beli' => function ($query) {
             $query->select('id', 'tgl_beli');
@@ -63,6 +63,195 @@ class PembagianBibitController extends Controller
             'kolam' => $kolam,
             'sortir' => $detailSortir,
             'pembelian' => $pembelian
+        ]);
+    }
+
+    public function store(PembagianBibitRequest $request)
+    {
+        // jika detail null
+        if ($request->detail == null) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Detail pembagian tidak tersedia"
+                ],
+            ], 422);
+        }
+
+        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
+
+
+
+        // cek jaring -------------------------------------------------------
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            $kolam = MasterKolam::find($value->id_kolam);
+            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
+                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->where('id_kolam', $value->id_kolam)
+                ->first();
+
+            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+            if ($batasJaring >= 1 && $value->id_jaring == null) {
+                return response()->json([
+                    'errors' => [
+                        'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                    ],
+                ], 422);
+            }
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam != null) {
+                    return response()->json([
+                        'errors' => [
+                            'general' => "Jaring Sudah Digunakan Oleh Data Lain"
+                        ],
+                    ], 422);
+                }
+            }
+        }
+        // end cek jaring -------------------------------------------------------
+
+        // cek quantity ----------------------------------------------------------
+        // hitung total quantity dari request
+        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
+
+        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
+        $quantityStok = DetailBeli::find($request->id_detail_beli)->quantity_stok;
+
+        // jika total quantity melebihi quantity_stok
+        if ($totalQuantity > $quantityStok) {
+            return response()->json([
+                'errors' => [
+                    'general' =>   'Total quantity melebihi quantity stok yang ada'
+                ],
+            ], 422);
+        }
+        // cek quantity ----------------------------------------------------------
+
+        // save
+        $headBagi =  HeaderPembagianBibit::create([
+            'tgl_pembagian' => $tglPembagian,
+            'id_detail_beli' => $request->id_detail_beli,
+        ]);
+
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $headBagi->id,
+                'quantity' => $value->quantity,
+                'id_jaring' => $value->id_jaring,
+                'id_kolam' => $value->id_kolam
+            ]);
+
+            // Kurangi nilai quantity_stok pada tabel pembelian
+            $detailBeli = DetailBeli::find($headBagi->id_detail_beli);
+            $detailBeli->update([
+                'quantity_stok' => DB::raw("quantity_stok-" . $value->quantity),
+            ]);
+
+            // Kurangi nilai quantity pada tabel produk
+            Produk::find($detailBeli->id_produk)->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam == null) {
+                    $jaring->update([
+                        'id_kolam' => $value->id_kolam
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
+        ]);
+    }
+
+    public function storeSortir(PembagianBibitRequest $request)
+    {
+        // return response()->json($request->id_detail_beli);
+        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
+
+        // cek jaring -------------------------------------------------------
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            $kolam = MasterKolam::find($value->id_kolam);
+            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
+                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->where('id_kolam', $value->id_kolam)
+                ->first();
+
+            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+            if ($batasJaring >= 1 && $value->id_jaring == null) {
+                return response()->json([
+                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                ]);
+            }
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam != null) {
+                    return response()->json([
+                        'error' => "Jaring Sudah Digunakan Oleh Data Lain"
+                    ]);
+                }
+            }
+        }
+        // end cek jaring -------------------------------------------------------
+
+        // cek quantity ----------------------------------------------------------
+        // hitung total quantity dari request
+        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
+
+        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
+        $quantityStok = DetailPanen::find($request->id_detail_panen)->quantity;
+
+        // jika total quantity melebihi quantity_stok
+        if ($totalQuantity > $quantityStok) {
+            return response()->json([
+                'error' => 'Total quantity melebihi quantity sortir yang ada'
+            ]);
+        }
+        // cek quantity ----------------------------------------------------------
+        $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli'])->first();
+        // save
+        $headBagi =  HeaderPembagianBibit::create([
+            'tgl_pembagian' => $tglPembagian,
+            'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
+            'id_detail_panen' => $request->id_detail_panen,
+        ]);
+
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $headBagi->id,
+                'quantity' => $value->quantity,
+                'id_jaring' => $value->id_jaring,
+                'id_kolam' => $value->id_kolam
+            ]);
+
+            // Kurangi nilai quantity_stok pada tabel pembelian           
+            $detailPanen->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam == null) {
+                    $jaring->update([
+                        'id_kolam' => $value->id_kolam
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
         ]);
     }
 
@@ -289,179 +478,6 @@ class PembagianBibitController extends Controller
             'sukses' => 'Berhasil Tambah Data',
             'save_detail' => true,
             'id' => $detailPembagianBibit->id
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        // return response()->json($request->id_detail_beli);
-        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
-
-        // cek jaring -------------------------------------------------------
-        foreach ($request->detail as $key => $valueArray) {
-            $value = (object) $valueArray;
-            $kolam = MasterKolam::find($value->id_kolam);
-            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
-                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
-                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
-                ->where('id_kolam', $value->id_kolam)
-                ->first();
-
-            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($batasJaring >= 1 && $value->id_jaring == null) {
-                return response()->json([
-                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                ]);
-            }
-
-            if ($value->id_jaring != null) {
-                $jaring = MasterJaring::find($value->id_jaring);
-                if ($jaring->id_kolam != null) {
-                    return response()->json([
-                        'error' => "Jaring Sudah Digunakan Oleh Data Lain"
-                    ]);
-                }
-            }
-        }
-        // end cek jaring -------------------------------------------------------
-
-        // cek quantity ----------------------------------------------------------
-        // hitung total quantity dari request
-        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
-
-        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
-        $quantityStok = DetailBeli::find($request->id_detail_beli)->quantity_stok;
-
-        // jika total quantity melebihi quantity_stok
-        if ($totalQuantity > $quantityStok) {
-            return response()->json([
-                'error' => 'Total quantity melebihi quantity stok yang ada'
-            ]);
-        }
-        // cek quantity ----------------------------------------------------------
-
-        // save
-        $headBagi =  HeaderPembagianBibit::create([
-            'tgl_pembagian' => $tglPembagian,
-            'id_detail_beli' => $request->id_detail_beli,
-        ]);
-
-        foreach ($request->detail as $key => $valueArray) {
-            $value = (object) $valueArray;
-            DetailPembagianBibit::create([
-                'id_header_pembagian_bibit' => $headBagi->id,
-                'quantity' => $value->quantity,
-                'id_jaring' => $value->id_jaring,
-                'id_kolam' => $value->id_kolam
-            ]);
-
-            // Kurangi nilai quantity_stok pada tabel pembelian
-            $detailBeli = DetailBeli::find($headBagi->id_detail_beli);
-            $detailBeli->update([
-                'quantity_stok' => DB::raw("quantity_stok-" . $value->quantity),
-            ]);
-
-            // Kurangi nilai quantity pada tabel produk
-            Produk::find($detailBeli->id_produk)->update([
-                'quantity' => DB::raw("quantity-" . $value->quantity),
-            ]);
-
-            if ($value->id_jaring != null) {
-                $jaring = MasterJaring::find($value->id_jaring);
-                if ($jaring->id_kolam == null) {
-                    $jaring->update([
-                        'id_kolam' => $value->id_kolam
-                    ]);
-                }
-            }
-        }
-
-        return response()->json([
-            'success' => 'Berhasil Tambah Data'
-        ]);
-    }
-
-    public function storeSortir(Request $request)
-    {
-        // return response()->json($request->id_detail_beli);
-        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
-
-        // cek jaring -------------------------------------------------------
-        foreach ($request->detail as $key => $valueArray) {
-            $value = (object) $valueArray;
-            $kolam = MasterKolam::find($value->id_kolam);
-            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
-                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
-                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
-                ->where('id_kolam', $value->id_kolam)
-                ->first();
-
-            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($batasJaring >= 1 && $value->id_jaring == null) {
-                return response()->json([
-                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                ]);
-            }
-
-            if ($value->id_jaring != null) {
-                $jaring = MasterJaring::find($value->id_jaring);
-                if ($jaring->id_kolam != null) {
-                    return response()->json([
-                        'error' => "Jaring Sudah Digunakan Oleh Data Lain"
-                    ]);
-                }
-            }
-        }
-        // end cek jaring -------------------------------------------------------
-
-        // cek quantity ----------------------------------------------------------
-        // hitung total quantity dari request
-        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
-
-        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
-        $quantityStok = DetailPanen::find($request->id_detail_panen)->quantity;
-
-        // jika total quantity melebihi quantity_stok
-        if ($totalQuantity > $quantityStok) {
-            return response()->json([
-                'error' => 'Total quantity melebihi quantity sortir yang ada'
-            ]);
-        }
-        // cek quantity ----------------------------------------------------------
-        $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli'])->first();
-        // save
-        $headBagi =  HeaderPembagianBibit::create([
-            'tgl_pembagian' => $tglPembagian,
-            'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
-            'id_detail_panen' => $request->id_detail_panen,
-        ]);
-
-        foreach ($request->detail as $key => $valueArray) {
-            $value = (object) $valueArray;
-            DetailPembagianBibit::create([
-                'id_header_pembagian_bibit' => $headBagi->id,
-                'quantity' => $value->quantity,
-                'id_jaring' => $value->id_jaring,
-                'id_kolam' => $value->id_kolam
-            ]);
-
-            // Kurangi nilai quantity_stok pada tabel pembelian           
-            $detailPanen->update([
-                'quantity' => DB::raw("quantity-" . $value->quantity),
-            ]);
-
-            if ($value->id_jaring != null) {
-                $jaring = MasterJaring::find($value->id_jaring);
-                if ($jaring->id_kolam == null) {
-                    $jaring->update([
-                        'id_kolam' => $value->id_kolam
-                    ]);
-                }
-            }
-        }
-
-        return response()->json([
-            'success' => 'Berhasil Tambah Data'
         ]);
     }
 

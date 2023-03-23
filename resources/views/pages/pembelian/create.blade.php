@@ -147,8 +147,7 @@
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
             let form_data = new FormData($(this)[0]); // convert form into formdata        
-
-
+            
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
