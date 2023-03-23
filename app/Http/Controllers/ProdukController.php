@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProdukRequest;
+use App\Models\DetailBeli;
 use App\Models\Produk;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
@@ -95,6 +96,12 @@ class ProdukController extends Controller
     {
         try {
             $produk = Produk::find($id);
+            $pembelian = DetailBeli::where('id_produk', $id)->first();
+            if ($pembelian) {
+                return redirect('produk')->withErrors([
+                    'error' => 'Data digunakan oleh tabel detail beli'
+                ]);
+            }
             $produk->delete();
             return redirect()->route('produk')->with(
                 'success',

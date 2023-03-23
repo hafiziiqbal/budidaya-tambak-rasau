@@ -26,7 +26,7 @@ class ProdukRequest extends FormRequest
         return [
             'id_kategori' => 'required|exists:kategori,id',
             'nama' => 'required|max:255',
-            'quantity' => 'required|numeric|digits_between:0,8',
+            'quantity' => 'required|numeric|between:0,99999999.99',
         ];
     }
 
@@ -39,7 +39,7 @@ class ProdukRequest extends FormRequest
             'nama.max' => 'Nama maksimal 255 karakter',
             'quantity.required' => 'Quantity harus diisi',
             'quantity.numeric' => 'Quantity tidak harus berupa angka',
-            'quantity.digits_between' => 'Quantity minimal 0 digit & maximal 8 digit',
+            'quantity.between' => 'Quantity minimal 0 digit & maximal 8 digit',
         ];
     }
 }

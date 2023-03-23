@@ -10,6 +10,7 @@
     <form id="formBeli" action="{{ route('pembelian.store') }}" method="POST">
         @csrf
         <div id="headerPembelian" class="mb-4">
+            <input type="hidden" name="type" value="store-all">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembelian</label>
             </div>

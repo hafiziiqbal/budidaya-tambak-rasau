@@ -9,6 +9,9 @@
     {{-- header beli --}}
     <form method="POST" id="formHeader" action="{{ route('pembelian.update', $id) }}" name="form_header">
         @csrf
+        <div id="alertJs">
+            @include('components.alert')
+        </div>
         <div id="headerPembelian" class="mb-4">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembelian</label>
@@ -21,12 +24,14 @@
                 <span></span></label>
 
             <div class="mb-3">
+                <input type="hidden" name="type" value="update-header">
                 <label for="inputNama" class="form-label">Tanggal Beli</label>
-                <div class="input-group mb-3">
+                <div class="input-group">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_beli" class="form-control" aria-describedby="basic-addon1"
+                    <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
                         data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
                 </div>
+                <small class="text-danger" id="errorTglBeli"></small>
             </div>
 
             <div class="mb-3">
@@ -40,21 +45,25 @@
                         </option>
                     @endforeach
                 </select>
+                <small class="text-danger" id="errorSupplier"></small>
             </div>
             <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Bruto</label>
-                <input type="text" class="form-control mata-uang" id="inputBruto" value="" disabled>
-
+                <input type="text" class="form-control mata-uang" id="inputBruto" value="" readonly
+                    name="total_bruto">
+                <small class="text-danger" id="errorTotalBruto"></small>
             </div>
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="text" class="form-control number mata-uang" id="inputPotonganHarga" required
-                    name="potongan_harga" value="">
+                <input type="text" class="form-control number mata-uang" id="inputPotonganHarga" name="potongan_harga"
+                    value="">
+                <small class="text-danger" id="errorPotonganHarga"></small>
             </div>
             <div class="mb-3">
                 <label for="inputBruto" class="form-label">Total Netto</label>
-                <input type="text" class="form-control mata-uang" id="inputNetto" value="" disabled>
-
+                <input type="text" class="form-control mata-uang" id="inputNetto" name="total_netto" value=""
+                    readonly>
+                <small class="text-danger" id="errorTotalNetto"></small>
             </div>
             <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
                     class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
@@ -103,7 +112,7 @@
                     $(`#selectSupplier`).trigger('change');
 
                     // default tgl_beli                
-                    $(`input[name='tgl_beli']`).val(response.tgl_beli.split("-").reverse().join("-"));
+                    $(`input[name='tanggal_beli']`).val(response.tgl_beli.split("-").reverse().join("-"));
 
                     // default total bruto
                     $(`#inputBruto`).val(response.total_bruto);
@@ -113,12 +122,6 @@
 
                     // default total netto
                     $(`#inputNetto`).val(response.total_netto);
-
-                    $('input.mata-uang').priceFormat({
-                        prefix: 'Rp ',
-                        centsLimit: 0,
-                        thousandsSeparator: '.'
-                    });
 
                 },
                 error: function(response) { // handle the error
@@ -133,19 +136,14 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
-            console.log('masuk');
+        $("#formHeader").on("submit", function(e) { //id of form             
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
 
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
-
-            // hilangkan karakter RP dan titik
-            form_data.set('potongan_harga', $(`input[name='potongan_harga']`).val().replace("Rp ", "").replace(
-                /\./g, ""));
+            let form_data = new FormData($(this)[0]); // convert form into formdata                    
 
             $.ajax({
                 url: action,
@@ -158,24 +156,36 @@
 
                 success: function(response) {
                     if (response.success != undefined) {
+                        $("small[id^='error']").html('');
                         $('#btnSimpanHeader').removeAttr('disabled')
                         $('#btnSimpanHeader').children().addClass('d-none')
-                        $('.status-header').removeClass('d-none')
-                        $('.status-header span').html(response.success)
-                        setTimeout(function() {
-                            $(".status-header").addClass("d-none");
-                        }, 3000);
+                        $('#alertNotif').removeClass('d-none');
+                        $('#alertNotif span').html(response.success);
+                        $('#alertJs').append(`@include('components.alert')`);
                         loadDataHeader();
                     }
                 },
                 error: function(response) { // handle the error            
+                    let errors = response.responseJSON.errors
+                    $("small[id^='error']").html('');
+                    if (errors.tanggal_beli) {
+                        $(`#errorTglBeli`).html(`*${errors.tanggal_beli[0]}`)
+                    }
+                    if (errors.supplier) {
+                        $(`#errorSupplier`).html(`*${errors.supplier[0]}`)
+                    }
+                    if (errors.total_bruto) {
+                        $(`#errorTotalBruto`).html(`*${errors.total_bruto[0]}`)
+                    }
+                    if (errors.total_netto) {
+                        $(`#errorTotalNetto`).html(`*${errors.total_netto[0]}`)
+                    }
+                    if (errors.potongan_harga) {
+                        $(`#errorPotonganHarga`).html(`*${errors.potongan_harga[0]}`)
+                    }
+
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
-                    $('.status-error-header').removeClass('d-none')
-                    $('.status-error-header span').html(response.responseText)
-                    setTimeout(function() {
-                        $(".status-error-header").addClass("d-none");
-                    }, 3000);
                     loadDataHeader();
                 },
 
@@ -204,42 +214,54 @@
                                     <span></span>
                                 </label>
                             </div>
-                            <button type="button" class="btn-close d-none"  aria-label="Close"></button>
+                            <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
                 `<div class="card-body border">
+                        <div id="alert${index}">
+                            @include('components.alert')
+                        </div>
                         @csrf
+                        <input type="hidden" name="type" value="update-detail">
                         <div class="mb-3">
                             <label class="form-label">Pilih Produk</label>
-                            <select class="form-select produk${index}" data-placeholder="Pilih Produk" name="id_produk" required>
+                            <input type="hidden" class="alt" name="id_produk" value="${item.id_produk}">
+                            <input type="hidden" name="id_header_beli" value="${item.id_header_beli}">
+                            <select class="form-select produk${index}" data-placeholder="Pilih Produk" required>
                                 <option></option>
                                 @foreach ($produk as $value)
                                     <option value="{{ $value->id }}">
                                         {{ $value->nama }}
                                     </option>
                                 @endforeach
+                                
                             </select>
+                            <small class="text-danger" id="errorProduk${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Harga Satuan</label>
                             <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
+                            <small class="text-danger" id="errorHargaSatuan${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
+                            <input type="number" class="form-control quantity" name="quantity" value="${item.quantity}" required>
+                            <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3 quantity_stok">
                             <label class="form-label">Quantity Stok</label>
-                            <input type="text" class="form-control quantity-stok" disabled value="${item.quantity_stok}">
+                            <input type="text" class="form-control quantity-stok" disabled value="${item.quantity_stok}">                            
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Diskon Persen</label>
-                            <input type="text" class="form-control diskon-persen" name="diskon_persen" value="${item.diskon_persen ?? ''}">
+                            <input type="number" class="form-control diskon-persen" name="diskon_persen" value="${item.diskon_persen ?? ''}">
+                            <small class="text-danger" id="errorDiskonPersen${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label ">Diskon Rupiah</label>
-                            <input type="text" class="form-control diskon-rupiah mata-uang" name="diskon_rupiah" value="${item.diskon_rupiah ?? ''}">
+                            <input type="number" class="form-control diskon-rupiah mata-uang" name="diskon_rupiah" value="${item.diskon_rupiah ?? ''}">
+                            <small class="text-danger" id="errorDiskonRupiah${index}"></small>
                         </div>
 
                         <div class="btn-update-content">
@@ -247,7 +269,7 @@
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Perbarui
                             </button>
-                            <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
+                            <button type="button" onclick="return confirm('Data ini akan dihapus')" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
                             </button>
@@ -287,12 +309,6 @@
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
 
-                // hilangkan karakter RP dan titik
-                form_data.set('harga_satuan', $(`#formDetail${index} input[name='harga_satuan']`).val()
-                    .replace(/[^0-9]/g, ''));
-                form_data.set('diskon_rupiah', $(`#formDetail${index} input[name='diskon_rupiah']`)
-                    .val().replace(/[^0-9]/g, ''));
-
                 $.ajax({
                     url: action,
                     dataType: 'json', // what to expect back from the server
@@ -310,38 +326,59 @@
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} .status-header`).removeClass('d-none')
-                            $(`#formDetail${index} .status-header span`).html(response
-                                .success)
-                            setTimeout(function() {
-                                $(`#formDetail${index} .status-header`).addClass(
-                                    "d-none");
-                            }, 3000);
+                            $(`#formDetail${index} input[name='type']`).val('update-detail');
+
+                            $(`#formDetail${index} input.alt`).val($(`.produk${index}`).val());
+                            $(`.produk${index}`).select2("enable", false);
+
+                            $(`#alert${index} #alertNotif`).removeClass('d-none');
+                            $(`#alert${index} #alertNotif span`).html(response.success);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
+
+                            $(`#formDetail${index} input.alt`).attr('name', 'id_produk');
+                            $(`#formDetail${index} select.produk${index}`).removeAttr('name');
                             loadDataHeader();
                         }
 
                         if (response.save_detail != undefined) {
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
-                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
                                 `/pembelian/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },
                     error: function(response) { // handle the error            
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                         $(`#btnSaveDetail${index}`).children().addClass('d-none')
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                        $(`#formDetail${index} .status-error-header span`).html(response
-                            .error)
-                        setTimeout(function() {
-                            $(`#formDetail${index} .status-error-header`).addClass(
-                                "d-none");
-                        }, 3000);
+
+                        if (errors.id_produk) {
+                            $(`#errorProduk${index}`).html(
+                                `*${errors.id_produk}`)
+                        }
+                        if (errors.harga_satuan) {
+                            $(`#errorHargaSatuan${index}`).html(
+                                `*${errors.harga_satuan}`)
+                        }
+                        if (errors.quantity) {
+                            $(`#errorQuantity${index}`).html(
+                                `*${errors.quantity}`)
+                        }
+                        if (errors.diskon_persen) {
+                            $(`#errorDiskonPersen${index}`).html(
+                                `*${errors.diskon_persen}`)
+                        }
+                        if (errors.diskon_rupiah) {
+                            $(`#errorDiskonRupiah${index}`).html(
+                                `*${errors.diskon_rupiah}`)
+                        }
+
                         loadDataHeader();
                     },
 
@@ -396,7 +433,8 @@
             number = number + 1
             idHeader = {!! $id !!}
             loadElementDetailBeli({
-                id_produk: null
+                id_produk: null,
+                id_header_beli: idHeader
             }, number)
 
             // hapus semua nilai input
@@ -407,31 +445,20 @@
                 .prop('selected', false);
 
             $(`.produk${number}`).removeAttr('disabled');
-            $(`#formDetail${number} .card-body`).append(
-                `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
             $(`#formDetail${number}`).attr('action', '/pembelian/detail')
+            $(`#formDetail${number} input[name='type']`).val('store-detail');
+
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
-            $(`#formDetail${number} .btn-close`).removeClass('d-none');
+            $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
             $(`#formDetail${number} .quantity_stok`).remove()
 
+            $(`#formDetail${number} input.alt[name='id_produk']`).removeAttr('name');
+            $(`#formDetail${number} select.produk${number}`).attr('name', 'id_produk');
 
-            $(`#formDetail${number} .btn-close`).click(function() {
+            $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
-            $('input.mata-uang').priceFormat({
-                prefix: 'Rp ',
-                centsLimit: 0,
-                thousandsSeparator: '.'
-            });
         })
-
-
-        // format mata uang
-        $('input.mata-uang').priceFormat({
-            prefix: 'Rp ',
-            centsLimit: 0,
-            thousandsSeparator: '.'
-        });
     </script>
 @endpush

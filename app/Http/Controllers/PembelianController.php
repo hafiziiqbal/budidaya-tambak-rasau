@@ -79,15 +79,15 @@ class PembelianController extends Controller
         }
     }
 
-    public function storeDetail(Request $request)
+    public function storeDetail(PembelianRequest $request)
     {
         // try {
-        $detailBeli = DetailBeli::all();
+        $detailBeli = DetailBeli::where('id_header_beli', $request->id_header_beli)->get();
         $totalBruto = [];
         $subtotal = 0;
-        if ($request->diskon_persen == null) {
+        if ($request->diskon_persen == 0) {
             $subtotal = ($request->harga_satuan * $request->quantity) - $request->diskon_rupiah;
-        } elseif ($request->diskon_persen != null) {
+        } elseif ($request->diskon_persen != 0) {
             $subtotal = $request->harga_satuan * $request->quantity * ((100 / 10) - ($request->diskon_persen / 100));
         } else {
             $subtotal = $request->harga_satuan * $request->quantity;
@@ -151,10 +151,10 @@ class PembelianController extends Controller
         return response()->json($headerBeli);
     }
 
-    public function update(Request $request, $id)
+    public function update(PembelianRequest $request, $id)
     {
         try {
-            $tglBeli = date('Y-m-d', strtotime($request->tgl_beli));
+            $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
             $totalBruto = [];
             $headerBeli = HeaderBeli::where('id', $id)->with('detail_beli')->first();
 
@@ -181,20 +181,20 @@ class PembelianController extends Controller
         }
     }
 
-    public function updateDetail(Request $request, $id)
+    public function updateDetail(PembelianRequest $request, $id)
     {
         $totalBruto = [];
-        $detailBeli = DetailBeli::all()->except($id);
+        $detailBeli = DetailBeli::where('id_header_beli', $request->id_header_beli)->where('id', '!=', $id)->get();
+
         // menghitung subtotal
         $subtotal = 0;
-        if ($request->diskon_persen == null) {
+        if ($request->diskon_persen == 0) {
             $subtotal = ($request->harga_satuan * $request->quantity) - $request->diskon_rupiah;
-        } elseif ($request->diskon_persen != null) {
-            $subtotal = $request->harga_satuan * $request->quantity * ((100 / 10) - ($request->diskon_persen / 100));
+        } elseif ($request->diskon_persen != 0) {
+            $subtotal = ($request->harga_satuan * $request->quantity) - (($request->harga_satuan * $request->quantity) * ($request->diskon_persen / 100));
         } else {
             $subtotal = $request->harga_satuan * $request->quantity;
         }
-
         // memasukkan subtotal ke total bruto
         array_push($totalBruto, $subtotal);
 
@@ -284,7 +284,7 @@ class PembelianController extends Controller
 
         $totalBruto = [];
         $detailBeli = DetailBeli::find($id);
-        $detailBeliUpdate = DetailBeli::all()->except($id);
+        $detailBeliUpdate = DetailBeli::where('id_header_beli', $detailBeli->id_header_beli)->where('id', '!=', $id)->get();
 
         foreach ($detailBeliUpdate as $key => $value) {
             array_push($totalBruto, $value->subtotal);
