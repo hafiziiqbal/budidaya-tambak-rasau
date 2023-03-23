@@ -13,7 +13,7 @@ class KolamRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,18 @@ class KolamRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nama' => 'required|max:255',
+            'posisi' => 'required|max:255',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nama.required' => 'Nama harus diisi',
+            'nama.max' => 'Nama maksimal 255 karakter',
+            'posisi.required' => 'Posisi harus diisi',
+            'posisi.max' => 'Posisi maksimal 255 karakter',
         ];
     }
 }

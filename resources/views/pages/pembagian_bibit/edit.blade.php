@@ -42,13 +42,13 @@
             </div>
             <div class="mb-3">
                 <label for="inputPanen" class="form-label">Sortir Kembali</label>
-                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_panen">
+                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
                     <option></option>
-                    {{-- @foreach ($pembelian as $value)
+                    @foreach ($sortir as $value)
                         <option value="{{ $value->id }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                            @DateIndo($value->header_panen->tgl_panen){{ ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
                         </option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
             </div>
 
@@ -93,11 +93,12 @@
 
                 success: function(response) {
                     detailBagi = response.detail_pembagian_bibit
-                    console.log(response);
                     // default value detail beli
                     $(`#inputDetailBeli`).val(response.id_detail_beli)
                     $(`#inputDetailBeli`).trigger('change');
                     $(`#inputDetailBeli`).select2("enable", false);
+                    $(`#inputPanen`).val(response.id_detail_panen)
+                    $(`#inputPanen`).trigger('change');
                     $(`#inputPanen`).select2("enable", false);
 
                     // default tgl_beli                
@@ -249,23 +250,7 @@
                 dropdownCssClass: "select2--medium",
             });
 
-            $(`#selectJaring${index}`).on('change', function() {
-                // mengambil nilai opsi yang dipilih
-                let selectFirst = $(this);
-                let selectedValue = $(this).val();
 
-                // validasi nilai opsi
-                $('select.select-jaring').not(this).each(function() {
-                    // jika nilai opsi sudah dipilih di element select2 lain
-                    if ($(this).val() == selectedValue && $(this).val() != '') {
-                        // menampilkan alert
-                        alert(`Jaring ini sudah digunakan`);
-                        // menghapus nilai opsi yang dipilih di element select2 baru
-                        $(this).val('').trigger('change.select2');
-                        return false
-                    }
-                });
-            });
 
             $(`#selectJaring${index}`).val(item.id_jaring)
             $(`#selectJaring${index}`).trigger('change');
@@ -283,7 +268,7 @@
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
-
+                console.log(form_data);
 
                 $.ajax({
                     url: action,
@@ -337,7 +322,7 @@
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
                             $(`#formDetail${index} .btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
-                                `/pembelian/detail/${response.id}/edit`)
+                                `/pembagian-bibit/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },

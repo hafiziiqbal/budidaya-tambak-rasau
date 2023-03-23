@@ -9,13 +9,13 @@
 
     <form action="{{ route('customer.store') }}" method="POST">
         @csrf
-
         <div class="mb-3">
+            <input type="hidden" name="type" value="store">
             <label for="inputNama" class="form-label">Nama</label>
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
             @if ($errors->has('nama'))
-                <small class="text-danger">*{{ $errors->first('name') }}</small>
+                <small class="text-danger">*{{ $errors->first('nama') }}</small>
             @endif
         </div>
         <div class="mb-3">

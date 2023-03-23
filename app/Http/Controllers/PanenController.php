@@ -112,7 +112,7 @@ class PanenController extends Controller
                     $produk[$detail['id_detail_pembagian_bibit']] = [
                         'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
                         'quantity' => $detail['quantity'],
-                        'id_kategori' => 3
+                        'id_kategori' => 6
 
                     ];
                 }
@@ -120,9 +120,9 @@ class PanenController extends Controller
         }
 
         foreach ($produk as $item) {
-            $produkExists = Produk::where('nama',  $item['nama'])->where('id_kategori', 3)->first();
+            $produkExists = Produk::where('nama',  $item['nama'])->where('id_kategori', 6)->first();
             if ($produkExists) {
-                DB::table('produk')->where('nama',  $item['nama'])->where('id_kategori', 3)->increment('quantity', $item['quantity']);
+                DB::table('produk')->where('nama',  $item['nama'])->where('id_kategori', 6)->increment('quantity', $item['quantity']);
             } else {
                 Produk::create($item);
             }
@@ -167,9 +167,9 @@ class PanenController extends Controller
         // Masukkan data ke dalam tabel produk
         $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id',  $id_detail_pembagian_bibit)->first();
 
-        $produkExists = Produk::where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->first();
+        $produkExists = Produk::where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->first();
         if ($produkExists) {
-            DB::table('produk')->where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->increment('quantity', $quantity);
+            DB::table('produk')->where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->increment('quantity', $quantity);
         } else {
             Produk::create([
                 'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
@@ -255,7 +255,7 @@ class PanenController extends Controller
 
             $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $id_detail_pembagian_bibit)->first();
             $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
-            $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 3)->first();
+            $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 6)->first();
 
             $produkExists->update([
                 'quantity' => ($produkExists->quantity - ($old_quantity + $total_quantity_same_id_detail_pembagian_bibit)) + ($request->quantity + $total_quantity_same_id_detail_pembagian_bibit)
@@ -284,7 +284,7 @@ class PanenController extends Controller
                 ->where('id', $detail->id_detail_pembagian_bibit);
             $detailPembagianBibit->increment('quantity', $detail->quantity);
 
-            $produkExists = Produk::where('nama', $detailPembagianBibit->first()->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 3)->first();
+            $produkExists = Produk::where('nama', $detailPembagianBibit->first()->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->first();
             $produkExists->decrement('quantity', $detail->quantity);
         }
 
@@ -320,7 +320,7 @@ class PanenController extends Controller
         // Memperbarui nilai column quantity pada tabel produk
         $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detailPanen->id_detail_pembagian_bibit)->first();
         $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
-        $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 3)->first();
+        $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 6)->first();
         $produkExists->decrement('quantity', $quantity);
 
         // Menghapus data detail_pembagian_pakan

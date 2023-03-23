@@ -6,7 +6,6 @@
         <li class="breadcrumb-item active">Tambah Pembagian Bibit</li>
     </ol>
 
-
     <form id="formPembagian" name="form_pembagian" action="{{ route('pembagian.bibit.store') }}" method="POST">
         @csrf
 
@@ -22,10 +21,21 @@
                     <input type="text" name="tgl_pembagian" id="inputTanggalPembagian" class="form-control"
                         aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
                 </div>
-
             </div>
-
             <div class="mb-3">
+                <label class="form-label">Pilih Pembagian</label>
+                <br>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" value="bibit" name="jenis_pembagian" id="btnBibit"
+                        autocomplete="off" checked>
+                    <label class="btn btn-outline-primary" for="btnBibit">Bibit</label>
+
+                    <input type="radio" class="btn-check" value="sortir" name="jenis_pembagian" id="btnSortir"
+                        autocomplete="off">
+                    <label class="btn btn-outline-primary" for="btnSortir">Sortir</label>
+                </div>
+            </div>
+            <div class="mb-3" id="bibitContainer">
                 <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
                 <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
                     <option></option>
@@ -39,15 +49,15 @@
                 </select>
             </div>
 
-            <div class="mb-3">
+            <div class="mb-3 d-none" id="sortirContainer">
                 <label for="inputPanen" class="form-label">Sortir Kembali</label>
-                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_panen">
+                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
                     <option></option>
-                    {{-- @foreach ($pembelian as $value)
+                    @foreach ($sortir as $value)
                         <option value="{{ $value->id }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                            @DateIndo($value->header_panen->tgl_panen){{ ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
                         </option>
-                    @endforeach --}}
+                    @endforeach
                 </select>
             </div>
 
@@ -56,7 +66,7 @@
 
         <div id="detail">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Detail Pembagian Bibit</label>
+                <label class="fw-bold">Detail Pembagian</label>
             </div>
 
             <div class="error-element">
@@ -78,13 +88,23 @@
     <script>
         let index = 0;
 
-
-
         // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
+        });
+
+        $('input[type=radio][name=jenis_pembagian]').change(function() {
+            if (this.value == 'sortir') {
+                $('#bibitContainer').addClass('d-none');
+                $('#sortirContainer').removeClass('d-none');
+                $('#formPembagian').attr('action', '/pembagian-bibit/sortir')
+            } else if (this.value == 'bibit') {
+                $('#sortirContainer').addClass('d-none');
+                $('#bibitContainer').removeClass('d-none');
+                $('#formPembagian').attr('action', '/pembagian-bibit')
+            }
         });
 
         // membuat element detail pembagian

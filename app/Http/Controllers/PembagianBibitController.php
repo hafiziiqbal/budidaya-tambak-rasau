@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PembagianBibitRequest;
 use App\Models\Produk;
 use App\Models\DetailBeli;
+use App\Models\DetailPanen;
 use App\Models\MasterKolam;
 use App\Models\MasterJaring;
 use Illuminate\Http\Request;
@@ -46,6 +47,7 @@ class PembagianBibitController extends Controller
     {
         $jaring = MasterJaring::where('id_kolam', null)->get();
         $kolam = MasterKolam::all();
+        $detailSortir = DetailPanen::where('status', 0)->with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
 
         $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity'])->with(['produk' => function ($query) {
             $query->select('id', 'nama', 'quantity');
@@ -59,6 +61,7 @@ class PembagianBibitController extends Controller
             'title' => 'PEMBAGIAN BIBIT',
             'jaring' => $jaring,
             'kolam' => $kolam,
+            'sortir' => $detailSortir,
             'pembelian' => $pembelian
         ]);
     }
@@ -133,24 +136,42 @@ class PembagianBibitController extends Controller
         $detailPembagianTanpaDataUpdate = DetailPembagianBibit::where('id_header_pembagian_bibit', $request->id_header_pembagian_bibit)->where('id', '!=', $id)->get();
         $totalQuantityDetailPembagian =  collect($detailPembagianTanpaDataUpdate)->sum('quantity') + $request->quantity;
         $headerPembagian = HeaderPembagianBibit::find($request->id_header_pembagian_bibit);
-        $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
-        $quantityStokOld = $detailBeli->quantity_stok;
-        // jika total quantity melebihi quantity_stok
-        if ($totalQuantityDetailPembagian > $detailBeli->quantity) {
-            return response()->json([
-                'error' => 'Total quantity melebihi quantity stok yang ada'
+        if ($headerPembagian->id_detail_panen == null) {
+            $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
+            $quantityStokOld = $detailBeli->quantity_stok;
+            // jika total quantity melebihi quantity_stok
+            if ($totalQuantityDetailPembagian > $detailBeli->quantity) {
+                return response()->json([
+                    'error' => 'Total quantity melebihi quantity stok yang ada'
+                ]);
+            }
+
+            $detailBeli->update([
+                'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
+            ]);
+
+            $produk = Produk::find($detailBeli->id_produk);
+            $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
+            $produk->update([
+                'quantity' => $quantityProduk,
+            ]);
+        } else {
+            $detailPanen = DetailPanen::find($headerPembagian->id_detail_panen);
+            $quantityDetailPanenNow = $detailPanen->quantity;
+            $quantityDetailPanenThen = DetailPembagianBibit::where('id_header_pembagian_bibit', $request->id_header_pembagian_bibit)->get()->sum('quantity') + $quantityDetailPanenNow;
+
+            // jika total quantity melebihi quantity_stok
+            if ($totalQuantityDetailPembagian > $quantityDetailPanenThen) {
+                return response()->json([
+                    'error' => 'Total quantity melebihi quantity stok yang ada'
+                ]);
+            }
+
+            $detailPanen->update([
+                'quantity' => $quantityDetailPanenThen - $totalQuantityDetailPembagian,
             ]);
         }
 
-        $detailBeli->update([
-            'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
-        ]);
-
-        $produk = Produk::find($detailBeli->id_produk);
-        $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
-        $produk->update([
-            'quantity' => $quantityProduk,
-        ]);
 
 
         DetailPembagianBibit::find($id)->update([
@@ -202,33 +223,60 @@ class PembagianBibitController extends Controller
         $detailPembagianTanpaDataUpdate = DetailPembagianBibit::where('id_header_pembagian_bibit', $request->id_header_pembagian_bibit)->get();
         $totalQuantityDetailPembagian =  collect($detailPembagianTanpaDataUpdate)->sum('quantity') + $request->quantity;
         $headerPembagian = HeaderPembagianBibit::find($request->id_header_pembagian_bibit);
-        $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
-        $quantityStokOld = $detailBeli->quantity_stok;
-        // jika total quantity melebihi quantity_stok
-        if ($totalQuantityDetailPembagian > $detailBeli->quantity) {
-            return response()->json([
-                'error' => 'Total quantity melebihi quantity stok yang ada'
+
+        if ($headerPembagian->id_detail_panen == null) {
+            $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
+            $quantityStokOld = $detailBeli->quantity_stok;
+            // jika total quantity melebihi quantity_stok
+            if ($totalQuantityDetailPembagian > $detailBeli->quantity) {
+                return response()->json([
+                    'error' => 'Total quantity melebihi quantity stok yang ada'
+                ]);
+            }
+
+            // save
+            $detailPembagianBibit = DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $request->id_header_pembagian_bibit,
+                'quantity' => $request->quantity,
+                'id_jaring' => $request->id_jaring,
+                'id_kolam' => $request->id_kolam
+            ]);
+
+
+            $detailBeli->update([
+                'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
+            ]);
+
+            $produk = Produk::find($detailBeli->id_produk);
+            $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
+            $produk->update([
+                'quantity' => $quantityProduk,
+            ]);
+        } else {
+            // ambil quantity_stok dari tabel pembelian berdasarkan id produk
+            $detailPanen = DetailPanen::find($headerPembagian->id_detail_panen);
+            $quantityDetailPanenNow = $detailPanen->quantity;
+            $quantityDetailPanenThen = DetailPembagianBibit::where('id_header_pembagian_bibit', $request->id_header_pembagian_bibit)->get()->sum('quantity') + $quantityDetailPanenNow;
+
+            // jika total quantity melebihi quantity_stok
+            if ($totalQuantityDetailPembagian > $quantityDetailPanenThen) {
+                return response()->json([
+                    'error' => 'Total quantity melebihi quantity stok yang ada'
+                ]);
+            }
+
+            // save
+            $detailPembagianBibit = DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $request->id_header_pembagian_bibit,
+                'quantity' => $request->quantity,
+                'id_jaring' => $request->id_jaring,
+                'id_kolam' => $request->id_kolam
+            ]);
+
+            $detailPanen->update([
+                'quantity' => $quantityDetailPanenThen - $totalQuantityDetailPembagian,
             ]);
         }
-
-        // save
-        $detailPembagianBibit = DetailPembagianBibit::create([
-            'id_header_pembagian_bibit' => $request->id_header_pembagian_bibit,
-            'quantity' => $request->quantity,
-            'id_jaring' => $request->id_jaring,
-            'id_kolam' => $request->id_kolam
-        ]);
-
-
-        $detailBeli->update([
-            'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
-        ]);
-
-        $produk = Produk::find($detailBeli->id_produk);
-        $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
-        $produk->update([
-            'quantity' => $quantityProduk,
-        ]);
 
         if ($request->id_jaring != null) {
             $jaring = MasterJaring::find($request->id_jaring);
@@ -296,7 +344,6 @@ class PembagianBibitController extends Controller
         $headBagi =  HeaderPembagianBibit::create([
             'tgl_pembagian' => $tglPembagian,
             'id_detail_beli' => $request->id_detail_beli,
-            'id_detail_panen' => $request->id_panen,
         ]);
 
         foreach ($request->detail as $key => $valueArray) {
@@ -334,11 +381,95 @@ class PembagianBibitController extends Controller
         ]);
     }
 
+    public function storeSortir(Request $request)
+    {
+        // return response()->json($request->id_detail_beli);
+        $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
+
+        // cek jaring -------------------------------------------------------
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            $kolam = MasterKolam::find($value->id_kolam);
+            $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
+                ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->where('id_kolam', $value->id_kolam)
+                ->first();
+
+            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+            if ($batasJaring >= 1 && $value->id_jaring == null) {
+                return response()->json([
+                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                ]);
+            }
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam != null) {
+                    return response()->json([
+                        'error' => "Jaring Sudah Digunakan Oleh Data Lain"
+                    ]);
+                }
+            }
+        }
+        // end cek jaring -------------------------------------------------------
+
+        // cek quantity ----------------------------------------------------------
+        // hitung total quantity dari request
+        $totalQuantity = collect($request->all()['detail'])->sum('quantity');
+
+        // ambil quantity_stok dari tabel pembelian berdasarkan id produk
+        $quantityStok = DetailPanen::find($request->id_detail_panen)->quantity;
+
+        // jika total quantity melebihi quantity_stok
+        if ($totalQuantity > $quantityStok) {
+            return response()->json([
+                'error' => 'Total quantity melebihi quantity sortir yang ada'
+            ]);
+        }
+        // cek quantity ----------------------------------------------------------
+        $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli'])->first();
+        // save
+        $headBagi =  HeaderPembagianBibit::create([
+            'tgl_pembagian' => $tglPembagian,
+            'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
+            'id_detail_panen' => $request->id_detail_panen,
+        ]);
+
+        foreach ($request->detail as $key => $valueArray) {
+            $value = (object) $valueArray;
+            DetailPembagianBibit::create([
+                'id_header_pembagian_bibit' => $headBagi->id,
+                'quantity' => $value->quantity,
+                'id_jaring' => $value->id_jaring,
+                'id_kolam' => $value->id_kolam
+            ]);
+
+            // Kurangi nilai quantity_stok pada tabel pembelian           
+            $detailPanen->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+
+            if ($value->id_jaring != null) {
+                $jaring = MasterJaring::find($value->id_jaring);
+                if ($jaring->id_kolam == null) {
+                    $jaring->update([
+                        'id_kolam' => $value->id_kolam
+                    ]);
+                }
+            }
+        }
+
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
+        ]);
+    }
+
     public function edit($id)
     {
         $jaring = MasterJaring::all();
         $kolam = MasterKolam::select(['id', 'nama'])->get();
-
+        $detailSortir = DetailPanen::where('status', 0)->with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
         $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity'])->with([
             'produk', 'header_beli'
         ])->orderBy('id_header_beli', 'asc')->get();
@@ -349,6 +480,7 @@ class PembagianBibitController extends Controller
             'jaring' => $jaring,
             'kolam' => $kolam,
             'id' => $id,
+            'sortir' => $detailSortir,
             'pembelian' => $pembelian
         ]);
     }
@@ -379,13 +511,19 @@ class PembagianBibitController extends Controller
         // Memperbarui tabel detail_beli dan produk
         foreach ($details as $detail) {
             $detailPembagianBibit = DetailPembagianBibit::find($detail->id);
-            DB::table('detail_beli')
-                ->where('id', $headerPembagianBibit->id_detail_beli)
-                ->increment('quantity_stok', $detail->quantity);
+            if ($headerPembagianBibit->id_detail_panen == null) {
+                DB::table('detail_beli')
+                    ->where('id', $headerPembagianBibit->id_detail_beli)
+                    ->increment('quantity_stok', $detail->quantity);
 
-            DB::table('produk')
-                ->where('id', $headerPembagianBibit->detail_beli->id_produk)
-                ->increment('quantity', $detail->quantity);
+                DB::table('produk')
+                    ->where('id', $headerPembagianBibit->detail_beli->id_produk)
+                    ->increment('quantity', $detail->quantity);
+            } else {
+                DB::table('detail_panen')
+                    ->where('id', $headerPembagianBibit->id_detail_panen)
+                    ->increment('quantity', $detail->quantity);
+            }
         }
 
         // Mengubah column id_kolam pada tabel jaring menjadi null
@@ -416,18 +554,28 @@ class PembagianBibitController extends Controller
         $detailPembagianTanpaDataUpdate = DetailPembagianBibit::where('id_header_pembagian_bibit', $detailPembagianBibit->id_header_pembagian_bibit)->where('id', '!=', $id)->get();
         $totalQuantityDetailPembagian =  collect($detailPembagianTanpaDataUpdate)->sum('quantity');
         $headerPembagian = HeaderPembagianBibit::find($detailPembagianBibit->id_header_pembagian_bibit);
-        $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
-        $quantityStokOld = $detailBeli->quantity_stok;
 
-        $detailBeli->update([
-            'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
-        ]);
+        if ($headerPembagian->id_detail_panen == null) {
+            $detailBeli = DetailBeli::find($headerPembagian->id_detail_beli);
+            $quantityStokOld = $detailBeli->quantity_stok;
 
-        $produk = Produk::find($detailBeli->id_produk);
-        $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
-        $produk->update([
-            'quantity' => $quantityProduk,
-        ]);
+            $detailBeli->update([
+                'quantity_stok' => $detailBeli->quantity - $totalQuantityDetailPembagian,
+            ]);
+
+            $produk = Produk::find($detailBeli->id_produk);
+            $quantityProduk = ($produk->quantity - $quantityStokOld) + $detailBeli->quantity_stok;
+            $produk->update([
+                'quantity' => $quantityProduk,
+            ]);
+        } else {
+            $detailPanen = DetailPanen::find($headerPembagian->id_detail_panen);
+            $quantityDetailPanenNow = $detailPanen->quantity;
+
+            $detailPanen->update([
+                'quantity' => $quantityDetailPanenNow + $detailPembagianBibit->quantity,
+            ]);
+        }
 
         if ($detailPembagianBibit->id_jaring != null) {
             $jaring = MasterJaring::find($detailPembagianBibit->id_jaring);

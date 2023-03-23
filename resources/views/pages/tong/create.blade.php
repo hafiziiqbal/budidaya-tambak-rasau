@@ -15,7 +15,7 @@
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
             @if ($errors->has('nama'))
-                <small class="text-danger">*{{ $errors->first('name') }}</small>
+                <small class="text-danger">*{{ $errors->first('nama') }}</small>
             @endif
         </div>
         <div class="mb-3">
@@ -37,8 +37,10 @@
 
                     </div>
                 @endforeach
-
             </div>
+            @if ($errors->has('id_kolam'))
+                <small class="text-danger">*{{ $errors->first('id_kolam') }}</small>
+            @endif
             {{-- <select class="form-select" id="selectKolam" data-placeholder="Pilih Kolam" name="id_kolam">
                 <option></option>
                 @foreach ($kolam as $value)

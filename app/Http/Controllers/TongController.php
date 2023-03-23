@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TongRequest;
 use App\Models\MasterTong;
 use App\Models\MasterKolam;
 use App\Models\MasterJaring;
@@ -70,7 +71,7 @@ class TongController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(TongRequest $request)
     {
 
         try {
@@ -110,7 +111,7 @@ class TongController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(TongRequest $request, $id)
     {
         try {
             $tong = MasterTong::find($id);

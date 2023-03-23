@@ -13,7 +13,7 @@ class TongRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,17 @@ class TongRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'nama' => 'required|max:255',
+            'id_kolam' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'nama.required' => 'Nama harus diisi',
+            'nama.max' => 'Nama maksimal 255 karakter',
+            'id_kolam.required' => 'Kolam harus dipilih',
         ];
     }
 }

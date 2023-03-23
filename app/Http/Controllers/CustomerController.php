@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CustomerRequest;
 use Illuminate\Http\Request;
 use App\Models\MasterCustomer;
 use Yajra\DataTables\Facades\DataTables;
@@ -39,7 +40,7 @@ class CustomerController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(CustomerRequest $request)
     {
         try {
             MasterCustomer::create([
@@ -69,7 +70,7 @@ class CustomerController extends Controller
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(CustomerRequest $request, $id)
     {
         try {
             $customer = MasterCustomer::find($id);

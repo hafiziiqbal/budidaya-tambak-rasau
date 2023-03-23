@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\KolamRequest;
 use App\Models\MasterJaring;
 use App\Models\MasterKolam;
 use Illuminate\Http\Request;
@@ -39,7 +40,7 @@ class KolamController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(KolamRequest $request)
     {
         try {
             MasterKolam::create([
@@ -69,7 +70,7 @@ class KolamController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(KolamRequest $request, $id)
     {
         try {
             $kolam = MasterKolam::find($id);

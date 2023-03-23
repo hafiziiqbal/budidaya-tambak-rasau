@@ -152,6 +152,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/delete/{id}', [PembagianBibitController::class, 'destroy'])->name('pembagian.bibit.destory');
 
         Route::post('/', [PembagianBibitController::class, 'store'])->name('pembagian.bibit.store');
+        Route::post('/sortir', [PembagianBibitController::class, 'storeSortir'])->name('pembagian.bibit.store.sortir');
         Route::post('/{id}/update', [PembagianBibitController::class, 'update'])->name('pembagian.bibit.update');
         Route::post('/datatable', [PembagianBibitController::class, 'datatable'])->name('pembagian.bibit.datatable');
 

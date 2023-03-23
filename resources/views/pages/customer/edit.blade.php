@@ -9,6 +9,8 @@
     <form action="{{ route('customer.update', $customer->id) }}" method="POST">
         @csrf
         <div class="mb-3">
+            <input type="hidden" name="type" value="update">
+            <input type="hidden" name="id" value="{{ $customer->id }}">
             <label for="inputNama" class="form-label">Nama</label>
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') ?? $customer->nama }}">

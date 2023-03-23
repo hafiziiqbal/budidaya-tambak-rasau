@@ -15,7 +15,7 @@
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
             @if ($errors->has('nama'))
-                <small class="text-danger">*{{ $errors->first('name') }}</small>
+                <small class="text-danger">*{{ $errors->first('nama') }}</small>
             @endif
         </div>
         <div class="mb-3">
