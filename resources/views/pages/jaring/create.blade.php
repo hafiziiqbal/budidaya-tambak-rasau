@@ -11,6 +11,7 @@
         @csrf
 
         <div class="mb-3">
+            <input type="hidden" name="type" value="store">
             <label for="inputNama" class="form-label">Nama Jaring</label>
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') }}">
@@ -20,8 +21,7 @@
         </div>
         <div class="mb-3">
             <label for="inputPosisi" class="form-label">Posisi</label>
-            <input type="text" class="form-control" id="inputPosisi" required name="posisi"
-                placeholder="Masukkan Posisi" value="{{ old('posisi') }}">
+            <textarea class="form-control" id="inputPosisi" rows="3" placeholder="Masukkan Posisi" name="posisi" required>{{ old('posisi') }}</textarea>
             @if ($errors->has('posisi'))
                 <small class="text-danger">*{{ $errors->first('posisi') }}</small>
             @endif
@@ -33,6 +33,7 @@
 @push('script')
     <script>
         $("#selectKolam").select2({
+            allowClear: true,
             theme: "bootstrap-5",
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",

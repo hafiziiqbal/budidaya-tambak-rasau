@@ -15,6 +15,7 @@
                 <label class="fw-bold">Header Pembagian Bibit</label>
             </div>
             <div class="mb-3">
+                <input type="hidden" name="type" value="store-all">
                 <label for="inputTanggalPembagian" class="form-label">Tanggal Pembagian</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>

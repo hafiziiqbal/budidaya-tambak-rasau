@@ -10,6 +10,7 @@
         @csrf
 
         <div class="mb-3">
+            <input type="hidden" name="type" value="update">
             <label for="inputNama" class="form-label">Nama Jaring</label>
             <input type="text" class="form-control" id="inputNama" required name="nama" placeholder="Masukkan Nama"
                 value="{{ old('nama') ?? $jaring->nama }}">
@@ -29,23 +30,22 @@
             </select>
         </div>
         <div class="mb-3">
-            <label for="inputQuantity" class="form-label">Quantity</label>
-            <input type="number" class="form-control" id="inputQuantity" required name="quantity"
-                placeholder="Masukkan Jumlah" value="{{ old('quantity') ?? $jaring->quantity }}">
-            @if ($errors->has('quantity'))
-                <small class="text-danger">*{{ $errors->first('quantity') }}</small>
+            <label for="inputPosisi" class="form-label">Posisi</label>
+            <textarea class="form-control" id="inputPosisi" rows="3" placeholder="Masukkan Posisi" name="posisi" required>{{ old('posisi') ?? $jaring->posisi }}</textarea>
+            @if ($errors->has('posisi'))
+                <small class="text-danger">*{{ $errors->first('posisi') }}</small>
             @endif
         </div>
-
         <button type="submit" class="btn btn-primary  w-100">Perbarui</button>
     </form>
 @endsection
 
 @push('script')
     <script>
-        let valKolam = {!! $jaring->id_kolam !!};
+        let valKolam = '{!! $jaring->id_kolam !!}';
         $('#selectKolam').val(valKolam);
         $("#selectKolam").select2({
+            allowClear: true,
             theme: "bootstrap-5",
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",

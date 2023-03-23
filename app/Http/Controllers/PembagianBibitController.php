@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PembagianBibitRequest;
 use App\Models\Produk;
 use App\Models\DetailBeli;
 use App\Models\MasterKolam;
@@ -51,7 +52,7 @@ class PembagianBibitController extends Controller
         }, 'header_beli' => function ($query) {
             $query->select('id', 'tgl_beli');
         }])->whereHas('produk', function ($query) {
-            $query->where('id_kategori', '=', 2);
+            $query->where('id_kategori', '=', 7);
         })->orderBy('id_header_beli', 'asc')->get();
 
         return view('pages.pembagian_bibit.create')->with([

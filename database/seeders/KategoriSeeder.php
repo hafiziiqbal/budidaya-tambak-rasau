@@ -17,18 +17,21 @@ class KategoriSeeder extends Seeder
     {
         Kategori::updateOrCreate(
             [
+                'id' => 5,
                 'nama' => 'Pakan',
                 'deskripsi' => '',
             ],
         );
         Kategori::updateOrCreate(
             [
+                'id' => 7,
                 'nama' => 'Bibit',
                 'deskripsi' => '',
             ],
         );
         Kategori::updateOrCreate(
             [
+                'id' => 6,
                 'nama' => 'Ikan',
                 'deskripsi' => '',
             ],

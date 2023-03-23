@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\JaringRequest;
 use App\Models\MasterJaring;
 use App\Models\MasterKolam;
 use App\Models\MasterTong;
@@ -42,24 +43,24 @@ class JaringController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(JaringRequest $request)
     {
-        // try {
-        MasterJaring::create([
-            'nama' => $request->nama,
-            'id_kolam' => null,
-            'posisi' => $request->posisi,
-        ]);
+        try {
+            MasterJaring::create([
+                'nama' => $request->nama,
+                'id_kolam' => null,
+                'posisi' => $request->posisi,
+            ]);
 
-        return redirect()->route('jaring')->with(
-            'success',
-            'Berhasil Tambah Jaring'
-        );
-        // } catch (\Throwable $th) {
-        //     return redirect('/')->withErrors([
-        //         'error' => 'Terdapat Kesalahan'
-        //     ]);
-        // }
+            return redirect()->route('jaring')->with(
+                'success',
+                'Berhasil Tambah Jaring'
+            );
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
     }
 
     public function edit($id)
@@ -75,14 +76,14 @@ class JaringController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(JaringRequest $request, $id)
     {
         try {
             $jaring = MasterJaring::find($id);
             $jaring->update([
                 'nama' => $request->nama,
                 'id_kolam' => $request->id_kolam,
-                'quantity' => $request->quantity,
+                'posisi' => $request->posisi,
             ]);
 
             return redirect()->route('jaring')->with(
