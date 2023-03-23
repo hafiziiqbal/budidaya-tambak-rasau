@@ -21,3 +21,9 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
+
+<div id="alertNotif" class="alert alert-success alert-dismissible fade show d-none" role="alert">
+    <i class="fa fa-check"></i>
+    <span></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>

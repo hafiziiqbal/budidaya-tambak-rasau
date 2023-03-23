@@ -158,25 +158,13 @@
                 type: method,
 
                 success: function(response) {
-                    $(`#btnSimpan`).removeAttr('disabled')
-                    $(`#btnSimpan`).children().addClass('d-none')
-                    if (response.error != undefined) {
-                        $(".error-element .btn-close").click()
-                        console.log(response.error);
-                        let errorElement = $(`
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fa fa-warning"></i>
-                        <span>${response.error}</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `)
-
-                        $('.error-element').append(errorElement);
-                    }
+                    // $(`#btnSimpan`).removeAttr('disabled')
+                    // $(`#btnSimpan`).children().addClass('d-none')
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
-                        window.location.href = "{{ route('jual') }}";
-
+                        // Set a cookie
+                        document.cookie = `success=Berhasil Simpan Data Pembelian;path=/pembelian`;
+                        window.location.href = "{{ route('pembelian') }}";
                     }
                 },
                 error: function(e) { // handle the error     
@@ -274,11 +262,11 @@
                 // Menghitung subtotal untuk input yang diubah
                 hitungSubtotal(index);
 
-                // // Menghitung total bruto
-                // hitungTotalBruto();
+                // Menghitung total bruto
+                hitungTotalBruto();
 
-                // // Menghitung total netto
-                // hitungTotalNetto();
+                // Menghitung total netto
+                hitungTotalNetto();
 
                 // // Menghitung kembalian
                 // hitungKembalian();

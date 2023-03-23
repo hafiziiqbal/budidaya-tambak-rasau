@@ -37,32 +37,19 @@ class PembelianController extends Controller
 
     public function store(PembelianRequest $request)
     {
-        return response()->json($request->all());
         try {
             $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
-            $totalBruto = [];
             $headerBeli =  HeaderBeli::create([
                 'tgl_beli' => $tglBeli,
                 'id_supplier' => $request->supplier,
                 'potongan_harga' => $request->potongan_harga == null ? 0 : $request->potongan_harga,
+                'total_bruto' => $request->total_bruto,
+                'total_netto' => $request->total_netto,
             ]);
 
             foreach ($request->detail_beli as $key =>  $valueArray) {
                 // ubah array ke objek
                 $value = (object) $valueArray;
-
-                // menghitung subtotal            
-                $subtotal = 0;
-                if ($value->diskon_persen == null) {
-                    $subtotal = ($value->harga_satuan * $value->quantity) - $value->diskon_rupiah;
-                } elseif ($value->diskon_persen != null) {
-                    $subtotal = $value->harga_satuan * $value->quantity * ((100 / 10) - ($value->diskon_persen / 100));
-                } else {
-                    $subtotal = $value->harga_satuan * $value->quantity;
-                }
-
-                // memasukkan subtotal ke total bruto
-                array_push($totalBruto, $subtotal);
 
                 // memasukkan detail beli ke database
                 DetailBeli::create([
@@ -73,7 +60,7 @@ class PembelianController extends Controller
                     'quantity_stok' => $value->quantity,
                     'diskon_persen' => $value->diskon_persen,
                     'diskon_rupiah' => $value->diskon_rupiah,
-                    'subtotal' => $subtotal
+                    'subtotal' => $value->subtotal,
                 ]);
 
                 // update quantity produk
@@ -82,15 +69,9 @@ class PembelianController extends Controller
                 ]);
             }
 
-            $headerBeli->update([
-                'total_bruto' => array_sum($totalBruto),
-                'total_netto' => array_sum($totalBruto) - $request->potongan_harga,
+            return response()->json([
+                'success' => 'Berhasil Tambah Data'
             ]);
-
-            return redirect()->route('pembelian')->with(
-                'success',
-                'Berhasil Tambah Pembelian'
-            );
         } catch (\Throwable $th) {
             return redirect('/')->withErrors([
                 'error' => 'Terdapat Kesalahan'

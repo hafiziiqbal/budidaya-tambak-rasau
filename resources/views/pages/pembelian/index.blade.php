@@ -30,6 +30,12 @@
 
 @push('script')
     <script>
+        alert = getCookie('success');
+        if (alert != '') {
+            $('#alertNotif').removeClass('d-none');
+            $('#alertNotif span').html(alert);
+            document.cookie = `success=;path=/pembelian`;
+        }
         $(document).ready(function() {
             let table = $('#tblPembelian').DataTable({
                 responsive: true,
