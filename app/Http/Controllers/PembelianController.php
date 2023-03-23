@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PembelianRequest;
 use App\Models\Produk;
 use App\Models\Supplier;
 use App\Models\DetailBeli;
@@ -25,7 +26,7 @@ class PembelianController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-        $produk = Produk::all();
+        $produk = Produk::where('id_kategori', '!=', '6')->get();
         return view('pages.pembelian.create')->with([
             'title' => 'TAMBAH PEMBELIAN',
             'supplier' => $suppliers,
@@ -34,9 +35,9 @@ class PembelianController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(PembelianRequest $request)
     {
-
+        return response()->json($request->all());
         try {
             $tglBeli = date('Y-m-d', strtotime($request->tanggal_beli));
             $totalBruto = [];
