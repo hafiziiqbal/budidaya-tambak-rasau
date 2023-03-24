@@ -344,6 +344,7 @@
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
                             $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
+                            $(`#formDetail${index} input[name='type']`).val('update-detail');
                             $(`#formDetail${index}`).attr('action',
                                 `/pembelian/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);

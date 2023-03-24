@@ -68,11 +68,18 @@ class PembagianBibitRequest extends FormRequest
         }
 
         if ($this->type == 'update-detail') {
-
             $validate =
                 [
                     'quantity' => 'required|numeric|between:0,99999999.99',
                     'id_jaring' => 'nullable|unique:detail_pembagian_bibit,id_jaring,' . $this->id,
+                    'id_kolam' => 'required|exists:master_kolam,id',
+                ];
+        }
+        if ($this->type == 'store-detail') {
+            $validate =
+                [
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'id_jaring' => 'nullable|unique:detail_pembagian_bibit,id_jaring',
                     'id_kolam' => 'required|exists:master_kolam,id',
                 ];
         }

@@ -185,11 +185,14 @@
                                     <span></span>
                                 </label>
                             </div>
-                            <button type="button" class="btn-close d-none"  aria-label="Close"></button>
+                            <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
                 `<div class="card-body border">        
+                    <div id="alert${index}">
+                            @include('components.alert')
+                    </div>
                     @csrf     
                         <input type="hidden" name="type" value="update-detail">
                         <input type="hidden" name="id" value="${item.id}">
@@ -283,20 +286,16 @@
                     type: method,
 
                     success: function(response) {
-                        console.log(response);
+                        $("small[id^='error']").html('');
                         if (response.success != undefined) {
                             $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                             $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} .status-header`).removeClass('d-none')
-                            $(`#formDetail${index} .status-header span`).html(response
-                                .success)
-                            setTimeout(function() {
-                                $(`#formDetail${index} .status-header`).addClass(
-                                    "d-none");
-                            }, 3000);
+                            $(`#alert${index} #alertNotif`).removeClass('d-none');
+                            $(`#alert${index} #alertNotif span`).html(response.success);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
                             loadDataHeader();
                         }
 
@@ -306,13 +305,6 @@
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                            $(`#formDetail${index} .status-error-header span`).html(response
-                                .error)
-                            setTimeout(function() {
-                                $(`#formDetail${index} .status-error-header`).addClass(
-                                    "d-none");
-                            }, 3000);
                             loadDataHeader();
                         }
 
@@ -322,8 +314,10 @@
                             $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).children().addClass('d-none')
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
+                            $(`#formDetail${index} input[name='type']`).val('update-detail');
+                            $(`#formDetail${index} input[name='id']`).val(response.id);
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
-                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
                                 `/pembagian-bibit/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
@@ -353,6 +347,13 @@
                             $(`#errorKolam${index}`).html(
                                 `*${errors.id_kolam}`)
                         }
+
+                        if (errors.general) {
+                            $(`#alert${index} #alertNotifError`).removeClass('d-none');
+                            $(`#alert${index} #alertNotifError span`).html(errors.general);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
+                        }
+
 
                     },
 
@@ -422,12 +423,13 @@
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
             $(`#formDetail${number}`).attr('action', '/pembagian-bibit/detail')
+            $(`#formDetail${number} input[name='type']`).val('store-detail');
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
-            $(`#formDetail${number} .btn-close`).removeClass('d-none');
+            $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
 
 
-            $(`#formDetail${number} .btn-close`).click(function() {
+            $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
 
