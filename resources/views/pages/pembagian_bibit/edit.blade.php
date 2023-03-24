@@ -10,6 +10,7 @@
     <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
         @csrf
         <div id="headerPembagian" class="mb-4">
+
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembagian</label>
             </div>
@@ -19,13 +20,15 @@
             <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
                     aria-hidden="true"></i>
                 <span></span></label>
-
+            <div id="alertHeader">
+                @include('components.alert')
+            </div>
             <div class="mb-3">
                 <label for="inputNama" class="form-label">Tanggal Pembagian</label>
                 <div class="input-group mb-3">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" required>
                 </div>
             </div>
 
@@ -117,8 +120,7 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
-            console.log('masuk');
+        $("#formHeader").on("submit", function(e) { //id of form             
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
 
@@ -140,11 +142,10 @@
                     if (response.success != undefined) {
                         $('#btnSimpanHeader').removeAttr('disabled')
                         $('#btnSimpanHeader').children().addClass('d-none')
-                        $('.status-header').removeClass('d-none')
-                        $('.status-header span').html(response.success)
-                        setTimeout(function() {
-                            $(".status-header").addClass("d-none");
-                        }, 3000);
+                        $('#alertNotif').removeClass('d-none');
+                        $('#alertNotif span').html(response.success);
+                        $('#alertHeader').append(`@include('components.alert')`);
+
                         loadDataHeader();
                     }
                 },
@@ -190,11 +191,13 @@
             let cardBody = $(
                 `<div class="card-body border">        
                     @csrf     
+                        <input type="hidden" name="type" value="update-detail">
+                        <input type="hidden" name="id" value="${item.id}">
                         <input type="hidden" name="id_header_pembagian_bibit" id="idHeader${index}" value="${item.id_header_pembagian_bibit}">
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
-                            <label class="error-quantity"></label>
+                            <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3 select-jaring">
                             <label class="form-label">Pilih Jaring</label>
@@ -206,7 +209,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <label class="error-jaring"></label>
+                            <small class="text-danger" id="errorJaring${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Kolam</label>
@@ -218,7 +221,7 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <label class="error-kolam"></label>
+                            <small class="text-danger" id="errorKolam${index}"></small>
                         </div>       
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
@@ -261,9 +264,9 @@
             // handle sumbit
             $(`#formDetail${index}`).on("submit", function(e) { //id of form 
                 e.preventDefault();
-                $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
-                $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
-                $(`#btnDeleteDetail${index}`).attr('disabled', 'disabled')
+                // $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
+                // $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
+                // $(`#btnDeleteDetail${index}`).attr('disabled', 'disabled')
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
@@ -332,14 +335,25 @@
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                         $(`#btnSaveDetail${index}`).children().addClass('d-none')
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                        $(`#formDetail${index} .status-error-header span`).html(response
-                            .error)
-                        setTimeout(function() {
-                            $(`#formDetail${index} .status-error-header`).addClass(
-                                "d-none");
-                        }, 3000);
                         loadDataHeader();
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+
+                        if (errors.quantity) {
+                            $(`#errorQuantity${index}`).html(
+                                `*${errors.quantity}`)
+                        }
+
+                        if (errors.id_jaring) {
+                            $(`#errorJaring${index}`).html(
+                                `*${errors.id_jaring}`)
+                        }
+
+                        if (errors.id_kolam) {
+                            $(`#errorKolam${index}`).html(
+                                `*${errors.id_kolam}`)
+                        }
+
                     },
 
                 })

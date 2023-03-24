@@ -66,12 +66,31 @@ class PembagianBibitRequest extends FormRequest
                     'detail.*.id_kolam' => 'required|exists:master_kolam,id',
                 ];
         }
+
+        if ($this->type == 'update-detail') {
+
+            $validate =
+                [
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'id_jaring' => 'nullable|unique:detail_pembagian_bibit,id_jaring,' . $this->id,
+                    'id_kolam' => 'required|exists:master_kolam,id',
+                ];
+        }
         return $validate;
     }
 
     public function messages()
     {
         return [
+            'id_kolam.required' => 'Kolam harus dipilih',
+            'id_kolam.exists' => 'Kolam tidak tersedia',
+
+            'id_jaring.unique' => 'Jaring digunakan oleh data lain',
+
+            'quantity.required' => 'Quantity harus diisi',
+            'quantity.numeric' => 'Quantity harus berupa angka',
+            'quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
+
             'detail.*.id_jaring.required' => 'Jaring dengan kolam yang sama harus dipilih salah satu',
             'detail.*.id_jaring.distinct' => 'Jaring tidak boleh duplikat',
             'detail.*.id_jaring.unique' => 'Jaring digunakan oleh data lain',

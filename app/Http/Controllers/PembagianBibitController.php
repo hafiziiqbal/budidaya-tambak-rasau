@@ -181,7 +181,7 @@ class PembagianBibitController extends Controller
                 ],
             ], 422);
         }
-        
+
         // return response()->json($request->id_detail_beli);
         $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
 
@@ -305,8 +305,9 @@ class PembagianBibitController extends Controller
         }
     }
 
-    public function updateDetail(Request $request, $id)
+    public function updateDetail(PembagianBibitRequest $request, $id)
     {
+
         // cek jaring dan kolam
         $kolam = MasterKolam::find($request->id_kolam);
         $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
@@ -315,12 +316,16 @@ class PembagianBibitController extends Controller
             ->where('id_kolam', $request->id_kolam)
             ->first();
 
-        $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-        if ($batasJaring >= 1 && $request->id_jaring == null && $kolam->id != $request->id_kolam) {
-            return response()->json([
-                'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-            ]);
+        $cekJaringDetailBibit = DB::table('detail_pembagian_bibit')->where('id', $id)->first()->id_jaring;
+        if ($cekJaringDetailBibit != null) {
+            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+            if ($batasJaring >= 1 && $request->id_jaring == null) {
+                return response()->json([
+                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                ]);
+            }
         }
+
         if ($request->id_jaring != null) {
             $jaring = MasterJaring::find($request->id_jaring);
             if ($jaring->id_kolam != null && $jaring->id != $request->id_jaring) {
@@ -329,7 +334,6 @@ class PembagianBibitController extends Controller
                 ]);
             }
         }
-
         // cek quantity
         $detailPembagianTanpaDataUpdate = DetailPembagianBibit::where('id_header_pembagian_bibit', $request->id_header_pembagian_bibit)->where('id', '!=', $id)->get();
         $totalQuantityDetailPembagian =  collect($detailPembagianTanpaDataUpdate)->sum('quantity') + $request->quantity;
