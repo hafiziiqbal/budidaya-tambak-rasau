@@ -119,6 +119,8 @@
         let index = 0;
         let bibitQuantity = 0
         let produkQuantity = 0
+        let sortirQuantity = 0
+        let bagi = ''
 
         let toastTrigger = $('#infoDataBtn')
         let toastLiveExample = $('#infoData')
@@ -157,9 +159,16 @@
             produkQuantity = parseFloat($(`#selectDetailBeli`).find(':selected').data('produkquantity') ?? 0)
             setToast()
         });
+        sortirQuantity = parseFloat($(`#selectDetailPanen`).find(':selected').data('sortirquantity') ?? 0)
+        $('#infoDetailPanen label').html(sortirQuantity)
+        $(`#selectDetailPanen`).on('change', function() {
+            sortirQuantity = parseFloat($(`#selectDetailPanen`).find(':selected').data('sortirquantity') ?? 0)
+            $('#infoDetailPanen label').html(sortirQuantity)
+        });
 
 
         $('input[type=radio][name=jenis_pembagian]').change(function() {
+            bagi = this.value
             if (this.value == 'sortir') {
                 $('#bibitContainer').addClass('d-none');
                 $('#sortirContainer').removeClass('d-none');
@@ -232,7 +241,9 @@
             })
 
             $('body').on('change', '.quantity', function() {
-                // inisialisasi variabel total
+                console.log(bagi);
+
+                // inisialisasi variabel total                
                 var total = 0;
 
                 // ulangi semua elemen dengan class yang sama
@@ -241,12 +252,17 @@
                     total += parseInt($(this).val());
                 });
 
+                if (bagi == 'bibit') {
+                    $('#infoDetailBeli label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
+                        bibitQuantity - total))
 
-                $('#infoDetailBeli label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
-                    bibitQuantity - total))
+                    $('#infoProduk label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
+                        bibitQuantity - total))
+                } else {
+                    $('#infoDetailPanen label').html((sortirQuantity - total) < 0 ? 'Quantity melebihi batas' : (
+                        sortirQuantity - total))
+                }
 
-                $('#infoProduk label').html((bibitQuantity - total) < 0 ? 'Quantity melebihi batas' : (
-                    bibitQuantity - total))
             });
 
         }

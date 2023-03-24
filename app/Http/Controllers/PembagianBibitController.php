@@ -173,6 +173,15 @@ class PembagianBibitController extends Controller
 
     public function storeSortir(PembagianBibitRequest $request)
     {
+        // jika detail null
+        if ($request->detail == null) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Detail pembagian tidak tersedia"
+                ],
+            ], 422);
+        }
+        
         // return response()->json($request->id_detail_beli);
         $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
 
