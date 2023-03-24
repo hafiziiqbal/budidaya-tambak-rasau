@@ -14,14 +14,15 @@
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Pembagian Pakan</label>
             </div>
+            <input type="hidden" name="type" value="store-all">
             <div class="mb-3">
                 <label for="inputTanggalPembagian" class="form-label">Tanggal Pembagian</label>
-                <div class="input-group mb-3">
+                <div class="input-group">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tgl_pembagian" id="inputTanggalPembagian" class="form-control"
                         aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
                 </div>
-
+                <small class="text-danger" id="errorTglBagi"></small>
             </div>
 
 
@@ -31,7 +32,9 @@
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Detail Pembagian Pakan</label>
             </div>
-
+            <div id="alertGeneral">
+                @include('components.alert')
+            </div>
             <div class="error-element">
 
             </div>
@@ -50,8 +53,6 @@
 @push('script')
     <script>
         let index = 0;
-
-
 
         // inisialisasi form select 2
         $(".form-select").select2({
@@ -82,7 +83,8 @@
                                         {{ $value->produk->nama }}
                                     </option>
                                 @endforeach
-                            </select>                            
+                            </select>    
+                            <small class="text-danger" id="errorPakan${index}"></small>
                         </div>
                         <div>
                             <label class="form-label">Pilih Tong</label>
@@ -94,12 +96,12 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <label class="error-tong"></label>
+                            <small class="text-danger" id="errorTong${index}"></small>
                         </div> 
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
-                            <label class="error-quantity"></label>
+                            <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>                       
                     </div>`
             )
@@ -114,24 +116,6 @@
                 containerCssClass: "select2--medium",
                 dropdownCssClass: "select2--medium",
             });
-
-            // $(`#selectTong${index}`).on('change', function() {
-            //     // mengambil nilai opsi yang dipilih
-            //     let selectFirst = $(this);
-            //     let selectedValue = $(this).val();
-
-            //     // validasi nilai opsi
-            //     $('select.select-tong').not(this).each(function() {
-            //         // jika nilai opsi sudah dipilih di element select2 lain
-            //         if ($(this).val() == selectedValue && $(this).val() != '') {
-            //             // menampilkan alert
-            //             alert(`Tong ini sudah digunakan`);
-            //             // menghapus nilai opsi yang dipilih di element select2 baru
-            //             $(this).val('').trigger('change.select2');
-            //             return false
-            //         }
-            //     });
-            // });
 
             $(`#detailPakan${index} .btn-close`).click(function() {
                 $(this).parent().parent().remove();
@@ -186,6 +170,31 @@
                 error: function(response) { // handle the error            
                     $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
+
+                    let errors = response.responseJSON.errors
+                    $("small[id^='error']").html('');
+
+                    if (errors.general) {
+                        $(`#alertGeneral #alertNotifError`).removeClass('d-none');
+                        $(`#alertGeneral #alertNotifError span`).html(errors.general);
+                        $(`#alertGeneral`).append(`@include('components.alert')`);
+                    }
+
+                    if (errors.tgl_pembagian) {
+                        $(`#errorTglBagi`).html(`*${errors.tgl_pembagian}`)
+                    }
+
+                    for (let x = 0; x < index + 1; x++) {
+                        if (`detail.${x}.id_detail_beli` in errors) {
+                            $(`#errorPakan${x}`).html(`*${errors[`detail.${x}.id_detail_beli`]}`)
+                        }
+                        if (`detail.${x}.id_tong` in errors) {
+                            $(`#errorTong${x}`).html(`*${errors[`detail.${x}.id_tong`]}`)
+                        }
+                        if (`detail.${x}.quantity` in errors) {
+                            $(`#errorQuantity${x}`).html(`*${errors[`detail.${x}.quantity`]}`)
+                        }
+                    }
                 },
 
             })
