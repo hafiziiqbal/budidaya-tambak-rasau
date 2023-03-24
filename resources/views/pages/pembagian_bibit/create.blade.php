@@ -256,8 +256,8 @@
         // handle sumbit
         $(`#formPembagian`).on("submit", function(e) { //id of form 
             e.preventDefault();
-            $(`#btnSimpan`).attr('disabled', 'disabled')
-            $(`#btnSimpan`).children().removeClass('d-none')
+            // $(`#btnSimpan`).attr('disabled', 'disabled')
+            // $(`#btnSimpan`).children().removeClass('d-none')
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
@@ -293,6 +293,15 @@
                         $(".error-element .btn-close").click()
                         window.location.href = "{{ route('pembagian.bibit') }}";
 
+
+
+                    }
+
+                    if (response.success != undefined) {
+                        $(".error-element .btn-close").click()
+                        // Set a cookie
+                        document.cookie = `success=Berhasil Membagikan Bibit;path=/pembagian-bibit`;
+                        window.location.href = "{{ route('pembagian.bibit') }}";
                     }
                 },
                 error: function(response) { // handle the error      

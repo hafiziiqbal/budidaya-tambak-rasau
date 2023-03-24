@@ -26,6 +26,7 @@ class PembagianBibitRequest extends FormRequest
         $validate = '';
         $idDetailBeliValidate = '';
         $idDetailPanenValidate = '';
+        $validateJaring = 'nullable';
 
         if ($this->type == 'store-all') {
 
@@ -38,13 +39,30 @@ class PembagianBibitRequest extends FormRequest
                 $idDetailBeliValidate = 'nullable';
             }
 
+            $details = $this->input('detail');
+            $hasValidDetail = false;
+            foreach ($details as $key => $detail) {
+                if ($detail['id_jaring'] !== null && $this->hasDuplicateKolamId($detail['id_kolam'], $details, $key)) {
+                    $hasValidDetail = true;
+                    break;
+                }
+            }
+
+            if (!$hasValidDetail) {
+                foreach ($details as $key => $detail) {
+                    if ($detail['id_jaring'] === null && $this->hasDuplicateKolamId($detail['id_kolam'], $details, $key)) {
+                        $validateJaring = 'required';
+                    }
+                }
+            }
+
             $validate =
                 [
                     'tgl_pembagian' => 'required|date_format:d-m-Y',
                     'id_detail_beli' => $idDetailBeliValidate,
                     'id_detail_panen' => $idDetailPanenValidate,
                     'detail.*.quantity' => 'required|numeric|between:0,99999999.99',
-                    'detail.*.id_jaring' => 'nullable|distinct',
+                    'detail.*.id_jaring' => $validateJaring . '|distinct|unique:detail_pembagian_bibit,id_jaring',
                     'detail.*.id_kolam' => 'required|exists:master_kolam,id',
                 ];
         }
@@ -54,7 +72,9 @@ class PembagianBibitRequest extends FormRequest
     public function messages()
     {
         return [
+            'detail.*.id_jaring.required' => 'Jaring dengan kolam yang sama harus dipilih salah satu',
             'detail.*.id_jaring.distinct' => 'Jaring tidak boleh duplikat',
+            'detail.*.id_jaring.unique' => 'Jaring digunakan oleh data lain',
 
             'detail.*.id_kolam.required' => 'Kolam harus dipilih',
             'detail.*.id_kolam.exists' => 'Kolam tidak tersedia',
@@ -72,5 +92,16 @@ class PembagianBibitRequest extends FormRequest
             'tgl_pembagian.required' => 'Tanggal pembagian harus diisi',
             'tgl_pembagian.date_format' => 'Tanggal pembagian memiliki format d-m-Y',
         ];
+    }
+
+    private function hasDuplicateKolamId($kolamId, $details, $currentIndex)
+    {
+        foreach ($details as $key => $detail) {
+            if ($key !== $currentIndex && $detail['id_kolam'] === $kolamId) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
