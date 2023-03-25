@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PembagianPakanRequest;
 use App\Models\DetailBeli;
 use App\Models\MasterTong;
 use Illuminate\Support\Arr;
@@ -63,7 +64,7 @@ class PembagianPakanController extends Controller
     {
         $produkPakan = DetailBeli::with('produk')
             ->whereHas('produk', function ($query) {
-                $query->where('id_kategori', '=', 1);
+                $query->where('id_kategori', '=', 5);
             })->where('quantity_stok', '>', '0')->get();
 
         $tong =  DB::table('master_tong')
@@ -80,8 +81,15 @@ class PembagianPakanController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(PembagianPakanRequest $request)
     {
+        if ($request->detail == null) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Detail pembagian tidak tersedia"
+                ],
+            ], 422);
+        }
         // return response()->json($request->id_detail_beli);
         $tglPembagian = date('Y-m-d', strtotime($request->tgl_pembagian));
         // return response()->json($request->all());
@@ -111,8 +119,10 @@ class PembagianPakanController extends Controller
             // Membandingkan quantity dengan quantity_stok
             if ($quantity > $quantity_stok) {
                 return response()->json([
-                    'error' => "Quantity $namaProduk melebihi jumlah stok"
-                ]);
+                    'errors' => [
+                        'general' => "Quantity $namaProduk melebihi jumlah stok"
+                    ],
+                ], 422);
             }
         }
 
@@ -120,7 +130,11 @@ class PembagianPakanController extends Controller
         foreach ($request->detail as $detail) {
             $id_tong = $detail['id_tong'];
             if (in_array($id_tong, $tongs)) {
-                return response()->json(['error' => 'Tong Tidak Bisa Digunakan Untuk Dua Pembagian']);
+                return response()->json([
+                    'errors' => [
+                        'general' => 'Tong Tidak Bisa Digunakan Untuk Dua Pembagian'
+                    ],
+                ], 422);
             }
             $tongs[] = $id_tong;
         }
@@ -165,7 +179,7 @@ class PembagianPakanController extends Controller
         ]);
     }
 
-    public function storeDetail(Request $request)
+    public function storeDetail(PembagianPakanRequest $request)
     {
 
         // return response()->json($request->all());
@@ -175,8 +189,10 @@ class PembagianPakanController extends Controller
         // Mengecek apakah quantity_stok pada tabel detail_beli lebih besar dari 0
         if ($detailBeli->quantity_stok <= 0) {
             return response()->json([
-                'error' => "Produk Pakan Sudah Tidak Ada Stok"
-            ]);
+                'errors' => [
+                    'general' => "Produk Pakan Sudah Tidak Ada Stok"
+                ],
+            ], 422);
         }
 
         // cek apakah id_tong sudah dipakai pada tabel detail_pembagian_bibit
@@ -186,8 +202,10 @@ class PembagianPakanController extends Controller
 
         if ($count > 0) {
             return response()->json([
-                'error' => "Tong Sudah Digunakan"
-            ]);
+                'errors' => [
+                    'general' => "Tong Sudah Digunakan"
+                ],
+            ], 422);
         }
 
         // Hitung total quantity dari detail_pembagian_pakan yang menggunakan id_tong yang sama dengan yang diinputkan di request
@@ -199,8 +217,10 @@ class PembagianPakanController extends Controller
         if ($total_quantity_to_use > (float)$detailBeli->quantity_stok) {
             // Jika melebihi, berikan respon quantity melebihi batas
             return response()->json([
-                'error' => "Quantity melebihi jumlah stok"
-            ]);
+                'errors' => [
+                    'general' => "Quantity melebihi jumlah stok"
+                ],
+            ], 422);
         }
 
         $detailPembagianPakan = DetailPembagianPakan::create([
@@ -234,7 +254,7 @@ class PembagianPakanController extends Controller
     {
         $produkPakan = DetailBeli::with('produk')
             ->whereHas('produk', function ($query) {
-                $query->where('id_kategori', '=', 1);
+                $query->where('id_kategori', '=', 5);
             })->get();
 
         $tong =  DB::table('master_tong')
@@ -274,7 +294,7 @@ class PembagianPakanController extends Controller
         ]);
     }
 
-    public function updateDetail(Request $request, $id)
+    public function updateDetail(PembagianPakanRequest $request, $id)
     {
 
         // Mendapatkan data detail_pembagian_pakan berdasarkan $id
@@ -286,7 +306,11 @@ class PembagianPakanController extends Controller
             ->first();
 
         if ($duplicate) {
-            return response()->json(['error' => 'Tong Tidak Bisa Digunakan Untuk Dua Pembagian']);
+            return response()->json([
+                'errors' => [
+                    'general' => 'Tong Tidak Bisa Digunakan Untuk Dua Pembagian'
+                ],
+            ], 422);
         }
 
         // Menghitung jumlah quantity dari tabel detail_pembagian_pakan dengan acuan id_tong yang sama dengan nilai yang diterima dari $request
@@ -299,8 +323,10 @@ class PembagianPakanController extends Controller
         // Memeriksa apakah jumlah quantity dari tabel detail_pembagian_pakan dengan acuan id_tong yang sama dengan nilai yang diterima dari $request melebihi jumlah column quantity_stok pada tabel detail_beli
         if ($totalQuantity > $detailPembagianPakan->detail_beli->quantity) {
             return response()->json([
-                'error' => "Quantity $namaProduk melebihi jumlah stok"
-            ]);
+                'errors' => [
+                    'general' => "Quantity $namaProduk melebihi jumlah stok"
+                ],
+            ], 422);
         }
 
         // Memperbarui nilai column quantity pada detail_pembagian_pakan dengan nilai yang diterima dari $request

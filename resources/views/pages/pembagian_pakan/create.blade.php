@@ -161,10 +161,9 @@
                     }
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
-
-                        {{ Session::flash('success', 'Berhasil Bagikan Pakan') }}
+                        // Set a cookie
+                        document.cookie = `success=Berhasil Membagikan Pakan;path=/pembagian-pakan`;
                         window.location.href = "{{ route('pembagian.pakan') }}";
-
                     }
                 },
                 error: function(response) { // handle the error            

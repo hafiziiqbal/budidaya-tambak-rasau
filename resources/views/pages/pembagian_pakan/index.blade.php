@@ -24,6 +24,12 @@
 
 @push('script')
     <script>
+        alert = getCookie('success');
+        if (alert != '') {
+            $('#alertNotif').removeClass('d-none');
+            $('#alertNotif span').html(alert);
+            document.cookie = `success=;path=/pembagian-pakan`;
+        }
         $(document).ready(function() {
             let table = $('#tblPembagianPakan').DataTable({
                 responsive: true,

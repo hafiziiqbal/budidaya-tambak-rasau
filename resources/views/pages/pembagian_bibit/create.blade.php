@@ -304,15 +304,7 @@
                         `)
 
                         $('.error-element').append(errorElement);
-                    }
-                    if (response.success != undefined) {
-                        $(".error-element .btn-close").click()
-                        window.location.href = "{{ route('pembagian.bibit') }}";
-
-
-
-                    }
-
+                    }                    
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
                         // Set a cookie

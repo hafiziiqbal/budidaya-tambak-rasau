@@ -326,25 +326,25 @@
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} input[name='type']`).val('update-detail');
-
-                            $(`#formDetail${index} input.alt`).val($(`.produk${index}`).val());
-                            $(`.produk${index}`).select2("enable", false);
 
                             $(`#alert${index} #alertNotif`).removeClass('d-none');
                             $(`#alert${index} #alertNotif span`).html(response.success);
                             $(`#alert${index}`).append(`@include('components.alert')`);
-
-                            $(`#formDetail${index} input.alt`).attr('name', 'id_produk');
-                            $(`#formDetail${index} select.produk${index}`).removeAttr('name');
                             loadDataHeader();
                         }
 
                         if (response.save_detail != undefined) {
+
+                            $(`.produk${index}`).select2("enable", false);
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
                             $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
+
+                            $(`#formDetail${index} input.alt`).val($(`.produk${index}`).val());
+                            $(`#formDetail${index} input.alt`).attr('name', 'id_produk');
+                            $(`#formDetail${index} select.produk${index}`).removeAttr('name');
                             $(`#formDetail${index} input[name='type']`).val('update-detail');
+
                             $(`#formDetail${index}`).attr('action',
                                 `/pembelian/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
