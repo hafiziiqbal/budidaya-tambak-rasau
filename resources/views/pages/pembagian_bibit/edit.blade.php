@@ -428,7 +428,6 @@
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
 
-
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })

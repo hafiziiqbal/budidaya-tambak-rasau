@@ -33,12 +33,37 @@ class PanenRequest extends FormRequest
                     'detail.*.id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
                 ];
         }
+        if ($this->type == 'update-detail') {
+            $validate =
+                [
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'status' => 'required',
+                    'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                ];
+        }
+        if ($this->type == 'store-detail') {
+            $validate =
+                [
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'status' => 'required',
+                    'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                ];
+        }
         return $validate;
     }
 
     public function messages()
     {
         return [
+            'quantity.required' => 'Quantity harus diisi',
+            'quantity.numeric' => 'Quantity harus berupa angka',
+            'quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
+
+            'status' => 'Status harus dipilih',
+
+            'id_detail_pembagian_bibit.required' => 'Ikan harus dipilih',
+            'id_detail_pembagian_bibit.exists' => 'Ikan tidak tersedia',
+
             'tgl_panen.required' => 'Tanggal panen harus diisi',
             'tgl_panen.date_format' => 'Tanggal panen memiliki format d-m-Y',
 

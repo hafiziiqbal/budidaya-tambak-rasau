@@ -198,16 +198,20 @@ class PembagianBibitController extends Controller
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
             if ($batasJaring >= 1 && $value->id_jaring == null) {
                 return response()->json([
-                    'error' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                ]);
+                    'errors' => [
+                        'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                    ],
+                ], 422);
             }
 
             if ($value->id_jaring != null) {
                 $jaring = MasterJaring::find($value->id_jaring);
                 if ($jaring->id_kolam != null) {
                     return response()->json([
-                        'error' => "Jaring Sudah Digunakan Oleh Data Lain"
-                    ]);
+                        'errors' => [
+                            'general' => "Jaring Sudah Digunakan Oleh Data Lain"
+                        ],
+                    ], 422);
                 }
             }
         }
@@ -223,8 +227,10 @@ class PembagianBibitController extends Controller
         // jika total quantity melebihi quantity_stok
         if ($totalQuantity > $quantityStok) {
             return response()->json([
-                'error' => 'Total quantity melebihi quantity sortir yang ada'
-            ]);
+                'errors' => [
+                    'general' => 'Total quantity melebihi quantity sortir yang ada'
+                ],
+            ], 422);
         }
         // cek quantity ----------------------------------------------------------
         $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli'])->first();

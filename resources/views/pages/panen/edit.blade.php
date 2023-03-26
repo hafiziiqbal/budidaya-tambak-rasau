@@ -155,12 +155,18 @@
                                     <span></span>
                                 </label>
                             </div>
-                            <button type="button" class="btn-close d-none"  aria-label="Close"></button>
+                            <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">        
-                    @csrf     
+                `<div class="card-body border">
+                    <div id="alert${index}">
+                            @include('components.alert')
+                    </div>        
+                    @csrf    
+                    <input type="hidden" name="type" value="update-detail">
+                        <input type="hidden" name="id" value="${item.id}">                        
+                        <input type="hidden" class="alt" name="id_detail_pembagian_bibit" value="${item.id_detail_pembagian_bibit}">
                         <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">                        
                         <div class="mb-3 select-ikan">
                             <label class="form-label">Pilih Ikan</label>
@@ -168,10 +174,11 @@
                                 <option></option>
                                 @foreach ($pembagianBibit as $value)
                                     <option value="{{ $value->id }}" data-hide="{{ $value->quantity > 0 ? 'false' : 'true' }}">
-                                        {{ $value->header_pembagian_bibit->detail_beli->produk->nama }}
+                                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' | ' . $value->kolam->nama . ' ' . ($value->jaring == null ? '' : '& ' . $value->jaring->nama) . ($value->jaring_old == null ? '' : '& ' . $value->jaring_old->nama) }}
                                     </option>
                                 @endforeach
-                            </select>                            
+                            </select>        
+                            <small class="text-danger" id="errorIkan${index}"></small>
                         </div>  
                         <div class="mb-3 select-status">
                             <label class="form-label">Pilih Status</label>
@@ -180,11 +187,12 @@
                                 <option value="0">Sortir</option>
                                 <option value="1">Ikan</option>                                
                             </select>                            
+                            <small class="text-danger" id="errorStatus${index}"></small>
                         </div>                        
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
-                            <label class="error-quantity"></label>
+                            <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>    
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
@@ -245,7 +253,7 @@
                     type: method,
 
                     success: function(response) {
-                        console.log(response);
+                        $("small[id^='error']").html('');
                         if (response.success != undefined) {
                             $(`#selectIkan${index}`).select2("enable", false);
                             $(`#btnUpdateDetail${index}`).removeAttr('disabled')
@@ -253,13 +261,9 @@
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} .status-header`).removeClass('d-none')
-                            $(`#formDetail${index} .status-header span`).html(response
-                                .success)
-                            setTimeout(function() {
-                                $(`#formDetail${index} .status-header`).addClass(
-                                    "d-none");
-                            }, 3000);
+                            $(`#alert${index} #alertNotif`).removeClass('d-none');
+                            $(`#alert${index} #alertNotif span`).html(response.success);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
                             loadDataHeader();
 
 
@@ -271,13 +275,6 @@
                             $(`#btnSaveDetail${index}`).removeAttr('disabled')
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                            $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                            $(`#formDetail${index} .status-error-header span`).html(response
-                                .error)
-                            setTimeout(function() {
-                                $(`#formDetail${index} .status-error-header`).addClass(
-                                    "d-none");
-                            }, 3000);
                             loadDataHeader();
                         }
 
@@ -288,7 +285,16 @@
                             $(`#btnDeleteDetail${index}`).children().addClass('d-none')
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
-                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
+
+                            $(`#formDetail${index} input[name='type']`).val('update-detail');
+                            $(`#formDetail${index} input[name='id']`).val(response.id);
+                            $(`#formDetail${index} input.alt`).attr('name',
+                                'id_detail_pembagian_bibit');
+                            $(`#formDetail${index} input.alt`).val($(`#selectIkan${index}`).val());
+                            $(`#formDetail${index} select#selectIkan${index}`).removeAttr('name');
+                            $(`#selectIkan${index}`).select2("enable", false);
+
                             $(`#formDetail${index}`).attr('action',
                                 `/panen/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
@@ -300,14 +306,33 @@
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                         $(`#btnSaveDetail${index}`).children().addClass('d-none')
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
-                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                        $(`#formDetail${index} .status-error-header span`).html(response
-                            .error)
-                        setTimeout(function() {
-                            $(`#formDetail${index} .status-error-header`).addClass(
-                                "d-none");
-                        }, 3000);
                         loadDataHeader();
+
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+
+                        if (errors.quantity) {
+                            $(`#errorQuantity${index}`).html(
+                                `*${errors.quantity}`)
+                        }
+
+                        if (errors.id_detail_pembagian_bibit) {
+                            $(`#errorIkan${index}`).html(
+                                `*${errors.id_detail_pembagian_bibit}`)
+                        }
+
+                        if (errors.status) {
+                            $(`#errorStatus${index}`).html(
+                                `*${errors.status}`)
+                        }
+
+                        if (errors.general) {
+                            $(`#alert${index} #alertNotifError`).removeClass('d-none');
+                            $(`#alert${index} #alertNotifError span`).html(errors.general);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
+                        }
+
+
                     },
 
                 })
@@ -377,12 +402,16 @@
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
             $(`#formDetail${number}`).attr('action', '/panen/detail')
+            $(`#formDetail${number} input[name='type']`).val('store-detail');
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
-            $(`#formDetail${number} .btn-close`).removeClass('d-none');
+            $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
 
 
-            $(`#formDetail${number} .btn-close`).click(function() {
+            $(`#formDetail${number} input.alt[name='id_detail_pembagian_bibit']`).removeAttr('name');
+            $(`#formDetail${number} select#selectIkan${number}`).attr('name', 'id_detail_pembagian_bibit');
+
+            $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
 

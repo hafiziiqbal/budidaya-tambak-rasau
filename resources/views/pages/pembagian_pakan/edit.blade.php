@@ -297,9 +297,9 @@
 
                             $(`#formDetail${index} input[name='type']`).val('update-detail');
                             $(`#formDetail${index} input[name='id']`).val(response.id);
-                            $(`#formDetail${number} input.alt`).attr('name', 'id_detail_beli');
+                            $(`#formDetail${index} input.alt`).attr('name', 'id_detail_beli');
                             $(`#formDetail${index} input.alt`).val($(`#selectPakan${index}`).val());
-                            $(`#formDetail${number} select#selectPakan${number}`).removeAttr('name');
+                            $(`#formDetail${index} select#selectPakan${index}`).removeAttr('name');
                             $(`#selectPakan${index}`).select2("enable", false);
 
                             $(`#formDetail${index}`).attr('action',

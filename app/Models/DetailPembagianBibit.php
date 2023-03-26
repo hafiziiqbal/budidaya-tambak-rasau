@@ -34,6 +34,11 @@ class DetailPembagianBibit extends Model
         return $this->belongsTo(MasterJaring::class, 'id_jaring');
     }
 
+    public function jaring_old()
+    {
+        return $this->belongsTo(MasterJaring::class, 'id_jaring_old');
+    }
+
     public function kolam()
     {
         return $this->belongsTo(MasterKolam::class, 'id_kolam');
