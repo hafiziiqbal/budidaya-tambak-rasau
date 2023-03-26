@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use stdClass;
 use App\Models\Produk;
 use App\Models\DetailPanen;
 use App\Models\HeaderPanen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\PanenRequest;
 use App\Models\DetailPembagianBibit;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -35,8 +37,10 @@ class PanenController extends Controller
 
     public function create()
     {
-        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring'])
             ->where('quantity', '>', '0')->get();
+
+        // return response()->json($pembagianBibit);
 
 
         return view('pages.panen.create')->with([
@@ -45,17 +49,29 @@ class PanenController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(PanenRequest $request)
     {
+        // jika detail null
+        if ($request->detail == null) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Detail panen tidak tersedia"
+                ],
+            ], 422);
+        }
         // return response()->json($request->all());
-        $tglPanen = date('Y-m-d', strtotime($request->tgl_pembagian));
+        $tglPanen = date('Y-m-d', strtotime($request->tgl_panen));
         $details = $request->detail;
 
         // loop through each detail and calculate total quantity based on id_detail_pembagian_bibit
+
         $totalQuantities = [];
-        foreach ($details as $detail) {
+        $listKey = [];
+        foreach ($details as $key => $detail) {
+
             $idDetail = $detail['id_detail_pembagian_bibit'];
             $quantity = $detail['quantity'];
+            $listKey[$idDetail] = $key;
 
             if (isset($totalQuantities[$idDetail])) {
                 $totalQuantities[$idDetail] += $quantity;
@@ -69,11 +85,12 @@ class PanenController extends Controller
             $detailPembagianBibit = DB::table('detail_pembagian_bibit')->where('id', $idDetail)->first();
             if ($totalQuantity > $detailPembagianBibit->quantity) {
                 return response()->json([
-                    'error' => "Total Quantity Melebihi Quantity Pembagian"
-                ]);
+                    'errors' => [
+                        "detail.$idDetail.quantity-all" => "Total Quantity tadak boleh lebih dari $detailPembagianBibit->quantity"
+                    ],
+                ], 422);
             }
         }
-
         // Masukkan data ke tabel detail_panen
         $headerPanen = new HeaderPanen;
         $headerPanen->tgl_panen = $tglPanen;
@@ -98,6 +115,12 @@ class PanenController extends Controller
                 'nama_jaring' => $detail_pembagian_bibit->jaring == null ? null : $detail_pembagian_bibit->jaring->nama,
                 'posisi_jaring' => $detail_pembagian_bibit->jaring == null ? null : $detail_pembagian_bibit->jaring->posisi,
             ]);
+
+            if ($detail_pembagian_bibit->quantity <= 0) {
+                $detail_pembagian_bibit->id_jaring_old = $detail_pembagian_bibit->id_jaring;
+                $detail_pembagian_bibit->id_jaring = null;
+                $detail_pembagian_bibit->save();
+            }
         }
         // exit();
         // Masukkan data ke dalam tabel produk

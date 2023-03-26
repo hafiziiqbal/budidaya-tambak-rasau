@@ -15,6 +15,7 @@ class DetailPembagianBibit extends Model
         'id_header_pembagian_bibit',
         'quantity',
         'id_jaring',
+        'id_jaring_old',
         'id_kolam',
     ];
 

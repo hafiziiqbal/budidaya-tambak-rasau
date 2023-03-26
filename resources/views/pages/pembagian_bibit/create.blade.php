@@ -291,20 +291,7 @@
 
                 success: function(response) {
                     $(`#btnSimpan`).removeAttr('disabled')
-                    $(`#btnSimpan`).children().addClass('d-none')
-                    if (response.error != undefined) {
-                        $(".error-element .btn-close").click()
-                        console.log(response.error);
-                        let errorElement = $(`
-                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                <i class="fa fa-warning"></i>
-                                <span>${response.error}</span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        `)
-
-                        $('.error-element').append(errorElement);
-                    }                    
+                    $(`#btnSimpan`).children().addClass('d-none')                    
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
                         // Set a cookie

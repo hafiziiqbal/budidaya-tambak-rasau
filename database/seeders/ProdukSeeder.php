@@ -17,7 +17,7 @@ class ProdukSeeder extends Seeder
     {
         Produk::updateOrCreate(
             [
-                'id_kategori' => 2,
+                'id_kategori' => 7,
                 'nama' => 'Nila',
                 'quantity' => 0,
             ],
@@ -25,7 +25,7 @@ class ProdukSeeder extends Seeder
 
         Produk::updateOrCreate(
             [
-                'id_kategori' => 2,
+                'id_kategori' => 7,
                 'nama' => 'Lele',
                 'quantity' => 0,
             ],
@@ -33,7 +33,7 @@ class ProdukSeeder extends Seeder
 
         Produk::updateOrCreate(
             [
-                'id_kategori' => 1,
+                'id_kategori' => 5,
                 'nama' => 'Pakan Grade A',
                 'quantity' => 0,
             ],

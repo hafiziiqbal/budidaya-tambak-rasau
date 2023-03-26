@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('quantity');
             $table->bigInteger('id_jaring')->nullable();
             $table->foreignId('id_kolam')->constrained('master_kolam');
+            $table->bigInteger('id_jaring_old')->nullable();
             $table->timestamps();
         });
     }
