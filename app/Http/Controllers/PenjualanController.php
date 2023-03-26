@@ -45,7 +45,7 @@ class PenjualanController extends Controller
         $customer = MasterCustomer::all();
 
         return view('pages.penjualan.create')->with([
-            'title' => 'TAMBAH PEMBELIAN',
+            'title' => 'TAMBAH PENJUALAN',
             'customers' => $customer,
             'panen' => $panen,
             'transaksi_toogle' => 1
