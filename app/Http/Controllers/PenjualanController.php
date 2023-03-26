@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PenjualanRequest;
 use Carbon\Carbon;
 use App\Models\Produk;
 use App\Models\DetailJual;
 use App\Models\HeaderJual;
+use App\Models\DetailPanen;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\MasterCustomer;
@@ -39,19 +41,54 @@ class PenjualanController extends Controller
 
     public function create()
     {
-        $produk = Produk::where('id_kategori', 3)->where('quantity', '>', 0)->get();
+        $panen = DetailPanen::where('status', 1)->where('quantity', '>', 0)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen'])->get();
         $customer = MasterCustomer::all();
 
         return view('pages.penjualan.create')->with([
             'title' => 'TAMBAH PEMBELIAN',
             'customers' => $customer,
-            'produk' => $produk,
+            'panen' => $panen,
             'transaksi_toogle' => 1
         ]);
     }
 
-    public function store(Request $request)
+    public function store(PenjualanRequest $request)
     {
+
+        $details = $request->detail;
+        $totalQuantities = [];
+        if ($request->detail == null) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Detail panen tidak tersedia"
+                ],
+            ], 422);
+        }
+
+        foreach ($details as $key => $detail) {
+
+            $idDetail = $detail['id_detail_panen'];
+            $quantity = $detail['quantity'];
+
+            if (isset($totalQuantities[$idDetail])) {
+                $totalQuantities[$idDetail] += $quantity;
+            } else {
+                $totalQuantities[$idDetail] = $quantity;
+            }
+        }
+
+        // validate total quantity against detail_pembagian_bibit
+        foreach ($totalQuantities as $idDetail => $totalQuantity) {
+            $detailPanen = DB::table('detail_panen')->where('id', $idDetail)->first();
+            if ($totalQuantity > $detailPanen->quantity) {
+                return response()->json([
+                    'errors' => [
+                        "detail.$idDetail.quantity-all" => "Total Quantity tadak boleh lebih dari $detailPanen->quantity"
+                    ],
+                ], 422);
+            }
+        }
+
         $randomString = Str::random(8);
         $invoice = Carbon::now()->timestamp . '-' . $request->customer . '-' . $randomString;
         $headerJual = HeaderJual::create([
@@ -65,18 +102,28 @@ class PenjualanController extends Controller
             'change' => $request->change,
         ]);
 
+
         foreach ($request->detail as $key => $valueArray) {
             $value = (object) $valueArray;
+            $detailPanen = DetailPanen::where('id', $value->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->first();
+            $produk = Produk::find($detailPanen->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->id_produk);
+            $produkIkan = Produk::where('nama',  $produk->nama)->where('id_kategori', 6)->first();
             DetailJual::create([
                 'id_header_jual' => $headerJual->id,
-                'id_produk' => $value->id_produk,
+                'id_produk' => $produkIkan->id,
+                'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
                 'harga_satuan' => $value->harga_satuan,
                 'diskon' => $value->diskon,
                 'quantity' => $value->quantity,
                 'sub_total' => $value->subtotal,
             ]);
             // update quantity produk
-            Produk::where('id', $value->id_produk)->update([
+            $produkIkan->update([
+                'quantity' => DB::raw("quantity-" . $value->quantity),
+            ]);
+
+            // update quantity produk
+            $detailPanen->update([
                 'quantity' => DB::raw("quantity-" . $value->quantity),
             ]);
         }

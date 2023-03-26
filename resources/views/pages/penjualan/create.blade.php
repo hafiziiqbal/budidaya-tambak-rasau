@@ -13,6 +13,7 @@
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Header Penjualan</label>
             </div>
+            <input type="hidden" name="type" value="store-all">
             <div class="mb-3">
                 <label for="selectCustomer" class="form-label">Customer</label>
                 <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
@@ -23,31 +24,43 @@
                         </option>
                     @endforeach
                 </select>
+                <small class="text-danger" id="errorCustomer"></small>
             </div>
             <div class="mb-3">
                 <label for="inputTotalBruto" class="form-label">Total Bruto</label>
-                <input type="number" class="form-control" id="inputTotalBruto" name="total_bruto" readonly>
+                <input type="number" class="form-control" id="inputTotalBruto" name="total_bruto" readonly value="0"
+                    required>
+                <small class="text-danger" id="errorTotalBruto"></small>
             </div>
             <div class="mb-3">
                 <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga">
+                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga" value="0"
+                    required>
+                <small class="text-danger" id="errorPotonganHarga"></small>
             </div>
             <div class="mb-3">
                 <label for="inputTotalNetto" class="form-label">Total Netto</label>
-                <input type="number" class="form-control" id="inputTotalNetto" name="total_netto" readonly>
+                <input type="number" class="form-control" id="inputTotalNetto" name="total_netto" readonly value="0"
+                    required>
+                <small class="text-danger" id="errorTotalNetto"></small>
             </div>
             <div class="mb-3">
                 <label for="inputPay" class="form-label">Bayar</label>
-                <input type="number" class="form-control" id="inputPay" name="pay">
+                <input type="number" class="form-control" id="inputPay" name="pay" required value="0">
+                <small class="text-danger" id="errorPay"></small>
             </div>
             <div class="mb-3">
                 <label for="inputChange" class="form-label">Kembali</label>
-                <input type="number" class="form-control" id="inputChange" name="change">
+                <input type="number" class="form-control" id="inputChange" name="change" required value="0">
+                <small class="text-danger" id="errorChange"></small>
             </div>
         </div>
         <div id="detail">
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Detail Jual</label>
+            </div>
+            <div id="alertGeneral">
+                @include('components.alert')
             </div>
             <div class="error-element">
             </div>
@@ -65,6 +78,7 @@
     <script>
         let index = 0;
         let quantity = 0;
+        let panen = {!! $panen !!}
 
         // inisialisasi form select 2
         $(".form-select").select2({
@@ -87,23 +101,26 @@
             let cardBody = $(
                 `<div class="card-body border">                                     
                 <div class="mb-3 ">
-                    <label class="form-label">Produk</label>
-                    <select class="form-select select-produk" id="selectProduk${index}" data-index="${index}" data-placeholder="Pilih Pakan" name="detail[${index}][id_produk]" >
+                    <label class="form-label">Produk Hasil Panen</label>
+                    <select class="form-select select-panen" id="selectProdukPanen${index}" data-index="${index}" data-placeholder="Pilih Produk Hasil Panen" name="detail[${index}][id_detail_panen]">
                         <option></option>
-                        @foreach ($produk as $value)
+                        @foreach ($panen as $value)
                             <option value="{{ $value->id }}">
-                                {{ $value->nama }}
+                                {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity . ')' }}
                             </option>
                         @endforeach
-                    </select>                            
+                    </select>
+                    <small class="text-danger" id="errorPanen${index}"></small>
                 </div>                
                 <div class="mb-3">
                     <label class="form-label">Harga Satuan</label>
                     <input type="text" class="form-control harga-satuan" name="detail[${index}][harga_satuan]" required>                    
+                    <small class="text-danger" id="errorhargaSatuan${index}"></small>
                 </div>                       
                 <div class="mb-3">
                     <label class="form-label">Diskon</label>
                     <input type="text" class="form-control diskon" name="detail[${index}][diskon]" required>                    
+                    <small class="text-danger" id="errorDiskon${index}"></small>
                 </div>                       
                 <div class="mb-3">
                     <label class="form-label">Quantity</label>
@@ -113,6 +130,7 @@
                 <div class="mb-3">
                     <label class="form-label">Subtotal</label>
                     <input type="text" class="form-control subtotal" name="detail[${index}][subtotal]" required readonly>                    
+                    <small class="text-danger" id="errorSubtotal${index}"></small>
                 </div>                       
             </div>`
             )
@@ -173,9 +191,6 @@
                 // Menghitung kembalian
                 hitungKembalian();
             });
-
-
-
         }
 
         // handle sumbit
@@ -201,21 +216,10 @@
                 success: function(response) {
                     $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
-                    if (response.error != undefined) {
-                        $(".error-element .btn-close").click()
-                        console.log(response.error);
-                        let errorElement = $(`
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <i class="fa fa-warning"></i>
-                        <span>${response.error}</span>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                `)
 
-                        $('.error-element').append(errorElement);
-                    }
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
+                        document.cookie = `success=Berhasil Menjual Produk;path=/jual`;
                         window.location.href = "{{ route('jual') }}";
 
                     }
@@ -223,6 +227,68 @@
                 error: function(response) { // handle the error            
                     $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
+
+                    let errors = response.responseJSON.errors
+                    $("small[id^='error']").html('');
+
+                    if (errors.general) {
+                        $(`#alertGeneral #alertNotifError`).removeClass('d-none');
+                        $(`#alertGeneral #alertNotifError span`).html(errors.general);
+                        $(`#alertGeneral`).append(`@include('components.alert')`);
+                    }
+
+                    if (errors.customer) {
+                        $(`#errorCustomer`).html(`*${errors.customer}`)
+                    }
+                    if (errors.total_bruto) {
+                        $(`#errorTotalBruto`).html(`*${errors.total_bruto}`)
+                    }
+                    if (errors.potongan_harga) {
+                        $(`#errorPotonganHarga`).html(`*${errors.potongan_harga}`)
+                    }
+                    if (errors.total_netto) {
+                        $(`#errorTotalNetto`).html(`*${errors.total_netto}`)
+                    }
+                    if (errors.pay) {
+                        $(`#errorPay`).html(`*${errors.pay}`)
+                    }
+                    if (errors.change) {
+                        $(`#errorChange`).html(`*${errors.change}`)
+                    }
+
+                    for (let x = 0; x < index + 1; x++) {
+                        if (`detail.${x}.id_detail_panen` in errors) {
+                            $(`#errorPanen${x}`).html(`*${errors[`detail.${x}.id_detail_panen`]}`)
+                        }
+                        if (`detail.${x}.harga_satuan` in errors) {
+                            $(`#errorhargaSatuan${x}`).html(
+                                `*${errors[`detail.${x}.harga_satuan`]}`)
+                        }
+                        if (`detail.${x}.diskon` in errors) {
+                            $(`#errorDiskon${x}`).html(`*${errors[`detail.${x}.diskon`]}`)
+                        }
+                        if (`detail.${x}.quantity` in errors) {
+                            $(`#errorQuantity${x}`).html(`*${errors[`detail.${x}.quantity`]}`)
+                        }
+                        if (`detail.${x}.subtotal` in errors) {
+                            $(`#errorSubtotal${x}`).html(`*${errors[`detail.${x}.subtotal`]}`)
+                        }
+                    }
+
+                    panen.forEach(element => {
+                        if (`detail.${element.id}.quantity-all` in errors) {
+                            // mencari semua elemen select yang memiliki nilai selected sama dengan nilai acuan
+                            $('select.select-panen').each(function() {
+                                if ($(this).val() == element.id) {
+
+                                    $(this).parent().parent().find(
+                                        "label[id^='errorQuantity']").html(
+                                        `*${errors[`detail.${element.id}.quantity-all`]}`
+                                    )
+                                }
+                            });
+                        }
+                    });
                 },
 
             })

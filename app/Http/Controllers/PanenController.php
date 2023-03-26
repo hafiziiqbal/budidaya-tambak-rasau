@@ -91,6 +91,7 @@ class PanenController extends Controller
                 ], 422);
             }
         }
+
         // Masukkan data ke tabel detail_panen
         $headerPanen = new HeaderPanen;
         $headerPanen->tgl_panen = $tglPanen;
