@@ -37,7 +37,7 @@
             <label for="inputQuantity" id="labelQuantity" class="form-label">Quantity <span
                     class="text-small fst-italic text-secondary">Bibit & Ikan(ekor/pcs) - Pakan(kg)</span></label>
             <input type="number" class="form-control" id="inputQuantity" required name="quantity"
-                value="{{ old('quantity') }}" step="0.01">
+                value="{{ old('quantity') ?? 0 }}" step="0.01" readonly>
             @if ($errors->has('quantity'))
                 <small class="text-danger">*{{ $errors->first('quantity') }}</small>
             @endif

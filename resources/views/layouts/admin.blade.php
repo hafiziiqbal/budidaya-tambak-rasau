@@ -92,12 +92,27 @@
                         </a>
 
 
+
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>
-                        <a class="nav-link {{ $title == 'PRODUK' || $title == 'TAMBAH PRODUK' || $title == 'EDIT PRODUK' ? 'active' : '' }}"
-                            href="{{ route('produk') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
+                        <a class="nav-link {{ isset($produk_toogle) ? 'active' : 'collapsed' }}" href="#"
+                            data-bs-toggle="collapse" data-bs-target="#collapseProduk" aria-expanded="false"
+                            aria-controls="collapseProduk">
+                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
                             Produk
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
+                        <div class="collapse {{ isset($produk_toogle) ? 'show' : '' }}" id="collapseProduk"
+                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PRODUK' || $title == 'TAMBAH PRODUK' || $title == 'EDIT PRODUK' ? 'active' : '' }}"
+                                    href="{{ route('produk') }}">Semua Produk</a>
+                            </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'BIBIT' || $title == 'TAMBAH BIBIT' || $title == 'EDIT BIBIT' ? 'active' : '' }}"
+                                    href="{{ route('jual') }}">Bibit</a>
+                            </nav>
+                        </div>
+
 
                         <div class="sb-sidenav-menu-heading">Transaksi Kami</div>
                         <a class="nav-link {{ isset($transaksi_toogle) ? 'active' : 'collapsed' }}" href="#"

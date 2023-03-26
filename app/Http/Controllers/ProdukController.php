@@ -16,7 +16,8 @@ class ProdukController extends Controller
         $kategori = Kategori::all();
         return view('pages.produk.index')->with([
             'title' => 'PRODUK',
-            'kategori' => $kategori
+            'kategori' => $kategori,
+            'produk_toogle' => 1
         ]);
     }
 
@@ -39,7 +40,8 @@ class ProdukController extends Controller
         $kategori = Kategori::all();
         return view('pages.produk.create')->with([
             'title' => 'TAMBAH PRODUK',
-            'kategori' => $kategori
+            'kategori' => $kategori,
+            'produk_toogle' => 1
         ]);
     }
 
@@ -68,7 +70,8 @@ class ProdukController extends Controller
         $produk = Produk::find($id);
         return view('pages.produk.edit')->with([
             'title' => 'EDIT PRODUK',
-            'produk' => $produk
+            'produk' => $produk,
+            'produk_toogle' => 1
         ]);
     }
 

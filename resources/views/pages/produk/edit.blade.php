@@ -20,7 +20,7 @@
         <div class="mb-3">
             <label for="inputQuantity" class="form-label">Quantity</label>
             <input type="text" class="form-control" id="inputQuantity" required name="quantity"
-                placeholder="Masukkan Alamat" value="{{ old('quantity') ?? $produk->quantity }}">
+                placeholder="Masukkan Alamat" value="{{ old('quantity') ?? $produk->quantity }}" readonly>
             @if ($errors->has('quantity'))
                 <small class="text-danger">*{{ $errors->first('quantity') }}</small>
             @endif
