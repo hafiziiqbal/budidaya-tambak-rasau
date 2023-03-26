@@ -5,7 +5,7 @@
         <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
         <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
     </ol>
-
+    
     {{-- header beli --}}
     <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
         @csrf

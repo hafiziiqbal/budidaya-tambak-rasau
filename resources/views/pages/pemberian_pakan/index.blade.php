@@ -45,8 +45,14 @@
                         },
                     },
                     {
-                        data: 'detail_pembagian_pakan.tong.nama',
-                        name: 'detail_pembagian_pakan.tong.nama'
+                        data: 'detail_pembagian_pakan',
+                        render: function(data) {
+                            if (data.tong == null) {
+                                return data.tong_old.nama
+                            } else {
+                                return data.tong.nama
+                            }
+                        }
                     },
                     {
                         data: 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk.nama',

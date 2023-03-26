@@ -14,6 +14,7 @@ class DetailPembagianPakan extends Model
         'id_header_pembagian_pakan',
         'id_detail_beli',
         'id_tong',
+        'id_tong_old',
         'quantity',
     ];
 
@@ -29,6 +30,11 @@ class DetailPembagianPakan extends Model
     public function tong()
     {
         return $this->belongsTo(MasterTong::class, 'id_tong');
+    }
+
+    public function tong_old()
+    {
+        return $this->belongsTo(MasterTong::class, 'id_tong_old');
     }
 
     public function header_pembagian_pakan()

@@ -6,13 +6,13 @@
         <li class="breadcrumb-item active">Edit Pemberian Pakan</li>
     </ol>
 
-
+    @include('components.alert')
     <form id="formPembagian" name="form_pembagian" action="{{ route('pemberian.pakan.update', $data->id) }}" method="POST">
         @csrf
         <div class="mb-3">
             <label for="inputAlamat" class="form-label">Pembagian Pakan</label>
-            <select class="form-select" id="selectBagiPakan" data-placeholder="Pilih Pembagaian Pakan"
-                name="id_pembagian_pakan">
+            <input type="hidden" name="id_pembagian_pakan" value="{{ $data->id_detail_pembagian_pakan }}">
+            <select class="form-select" id="selectBagiPakan" data-placeholder="Pilih Pembagaian Pakan">
                 <option></option>
                 @foreach ($pembagianPakan as $value)
                     <option value="{{ $value->id }}">
@@ -29,7 +29,7 @@
                 <option></option>
                 @foreach ($pembagianBibit as $value)
                     <option value="{{ $value->id }}">
-                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama }}
+                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity . ')' }}
                     </option>
                 @endforeach
             </select>
@@ -50,6 +50,8 @@
     <script>
         $('#selectBagiPakan').val({!! $data->id_detail_pembagian_pakan !!})
         $('#selectBagiBibit').val({!! $data->id_detail_pembagian_bibit !!})
+
+
         // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
@@ -57,5 +59,7 @@
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
         });
+
+        $('#selectBagiPakan').select2("enable", false);
     </script>
 @endpush

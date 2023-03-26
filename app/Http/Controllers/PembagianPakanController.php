@@ -25,7 +25,7 @@ class PembagianPakanController extends Controller
     {
         $produkPakan = DetailBeli::with('produk')
             ->whereHas('produk', function ($query) {
-                $query->where('id_kategori', '=', 1);
+                $query->where('id_kategori', '=', 5);
             })->get();
 
         $tong =  DB::table('master_tong')

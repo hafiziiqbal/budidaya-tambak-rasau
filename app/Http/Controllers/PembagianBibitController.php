@@ -55,7 +55,7 @@ class PembagianBibitController extends Controller
             $query->select('id', 'tgl_beli');
         }])->whereHas('produk', function ($query) {
             $query->where('id_kategori', '=', 7);
-        })->orderBy('id_header_beli', 'asc')->get();
+        })->where('quantity_stok', '>', 0)->get();
 
         return view('pages.pembagian_bibit.create')->with([
             'title' => 'PEMBAGIAN BIBIT',
@@ -88,11 +88,14 @@ class PembagianBibitController extends Controller
             $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
                 ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
                 ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring_old IS NOT NULL THEN 1 END) AS jaring_old_count')
                 ->where('id_kolam', $value->id_kolam)
                 ->first();
 
+            $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($batasJaring >= 1 && $value->id_jaring == null) {
+
+            if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam >= 1) {
                 return response()->json([
                     'errors' => [
                         'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
@@ -192,11 +195,14 @@ class PembagianBibitController extends Controller
             $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
                 ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
                 ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+                ->selectRaw('COUNT(CASE WHEN id_jaring_old IS NOT NULL THEN 1 END) AS jaring_old_count')
                 ->where('id_kolam', $value->id_kolam)
                 ->first();
 
+            $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($batasJaring >= 1 && $value->id_jaring == null) {
+
+            if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam >= 1) {
                 return response()->json([
                     'errors' => [
                         'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
@@ -316,16 +322,19 @@ class PembagianBibitController extends Controller
 
         // cek jaring dan kolam
         $kolam = MasterKolam::find($request->id_kolam);
+
         $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
             ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
             ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+            ->selectRaw('COUNT(CASE WHEN id_jaring_old IS NOT NULL THEN 1 END) AS jaring_old_count')
             ->where('id_kolam', $request->id_kolam)
             ->first();
 
         $cekJaringDetailBibit = DB::table('detail_pembagian_bibit')->where('id', $id)->first()->id_jaring;
         if ($cekJaringDetailBibit != null) {
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($batasJaring >= 1 && $request->id_jaring == null) {
+            $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
+            if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam >= 1) {
                 if ($request->detail == null) {
                     return response()->json([
                         'errors' => [
@@ -417,11 +426,13 @@ class PembagianBibitController extends Controller
         $jumlahKolamJaring = DB::table('detail_pembagian_bibit')
             ->selectRaw('COUNT(CASE WHEN id_kolam IS NOT NULL THEN 1 END) AS kolam_count')
             ->selectRaw('COUNT(CASE WHEN id_jaring IS NOT NULL THEN 1 END) AS jaring_count')
+            ->selectRaw('COUNT(CASE WHEN id_jaring_old IS NOT NULL THEN 1 END) AS jaring_old_count')
             ->where('id_kolam', $request->id_kolam)
             ->first();
 
+        $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
         $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-        if ($batasJaring >= 1 && $request->id_jaring == null) {
+        if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam >= 1) {
             return response()->json([
                 'errors' => [
                     'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
