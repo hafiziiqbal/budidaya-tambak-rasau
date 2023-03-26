@@ -42,12 +42,55 @@ class PenjualanRequest extends FormRequest
 
                 ];
         }
+
+        if ($this->type == 'update-header') {
+            $validate =
+                [
+                    'customer' => 'required|exists:master_customer,id',
+                    'total_bruto' => 'required|numeric|digits_between:0,20',
+                    'potongan_harga' => 'required|numeric|digits_between:0,20',
+                    'total_netto' => 'required|numeric|digits_between:0,20',
+                    'pay' => 'required|numeric|digits_between:1,20',
+                    'change' => 'required|numeric|digits_between:0,20',
+                ];
+        }
+
+        if ($this->type == 'update-detail') {
+            $validate =
+                [
+                    'id_detail_panen' => 'required|exists:detail_panen,id',
+                    'harga_satuan' => 'required|numeric|digits_between:0,20',
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'diskon' => 'required|numeric|between:0,99999999.99',
+                    'subtotal' => 'required|numeric|digits_between:0,20',
+                ];
+        }
         return $validate;
     }
 
     public function messages()
     {
         return [
+            'subtotal.digits_between' => 'Subtotal minimal 0 digit dan maksimal 20 digit',
+            'subtotal.numeric' => 'Subtotal harus berupa angka',
+            'subtotal.required' => 'Subtotal harus diisi',
+
+            'diskon.between' => 'Diskon minimal 0 digit dan maksimal 8 digit',
+            'diskon.numeric' => 'Diskon harus berupa angka',
+            'diskon.required' => 'Diskon harus diisi',
+
+            'quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
+            'quantity.numeric' => 'Quantity harus berupa angka',
+            'quantity.required' => 'Quantity harus diisi',
+
+            'harga_satuan.digits_between' => 'Harga satuan minimal 0 digit dan maksimal 20 digit',
+            'harga_satuan.numeric' => 'Harga satuan harus berupa angka',
+            'harga_satuan.required' => 'Harga satuan harus diisi',
+
+            'id_detail_panen.required' => 'Produk hasil panen harus dipilih',
+            'id_detail_panen.exists' => 'Produk hasil panen tidak tersedia',
+
+
             'detail.*.subtotal.digits_between' => 'Subtotal minimal 0 digit dan maksimal 20 digit',
             'detail.*.subtotal.numeric' => 'Subtotal harus berupa angka',
             'detail.*.subtotal.required' => 'Subtotal harus diisi',

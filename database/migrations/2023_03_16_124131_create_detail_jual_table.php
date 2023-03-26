@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('id_header_jual')->constrained('header_jual');
             $table->foreignId('id_produk')->constrained('produk');
             $table->foreignId('id_detail_beli')->constrained('detail_beli');
+            $table->foreignId('id_detail_panen')->constrained('detail_panen');
             $table->bigInteger('harga_satuan');
             $table->decimal('diskon');
             $table->decimal('quantity');

@@ -14,6 +14,7 @@ class DetailJual extends Model
     protected $fillable = [
         'id_header_jual',
         'id_detail_beli',
+        'id_detail_panen',
         'id_produk',
         'harga_satuan',
         'diskon',

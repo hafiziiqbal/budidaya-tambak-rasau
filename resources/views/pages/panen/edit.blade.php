@@ -164,7 +164,7 @@
                             @include('components.alert')
                     </div>        
                     @csrf    
-                    <input type="hidden" name="type" value="update-detail">
+                        <input type="hidden" name="type" value="update-detail">
                         <input type="hidden" name="id" value="${item.id}">                        
                         <input type="hidden" class="alt" name="id_detail_pembagian_bibit" value="${item.id_detail_pembagian_bibit}">
                         <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">                        

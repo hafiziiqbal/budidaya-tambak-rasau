@@ -219,7 +219,7 @@
 
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
-                        document.cookie = `success=Berhasil Menjual Produk;path=/jual`;
+                        document.cookie = `success=Berhasil Menjual Produk;path=/penjualan`;
                         window.location.href = "{{ route('jual') }}";
 
                     }

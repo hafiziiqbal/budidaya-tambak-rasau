@@ -111,6 +111,7 @@ class PenjualanController extends Controller
             DetailJual::create([
                 'id_header_jual' => $headerJual->id,
                 'id_produk' => $produkIkan->id,
+                'id_detail_panen' => $value->id_detail_panen,
                 'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
                 'harga_satuan' => $value->harga_satuan,
                 'diskon' => $value->diskon,
@@ -185,18 +186,18 @@ class PenjualanController extends Controller
 
     public function edit($id)
     {
-        $produk = Produk::where('id_kategori', 3)->get();
+        $panen = DetailPanen::where('status', 1)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen'])->get();
         $customer = MasterCustomer::all();
         return view('pages.penjualan.edit')->with([
             'title' => 'PENJUALAN',
             'id' => $id,
             'customer' => $customer,
-            'produk' => $produk,
+            'panen' => $panen,
             'transaksi_toogle' => 1
         ]);
     }
 
-    public function update(Request $request, $id)
+    public function update(PenjualanRequest $request, $id)
     {
         try {
             $totalBruto = [];
@@ -219,15 +220,29 @@ class PenjualanController extends Controller
                 'success' => 'Data Berhasil di Perbarui'
             ], 200);
         } catch (\Throwable $th) {
-            return response()->json(
-                'Kesalahan Aplikasi',
-                400
-            );
+            return response()->json([
+                'errors' => [
+                    'general' => "Kesalahan Aplikasi"
+                ],
+            ], 500);
         }
     }
 
-    public function updateDetail(Request $request, $id)
+    public function updateDetail(PenjualanRequest $request, $id)
     {
+        $detailJualUpdate = DetailJual::find($id);
+        $panen = DetailPanen::find($detailJualUpdate->id_detail_panen);
+
+        $jumlahQuantityPanenAwal = $panen->quantity + $detailJualUpdate->quantity;
+
+        if ($request->quantity > $jumlahQuantityPanenAwal) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Total quantity melebihi quantity stok panen'
+                ],
+            ], 422);
+        }
+
         $totalBruto = [];
         $detailJual = DetailJual::all()->except($id);
         // menghitung subtotal
@@ -245,7 +260,7 @@ class PenjualanController extends Controller
         }
 
         // update beli ke database
-        $detailJualUpdate = DetailJual::find($id);
+
         $quantityProdukOld = $detailJualUpdate->quantity;
         $detailJualUpdate->update([
             'harga_satuan' => $request->harga_satuan,
@@ -259,6 +274,12 @@ class PenjualanController extends Controller
         $jumlahProduk = ($produk->quantity + $quantityProdukOld) - $request->quantity;
         $produk->update([
             'quantity' => $jumlahProduk,
+        ]);
+
+
+        $jumlahPanen = ($panen->quantity + $quantityProdukOld) - $request->quantity;
+        $panen->update([
+            'quantity' => $jumlahPanen,
         ]);
 
         $headerJual = HeaderJual::find($detailJualUpdate->id_header_jual);
