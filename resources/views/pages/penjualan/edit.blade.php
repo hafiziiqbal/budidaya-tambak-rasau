@@ -339,18 +339,32 @@
                             $(`#alert${index} #alertNotif`).removeClass('d-none');
                             $(`#alert${index} #alertNotif span`).html(response.success);
                             $(`#alert${index}`).append(`@include('components.alert')`);
-                            loadDataHeader();
+
+                            setTimeout(function() {
+                                loadDataHeader();
+                                $('#detail').empty();
+                                detailJual.forEach((item, index) => {
+                                    loadElementDetailJual(item, index)
+                                });
+                            }, 500);
+
 
                         }
 
                         if (response.save_detail != undefined) {
-                            // $(`#selectIkan${index}`).select2("enable", false);
                             $(`#formDetail${index} .btn-update-content`).removeClass('d-none');
                             $(`#formDetail${index} .btn-store-content`).addClass('d-none');
-                            $(`#formDetail${index} .btn-close`).addClass('d-none');
+                            $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
-                                `/pembelian/detail/${response.id}/edit`)
+                                `/penjualan/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+
+                            $(`.select-panen${index}`).select2("enable", false);
+
+                            $(`#formDetail${index} input.alt`).val($(`.select-panen${index}`).val());
+                            $(`#formDetail${index} input.alt`).attr('name', 'id_detail_panen');
+                            $(`#formDetail${index} select.select-panen${index}`).removeAttr('name');
+                            $(`#formDetail${index} input[name='type']`).val('update-detail');
                         }
                     },
                     error: function(response) { // handle the error            
@@ -457,17 +471,23 @@
                 .prop('checked', false)
                 .prop('selected', false);
 
-            $(`.produk${number}`).removeAttr('disabled');
+            $(`.select-panen${number}`).removeAttr('disabled');
+
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_jual">`)
+
             $(`#formDetail${number}`).attr('action', '/penjualan/detail')
+            $(`#formDetail${number} input[name='type']`).val('store-detail');
+
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
-            $(`#formDetail${number} .btn-close`).removeClass('d-none');
+            $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
             $(`#formDetail${number} .quantity_stok`).remove()
 
+            $(`#formDetail${number} input.alt[name='id_detail_beli']`).removeAttr('name');
+            $(`#formDetail${number} select.select.panen${number}`).attr('name', 'id_detail_beli')
 
-            $(`#formDetail${number} .btn-close`).click(function() {
+            $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
 

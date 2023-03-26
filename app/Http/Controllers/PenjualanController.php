@@ -134,9 +134,24 @@ class PenjualanController extends Controller
         ]);
     }
 
-    public function storeDetail(Request $request)
+    public function storeDetail(PenjualanRequest $request)
     {
-        // try {
+        $panen = DetailPanen::find($request->id_detail_panen);
+        if ($panen->quantity == 0) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Stok produk hasil panen sudah habis"
+                ],
+            ], 422);
+        }
+        if ($request->quantity > $panen->quantity) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Total quantity melebihi quantity stok panen'
+                ],
+            ], 422);
+        }
+
         $detailJual = DetailJual::all();
         $totalBruto = [];
         // menghitung subtotal
@@ -152,13 +167,27 @@ class PenjualanController extends Controller
             array_push($totalBruto, $value->sub_total);
         }
 
+        $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->first();
+        $produk = Produk::find($detailPanen->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->id_produk);
+        $produkIkan = Produk::where('nama',  $produk->nama)->where('id_kategori', 6)->first();
         $tambahBaru = DetailJual::create([
             'id_header_jual' => $request->id_header_jual,
-            'id_produk' => $request->id_produk,
+            'id_produk' => $produkIkan->id,
+            'id_detail_panen' => $request->id_detail_panen,
+            'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
             'harga_satuan' => $request->harga_satuan,
-            'diskon' => $request->diskon ?? 0,
+            'diskon' => $request->diskon,
             'quantity' => $request->quantity,
             'sub_total' => $subtotal,
+        ]);
+        // update quantity produk
+        $produkIkan->update([
+            'quantity' => DB::raw("quantity-" . $request->quantity),
+        ]);
+
+        // update quantity produk
+        $detailPanen->update([
+            'quantity' => DB::raw("quantity-" . $request->quantity),
         ]);
 
         // update quantity produk
@@ -309,6 +338,9 @@ class PenjualanController extends Controller
             Produk::find($value->id_produk)->update([
                 'quantity' => DB::raw("quantity+" . $value->quantity),
             ]);
+            DetailPanen::find($value->id_detail_panen)->update([
+                'quantity' => DB::raw("quantity+" . $value->quantity),
+            ]);
             $detailJual->delete();
         }
 
@@ -340,6 +372,9 @@ class PenjualanController extends Controller
 
         // update quantity produk
         Produk::find($detailJual->id_produk)->update([
+            'quantity' => DB::raw("quantity+" . $detailJual->quantity),
+        ]);
+        DetailPanen::find($detailJual->id_detail_panen)->update([
             'quantity' => DB::raw("quantity+" . $detailJual->quantity),
         ]);
 
