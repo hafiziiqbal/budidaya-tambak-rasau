@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-    <div class="position-fixed top-1 end-0 p-3" style="z-index: 11">
+    {{-- <div class="position-fixed top-1 end-0 p-3" style="z-index: 11">
         <button type="button" class="btn btn-danger btn-circle " title="info penggunaan data" id="infoDataBtn"><i
                 class="fa fa-info"></i>
         </button>
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
     <h1 class="mt-4">Tambah Pembagian Bibit</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
@@ -291,7 +291,7 @@
 
                 success: function(response) {
                     $(`#btnSimpan`).removeAttr('disabled')
-                    $(`#btnSimpan`).children().addClass('d-none')                    
+                    $(`#btnSimpan`).children().addClass('d-none')
                     if (response.success != undefined) {
                         $(".error-element .btn-close").click()
                         // Set a cookie
@@ -343,5 +343,40 @@
             index = index + 1
             loadElementDetailBeli(index)
         })
+
+        // start get share bibit
+        const cookies = document.cookie.split(";");
+        shareIdDetail = getCookie('shareBibitDetailBeli');
+        shareTanggal = getCookie('shareBibitTanggal');
+        shareCheck = getCookie('shareBibitJenis');
+        shareUrl = getCookie('shareBibitUrl');
+        if (shareIdDetail != '') {
+            $('#selectDetailBeli').val(shareIdDetail);
+            $('#inputTanggalPembagian').val(shareTanggal);
+            $('ol a').attr('href', `/${shareUrl}`);
+            $("input.btn-check[type='radio']").each(function() {
+                // Periksa apakah nilai dari elemen radio button sama dengan nilai variabel jenis_pembagian
+                if ($(this).val() === shareCheck) {
+                    // Jika sama, set properti checked menjadi true
+                    $(this).prop("checked", true);
+                }
+            });
+
+            $('#btnTambahPembagian').trigger("click");
+            // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
+            $.removeCookie("shareBibitDetailBeli", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitTanggal", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitJenis", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitUrl", {
+                path: "/pembagian-bibit/create"
+            });
+        }
+        // end get share bibit
     </script>
 @endpush

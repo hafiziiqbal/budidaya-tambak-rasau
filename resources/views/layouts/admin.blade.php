@@ -35,7 +35,7 @@
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="index.html">Admin Panel</a>
+        <a class="navbar-brand ps-3" href="/dashboard">Admin Panel</a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i
                 class="fas fa-bars"></i></button>
@@ -80,7 +80,7 @@
                             Pembagian Pakan
                         </a>
 
-                        <a class="nav-link {{ $title == 'PMEBERIAN PAKAN' || $title == 'TAMBAH PMEBERIAN PAKAN' || $title == 'EDIT PMEBERIAN PAKAN' ? 'active' : '' }}"
+                        <a class="nav-link {{ $title == 'PEMBERIAN PAKAN' || $title == 'TAMBAH PEMBERIAN PAKAN' || $title == 'EDIT PEMBERIAN PAKAN' ? 'active' : '' }}"
                             href="{{ route('pemberian.pakan') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
                             Pemberian Pakan
@@ -109,7 +109,7 @@
                             </nav>
                             <nav class="sb-sidenav-menu-nested nav">
                                 <a class="nav-link {{ $title == 'BIBIT' || $title == 'TAMBAH BIBIT' || $title == 'EDIT BIBIT' ? 'active' : '' }}"
-                                    href="{{ route('jual') }}">Bibit</a>
+                                    href="{{ route('bibit') }}">Bibit</a>
                             </nav>
                         </div>
 
@@ -191,6 +191,7 @@
 
     <script src="{{ asset('/js/script.js') }}"></script>
     <script src="{{ asset('/vendor/jquery/jquery-3.5.1.js') }}"></script>
+    <script src="{{ asset('/vendor/jquery/jquery.cookie.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>

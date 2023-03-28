@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\KolamRequest;
 use App\Models\MasterJaring;
 use App\Models\MasterKolam;
+use App\Models\MasterTong;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -98,6 +99,14 @@ class KolamController extends Controller
                 return redirect('kolam')->withErrors([
                     'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
                 ]);
+            }
+
+            $tong = MasterTong::select(['id', 'id_kolam'])->where('id', $id)->first();
+            foreach ($tong->id_kolam as $key => $value) {
+                $kolam = MasterKolam::where('id', $value)->first();
+                if ($kolam) {
+                    return redirect()->route('kolam')->withErrors(['error' => 'Tabel tong sedang menggunakan kolam ini']);
+                }
             }
             $kolam = MasterKolam::find($id);
             $kolam->delete();

@@ -5,7 +5,7 @@
         <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
         <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
     </ol>
-    
+
     {{-- header beli --}}
     <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
         @csrf
@@ -384,13 +384,13 @@
 
                     },
                     error: function(response) { // handle the error                                    
-                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                        $(`#formDetail${index} .status-error-header span`).html(response
-                            .success)
-                        setTimeout(function() {
-                            $(`#formDetail${index} .status-error-header`).addClass(
-                                "d-none");
-                        }, 3000);
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+                        if (errors.general) {
+                            $(`#alert${index} #alertNotifError`).removeClass('d-none');
+                            $(`#alert${index} #alertNotifError span`).html(errors.general);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
+                        }
                         loadDataHeader();
                     },
 

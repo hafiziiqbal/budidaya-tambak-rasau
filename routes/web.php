@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\BibitController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
@@ -29,7 +30,7 @@ use App\Http\Controllers\TongController;
 */
 
 Route::get('/', function () {
-    return view('home');
+    return redirect()->route('dashboard')->with(['title' => 'DASHBOARD']);
 });
 
 Route::group(['middleware' => 'guest'], function () {
@@ -145,7 +146,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'pembagian-bibit'], function () {
         Route::get('/', [PembagianBibitController::class, 'index'])->name('pembagian.bibit');
         Route::get('/create', [PembagianBibitController::class, 'create'])->name('pembagian.bibit.create');
-        Route::get('/contoh', [PembagianBibitController::class, 'contoh'])->name('pembagian.bibit.contoh');
+        // Route::get('/contoh', [PembagianBibitController::class, 'contoh'])->name('pembagian.bibit.contoh');
         Route::get('/{id}/edit', [PembagianBibitController::class, 'edit'])->name('pembagian.bibit.edit');
         Route::get('/{id}/edit-json', [PembagianBibitController::class, 'editJson'])->name('pembagian.bibit.edit.json');
         Route::get('/{id}/show', [PembagianBibitController::class, 'show'])->name('pembagian.bibit.show');
@@ -166,7 +167,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'pembagian-pakan'], function () {
         Route::get('/', [PembagianPakanController::class, 'index'])->name('pembagian.pakan');
         Route::get('/create', [PembagianPakanController::class, 'create'])->name('pembagian.pakan.create');
-        Route::get('/contoh', [PembagianPakanController::class, 'contoh'])->name('pembagian.pakan.contoh');
+        // Route::get('/contoh', [PembagianPakanController::class, 'contoh'])->name('pembagian.pakan.contoh');
         Route::get('/{id}/edit', [PembagianPakanController::class, 'edit'])->name('pembagian.pakan.edit');
         Route::get('/{id}/edit-json', [PembagianPakanController::class, 'editJson'])->name('pembagian.pakan.edit.json');
         Route::get('/delete/{id}', [PembagianPakanController::class, 'destroy'])->name('pembagian.pakan.destory');
@@ -187,7 +188,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [PemberianPakanController::class, 'index'])->name('pemberian.pakan');
         Route::get('/create', [PemberianPakanController::class, 'create'])->name('pemberian.pakan.create');
         Route::get('/pembagian-bibit-by-tong/{id}', [PemberianPakanController::class, 'getBagiBibitByTong']);
-        Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
+        // Route::get('/contoh', [PemberianPakanController::class, 'contoh'])->name('pemberian.pakan.contoh');
         Route::get('/{id}/edit', [PemberianPakanController::class, 'edit'])->name('pemberian.pakan.edit');
         // Route::get('/{id}/edit-json', [PemberianPakanController::class, 'editJson'])->name('pemberian.pakan.edit.json');
         Route::get('/delete/{id}', [PemberianPakanController::class, 'destroy'])->name('pemberian.pakan.destory');
@@ -200,7 +201,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'panen'], function () {
         Route::get('/', [PanenController::class, 'index'])->name('panen');
         Route::get('/create', [PanenController::class, 'create'])->name('panen.create');
-        Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
+        // Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
         Route::get('/{id}/edit', [PanenController::class, 'edit'])->name('panen.pakan.edit');
         Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.edit.json');
         Route::get('/delete/{id}', [PanenController::class, 'destroy'])->name('panen.destory');
@@ -234,5 +235,17 @@ Route::group(['middleware' => 'auth'], function () {
             Route::post('/{id}/edit', [PenjualanController::class, 'updateDetail'])->name('jual.update.detail');
             Route::get('/delete/{id}', [PenjualanController::class, 'destroyDetail'])->name('jual.destory.detail');
         });
+    });
+
+    Route::group(['prefix' => 'bibit'], function () {
+        Route::get('/', [BibitController::class, 'index'])->name('bibit');
+        Route::get('/contoh', [BibitController::class, 'contoh'])->name('bibit.contoh');
+        Route::get('/create', [BibitController::class, 'create'])->name('bibit.create');
+        Route::get('/{id}/edit', [BibitController::class, 'edit'])->name('bibit.edit');
+        Route::get('/delete/{id}', [BibitController::class, 'destroy'])->name('bibit.destory');
+
+        Route::post('/', [BibitController::class, 'store'])->name('bibit.store');
+        Route::post('/{id}/update', [BibitController::class, 'update'])->name('bibit.update');
+        Route::post('/datatable', [BibitController::class, 'datatable'])->name('bibit.datatable');
     });
 });

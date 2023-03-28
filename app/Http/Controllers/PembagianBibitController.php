@@ -11,6 +11,7 @@ use App\Models\MasterJaring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailPembagianBibit;
+use App\Models\DetailPemberianPakan;
 use App\Models\HeaderPembagianBibit;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -319,6 +320,14 @@ class PembagianBibitController extends Controller
 
     public function updateDetail(PembagianBibitRequest $request, $id)
     {
+        $panen = DetailPanen::where('id_detail_pembagian_bibit', $id)->first();
+        if ($panen) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Data ini sudah dipanen'
+                ],
+            ], 422);
+        }
 
         // cek jaring dan kolam
         $kolam = MasterKolam::find($request->id_kolam);
@@ -566,10 +575,31 @@ class PembagianBibitController extends Controller
 
     public function destroy($id)
     {
-        // Mencari semua record dari tabel detail_pembagian_bibit yang terkait dengan header_pembagian_bibit yang akan dihapus
         $details = DB::table('detail_pembagian_bibit')
             ->where('id_header_pembagian_bibit', $id)
             ->get();
+
+        foreach ($details as $key => $value) {
+            $pemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_bibit', $value->id)->first();
+            if ($pemberianPakan) {
+                return redirect()->route('pembagian.bibit')->withErrors(
+                    [
+                        'error' => "Data ini digunakan oleh tabel pemberian"
+                    ]
+                );
+            }
+
+            $panen = DetailPanen::where('id_detail_pembagian_bibit', $value->id)->first();
+            if ($panen) {
+                return redirect()->route('pembagian.bibit')->withErrors(
+                    [
+                        'error' => "Bibit ini sudah dipanen"
+                    ]
+                );
+            }
+        }
+
+
         $headerPembagianBibit = HeaderPembagianBibit::where('id', $id)->with('detail_beli')->first();
 
         // Memperbarui tabel detail_beli dan produk
@@ -613,6 +643,23 @@ class PembagianBibitController extends Controller
 
     public function destroyDetail($id)
     {
+        $panen = DetailPanen::where('id_detail_pembagian_bibit', $id)->first();
+        if ($panen) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Data ini sudah dipanen'
+                ],
+            ], 422);
+        }
+
+        $pemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_bibit', $id)->first();
+        if ($pemberianPakan) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Data ini digunakan oleh tabel pemberian'
+                ],
+            ], 422);
+        }
         // cek quantity
         $detailPembagianBibit = DetailPembagianBibit::find($id);
         $detailPembagianTanpaDataUpdate = DetailPembagianBibit::where('id_header_pembagian_bibit', $detailPembagianBibit->id_header_pembagian_bibit)->where('id', '!=', $id)->get();

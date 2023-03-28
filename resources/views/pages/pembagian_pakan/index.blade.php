@@ -78,8 +78,10 @@
                             var tongList =
                                 '<select name="tong" class="form-control"><option value="" class="fst-italic" selected data-default>Daftar Tong ▼</option>';
                             $.each(data, function(index, value) {
-                                tongList += '<option disabled value="' + value.tong
-                                    .nama + '">' + value.tong.nama +
+                                tongList += '<option disabled value="' + (value.tong ==
+                                        null ? value.tong_old.nama : value.tong.nama) +
+                                    '">' + (value.tong == null ? value.tong_old.nama : value
+                                        .tong.nama) +
                                     '</option>';
                             });
                             tongList += '</select>';

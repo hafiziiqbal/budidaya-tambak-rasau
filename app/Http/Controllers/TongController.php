@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\TongRequest;
+use App\Models\DetailPembagianPakan;
 use App\Models\MasterTong;
 use App\Models\MasterKolam;
 use App\Models\MasterJaring;
@@ -135,6 +136,12 @@ class TongController extends Controller
     public function destroy($id)
     {
         try {
+            $pembagianPakan = DetailPembagianPakan::where('id_tong', $id)->first();
+            if ($pembagianPakan) {
+                return redirect('tong')->withErrors([
+                    'error' => 'Tong sedang digunakan'
+                ]);
+            }
             $tong = MasterTong::find($id);
             $tong->delete();
             return redirect()->route('tong')->with(

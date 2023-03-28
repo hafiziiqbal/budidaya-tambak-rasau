@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CustomerRequest;
+use App\Models\HeaderJual;
 use Illuminate\Http\Request;
 use App\Models\MasterCustomer;
 use Yajra\DataTables\Facades\DataTables;
@@ -94,6 +95,14 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         try {
+            $jual = HeaderJual::where('id_customer', $id)->first();
+            if ($jual) {
+                return response()->json([
+                    'errors' => [
+                        'general' => 'Data ini digunakan di tabel lain'
+                    ],
+                ], 422);
+            }
             $customer = MasterCustomer::find($id);
             $customer->delete();
             return redirect()->route('customer')->with(

@@ -189,12 +189,12 @@
                             // mencari semua elemen select yang memiliki nilai selected sama dengan nilai acuan
                             $('select.select-ikan').each(function() {
                                 if ($(this).val() == element.id) {
-                                    console.log(
-                                        $(this).parent().parent().find(
-                                            "small[id^='errorQuantity']").html(
-                                            `*${errors[`detail.${element.id}.quantity-all`]}`
-                                        )
-                                    ); // menampilkan element select yang memiliki nilai selected yang sama dengan nilai acuan
+
+                                    $(this).parent().parent().find(
+                                        "small[id^='errorQuantity']").html(
+                                        `*${errors[`detail.${element.id}.quantity-all`]}`
+                                    )
+
                                 }
                             });
                         }

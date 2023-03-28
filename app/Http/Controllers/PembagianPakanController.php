@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\PembagianPakanRequest;
 use App\Models\DetailBeli;
 use App\Models\MasterTong;
 use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailPembagianPakan;
+use App\Models\DetailPemberianPakan;
 use App\Models\HeaderPembagianPakan;
 use Yajra\DataTables\Facades\DataTables;
+use App\Http\Requests\PembagianPakanRequest;
 
 class PembagianPakanController extends Controller
 {
@@ -48,7 +49,7 @@ class PembagianPakanController extends Controller
                     'detail_pembagian_pakan' => function ($query) {
                         $query->with(['detail_beli' => function ($query) {
                             $query->with('produk');
-                        }, 'tong']);
+                        }, 'tong', 'tong_old']);
                     }
                 ])->orderBy('updated_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
@@ -181,7 +182,6 @@ class PembagianPakanController extends Controller
 
     public function storeDetail(PembagianPakanRequest $request)
     {
-
         // return response()->json($request->all());
         // Mendapatkan data detail_beli berdasarkan id_detail_beli dari $request
         $detailBeli = DetailBeli::find($request->id_detail_beli);
@@ -296,6 +296,14 @@ class PembagianPakanController extends Controller
 
     public function updateDetail(PembagianPakanRequest $request, $id)
     {
+        $pemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_pakan', $id)->first();
+        if ($pemberianPakan) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Data ini digunakan oleh tabel pemberian"
+                ],
+            ], 422);
+        }
 
         // Mendapatkan data detail_pembagian_pakan berdasarkan $id
         $detailPembagianPakan = DetailPembagianPakan::where('id', $id)->with('detail_beli.produk')->first();
@@ -364,6 +372,19 @@ class PembagianPakanController extends Controller
         $details = DetailPembagianPakan::where('id_header_pembagian_pakan', $id)->with('detail_beli')
             ->get();
 
+        foreach ($details as $key => $value) {
+            $pemberianPakan = DetailPemberianPakan::select(['id', 'id_detail_pembagian_pakan'])->where('id_detail_pembagian_pakan', $value->id)->first();
+            if ($pemberianPakan) {
+                return redirect()->route('pembagian.pakan')->withErrors(
+                    [
+                        'error' => "Data ini digunakan oleh tabel pemberian"
+                    ]
+                );
+            }
+        }
+
+
+
         // Memperbarui tabel detail_beli dan produk
         foreach ($details as $detail) {
             DB::table('detail_beli')
@@ -393,6 +414,14 @@ class PembagianPakanController extends Controller
 
     public function destroyDetail($id)
     {
+        $pemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_pakan', $id)->first();
+        if ($pemberianPakan) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Data ini digunakan oleh tabel pemberian"
+                ],
+            ], 422);
+        }
         // Mendapatkan data detail_pembagian_pakan berdasarkan $id
         $detailPembagianPakan = DetailPembagianPakan::find($id);
 

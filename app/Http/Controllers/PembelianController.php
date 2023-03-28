@@ -7,6 +7,7 @@ use App\Models\Produk;
 use App\Models\Supplier;
 use App\Models\DetailBeli;
 use App\Models\DetailPembagianBibit;
+use App\Models\DetailPembagianPakan;
 use App\Models\HeaderBeli;
 use App\Models\HeaderPembagianBibit;
 use Illuminate\Http\Request;
@@ -183,6 +184,24 @@ class PembelianController extends Controller
 
     public function updateDetail(PembelianRequest $request, $id)
     {
+        $headerPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $id)->first();
+        if ($headerPembagianBibit) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Bibit ini sudah dibagikan"
+                ],
+            ], 422);
+        }
+
+        $detailPembagianPakan = DetailPembagianPakan::where('id_detail_beli', $id)->first();
+        if ($detailPembagianPakan) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Pakan ini sudah dibagikan"
+                ],
+            ], 422);
+        }
+
         $totalBruto = [];
         $detailBeli = DetailBeli::where('id_header_beli', $request->id_header_beli)->where('id', '!=', $id)->get();
 
@@ -266,6 +285,19 @@ class PembelianController extends Controller
         $detailBeli = DetailBeli::where('id_header_beli', $id)->get();
 
         foreach ($detailBeli as $key => $value) {
+            $headerPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $value->id)->first();
+            if ($headerPembagianBibit) {
+                return redirect()->route('pembelian')->withErrors(['error' => 'Terdapat data yang sudah dibagikan']);
+            }
+
+            $detailPembagianPakan = DetailPembagianPakan::where('id_detail_beli', $value->id)->first();
+            if ($detailPembagianPakan) {
+                return redirect()->route('pembelian')->withErrors(['error' => 'Terdapat data yang sudah dibagikan']);
+            }
+        }
+
+
+        foreach ($detailBeli as $key => $value) {
             Produk::find($value->id_produk)->update([
                 'quantity' => DB::raw("quantity-" . $value->quantity),
             ]);
@@ -281,6 +313,22 @@ class PembelianController extends Controller
 
     public function destroyDetail($id)
     {
+        $headerPembagianBibit = HeaderPembagianBibit::where('id_detail_beli', $id)->first();
+        if ($headerPembagianBibit) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Bibit ini sudah dibagikan"
+                ],
+            ], 422);
+        }
+        $detailPembagianPakan = DetailPembagianPakan::where('id_detail_beli', $id)->first();
+        if ($detailPembagianPakan) {
+            return response()->json([
+                'errors' => [
+                    'general' => "Pakan  ini sudah dibagikan"
+                ],
+            ], 422);
+        }
 
         $totalBruto = [];
         $detailBeli = DetailBeli::find($id);

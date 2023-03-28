@@ -9,7 +9,9 @@ use App\Models\HeaderPanen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PanenRequest;
+use App\Models\DetailJual;
 use App\Models\DetailPembagianBibit;
+use App\Models\HeaderPembagianBibit;
 use Yajra\DataTables\Facades\DataTables;
 
 class PanenController extends Controller
@@ -264,6 +266,21 @@ class PanenController extends Controller
 
     public function updateDetail(PanenRequest $request, $id)
     {
+        $jual = DetailJual::where('id_detail_panen', $id)->first();
+        if ($jual) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Hasil panen ini sudah di Jual'
+                ],
+            ], 422);
+        }
+        $sortir = HeaderPembagianBibit::where('id_detail_panen', $id)->first();
+        if ($sortir) {
+            return redirect()->route('panen')->withErrors([
+                'error' =>
+                'Terdapat data yang sudah disortir'
+            ]);
+        }
         $detailPanen  = DetailPanen::find($id);
         $id_detail_pembagian_bibit = $detailPanen->id_detail_pembagian_bibit;
         $new_quantity = $request->quantity;
@@ -361,8 +378,23 @@ class PanenController extends Controller
     {
         // Mencari semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus
         $details = DetailPanen::where('id_header_panen', $id)->get();
+        foreach ($details as $key => $value) {
+            $jual = DetailJual::where('id_detail_panen', $value->id)->first();
+            if ($jual) {
+                return redirect()->route('panen')->withErrors([
+                    'error' =>
+                    'Terdapat data yang sudah dipanen'
+                ]);
+            }
 
-
+            $sortir = HeaderPembagianBibit::where('id_detail_panen', $value->id)->first();
+            if ($sortir) {
+                return redirect()->route('panen')->withErrors([
+                    'error' =>
+                    'Terdapat data yang sudah disortir'
+                ]);
+            }
+        }
 
         // Memperbarui tabel detail_beli dan produk
         foreach ($details as $detail) {
@@ -405,6 +437,21 @@ class PanenController extends Controller
 
     public function destroyDetail($id)
     {
+        $jual = DetailJual::where('id_detail_panen', $id)->first();
+        if ($jual) {
+            return response()->json([
+                'errors' => [
+                    'general' => 'Hasil panen ini sudah di Jual'
+                ],
+            ], 422);
+        }
+        $sortir = HeaderPembagianBibit::where('id_detail_panen', $id)->first();
+        if ($sortir) {
+            return redirect()->route('panen')->withErrors([
+                'error' =>
+                'Terdapat data yang sudah disortir'
+            ]);
+        }
         // Mendapatkan data detail_pembagian_pakan berdasarkan $id
         $detailPanen = DetailPanen::find($id);
 

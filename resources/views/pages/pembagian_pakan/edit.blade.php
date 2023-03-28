@@ -150,10 +150,7 @@
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
                                 </label>
-                                <label class="text-danger fw-bold status-error-header d-none  mb-2">
-                                    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                    <span></span>
-                                </label>
+                                
                             </div>
                             <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
                     </div>`
@@ -334,6 +331,7 @@
                         }
 
                         if (errors.general) {
+
                             $(`#alert${index} #alertNotifError`).removeClass('d-none');
                             $(`#alert${index} #alertNotifError span`).html(errors.general);
                             $(`#alert${index}`).append(`@include('components.alert')`);
@@ -367,13 +365,13 @@
 
                     },
                     error: function(response) { // handle the error                                    
-                        $(`#formDetail${index} .status-error-header`).removeClass('d-none')
-                        $(`#formDetail${index} .status-error-header span`).html(response
-                            .success)
-                        setTimeout(function() {
-                            $(`#formDetail${index} .status-error-header`).addClass(
-                                "d-none");
-                        }, 3000);
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+                        if (errors.general) {
+                            $(`#alert${index} #alertNotifError`).removeClass('d-none');
+                            $(`#alert${index} #alertNotifError span`).html(errors.general);
+                            $(`#alert${index}`).append(`@include('components.alert')`);
+                        }
                         loadDataHeader();
                     },
 
