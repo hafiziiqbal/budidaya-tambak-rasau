@@ -204,5 +204,43 @@
             index = index + 1
             loadElementDetailBeli(index)
         })
+
+        // start get share bibit
+        const cookies = document.cookie.split(";");
+        shareIdDetail = getCookie('sharePakanDetailBeli');
+        shareTanggal = getCookie('sharePakanTanggal');
+        shareUrl = getCookie('sharePakanUrl');
+        shareIsMultiple = getCookie('sharePakanMultiple');
+        if (shareIdDetail != '') {
+            $('#inputTanggalPembagian').val(shareTanggal)
+            $('ol a').attr('href', `/${shareUrl}`);
+            $('ol a').html('Pakan');
+            if (shareIsMultiple) {
+                let idPakan = shareIdDetail.split(',');
+                idPakan.forEach(item => {
+                    $('#btnTambahPembagian').trigger("click");
+                    $(`#selectPakan${index}`).select2("val", item);
+                });
+
+            } else {
+                $('#btnTambahPembagian').trigger("click");
+                $(`#selectPakan${index}`).select2("val", shareIdDetail);
+            }
+
+            // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
+            $.removeCookie("sharePakanDetailBeli", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePakanTanggal", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePakanUrl", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePakanMultiple", {
+                path: "/pembagian-pakan/create"
+            });
+        }
+        // end get share bibit
     </script>
 @endpush

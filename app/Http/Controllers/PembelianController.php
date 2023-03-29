@@ -27,7 +27,7 @@ class PembelianController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-        $produk = Produk::where('id_kategori', '!=', '6')->get();
+        $produk = Produk::where('id_kategori', '!=', 6)->get();
         return view('pages.pembelian.create')->with([
             'title' => 'TAMBAH PEMBELIAN',
             'supplier' => $suppliers,
@@ -136,7 +136,7 @@ class PembelianController extends Controller
     public function edit($id)
     {
         $supplier = Supplier::all();
-        $produk = Produk::all();
+        $produk = Produk::where('id_kategori', '!=', 6)->get();
         return view('pages.pembelian.edit')->with([
             'title' => 'PEMBELIAN',
             'id' => $id,

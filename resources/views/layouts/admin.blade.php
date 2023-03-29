@@ -111,6 +111,10 @@
                                 <a class="nav-link {{ $title == 'BIBIT' || $title == 'TAMBAH BIBIT' || $title == 'EDIT BIBIT' ? 'active' : '' }}"
                                     href="{{ route('bibit') }}">Bibit</a>
                             </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PAKAN' || $title == 'TAMBAH PAKAN' || $title == 'EDIT PAKAN' ? 'active' : '' }}"
+                                    href="{{ route('pakan') }}">Pakan</a>
+                            </nav>
                         </div>
 
 

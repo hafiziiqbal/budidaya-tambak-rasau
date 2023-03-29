@@ -7,13 +7,13 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\KolamController;
+use App\Http\Controllers\PakanController;
 use App\Http\Controllers\PanenController;
 use App\Http\Controllers\PembagianBibitController;
 use App\Http\Controllers\PembagianPakanController;
 use App\Http\Controllers\PembelianController;
 use App\Http\Controllers\PemberianPakanController;
 use App\Http\Controllers\PenjualanController;
-use App\Http\Controllers\Produk\PakanController;
 use App\Http\Controllers\ProdukController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TongController;
@@ -247,5 +247,17 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [BibitController::class, 'store'])->name('bibit.store');
         Route::post('/{id}/update', [BibitController::class, 'update'])->name('bibit.update');
         Route::post('/datatable', [BibitController::class, 'datatable'])->name('bibit.datatable');
+    });
+
+    Route::group(['prefix' => 'pakan'], function () {
+        Route::get('/', [PakanController::class, 'index'])->name('pakan');
+        Route::get('/contoh', [PakanController::class, 'contoh'])->name('pakan.contoh');
+        Route::get('/create', [PakanController::class, 'create'])->name('pakan.create');
+        Route::get('/{id}/edit', [PakanController::class, 'edit'])->name('pakan.edit');
+        Route::get('/delete/{id}', [PakanController::class, 'destroy'])->name('pakan.destory');
+
+        Route::post('/', [PakanController::class, 'store'])->name('pakan.store');
+        Route::post('/{id}/update', [PakanController::class, 'update'])->name('pakan.update');
+        Route::post('/datatable', [PakanController::class, 'datatable'])->name('pakan.datatable');
     });
 });
