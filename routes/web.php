@@ -167,7 +167,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'pembagian-pakan'], function () {
         Route::get('/', [PembagianPakanController::class, 'index'])->name('pembagian.pakan');
         Route::get('/create', [PembagianPakanController::class, 'create'])->name('pembagian.pakan.create');
-        // Route::get('/contoh', [PembagianPakanController::class, 'contoh'])->name('pembagian.pakan.contoh');
+        Route::get('/contoh', [PembagianPakanController::class, 'contoh'])->name('pembagian.pakan.contoh');
         Route::get('/{id}/edit', [PembagianPakanController::class, 'edit'])->name('pembagian.pakan.edit');
         Route::get('/{id}/edit-json', [PembagianPakanController::class, 'editJson'])->name('pembagian.pakan.edit.json');
         Route::get('/delete/{id}', [PembagianPakanController::class, 'destroy'])->name('pembagian.pakan.destory');
@@ -176,6 +176,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [PembagianPakanController::class, 'store'])->name('pembagian.pakan.store');
         Route::post('/{id}/update', [PembagianPakanController::class, 'update'])->name('pembagian.pakan.update');
         Route::post('/datatable', [PembagianPakanController::class, 'datatable'])->name('pembagian.pakan.datatable');
+        Route::post('/datatable/detail', [PembagianPakanController::class, 'datatableDetail'])->name('pembagian.pakan.datatable.detai;');
 
         Route::group(['prefix' => 'detail'], function () {
             Route::post('/', [PembagianPakanController::class, 'storeDetail'])->name('pembagian.pakan.store.detail');

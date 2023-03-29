@@ -136,5 +136,33 @@
                 });
             }
         });
+
+        // start get share bibit
+        const cookies = document.cookie.split(";");
+        shareIdDetail = getCookie('sharePakanDetailBagi');
+        shareUrl = getCookie('sharePakanUrl');
+        if (shareIdDetail != '') {
+            $('#selectBagiPakan').select2("val", shareIdDetail);
+            $('#selectBagiPakan').trigger('change');
+            $('ol a').attr('href', `/${shareUrl}`);
+            $('ol a').html('Pembagian Bibit');
+
+
+            $('#btnTambahPembagian').trigger("click");
+            // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
+            $.removeCookie("shareBibitDetailBeli", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitTanggal", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitJenis", {
+                path: "/pembagian-bibit/create"
+            });
+            $.removeCookie("shareBibitUrl", {
+                path: "/pembagian-bibit/create"
+            });
+        }
+        // end get share bibit
     </script>
 @endpush

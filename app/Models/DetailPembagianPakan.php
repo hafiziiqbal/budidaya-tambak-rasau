@@ -41,4 +41,15 @@ class DetailPembagianPakan extends Model
     {
         return $this->belongsTo(HeaderPembagianPakan::class, 'id_header_pembagian_pakan');
     }
+
+    public function detail_pemberian_pakan()
+    {
+        return $this->hasMany(DetailPemberianPakan::class, 'id_detail_pembagian_pakan', 'id');
+    }
+
+
+    public function getQuantityTerpakaiAttribute()
+    {
+        return $this->quantity + $this->detail_pemberian_pakan->sum('quantity');
+    }
 }

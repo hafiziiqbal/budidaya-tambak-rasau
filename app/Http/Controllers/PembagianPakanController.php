@@ -61,6 +61,27 @@ class PembagianPakanController extends Controller
         }
     }
 
+    public function datatableDetail(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = DetailPembagianPakan::with(['detail_beli' => function ($query) {
+                    $query->with('produk');
+                }, 'tong', 'tong_old', 'detail_pemberian_pakan', 'header_pembagian_pakan'])->orderBy('updated_at', 'desc')->get();
+                foreach ($data as $key => $value) {
+                    $value['quantity_terpakai'] = $value->quantityTerpakai;
+                }
+                return DataTables::of($data)->addIndexColumn()->make(true);
+            }
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
+
+
     public function create()
     {
         $produkPakan = DetailBeli::with('produk')
@@ -444,13 +465,12 @@ class PembagianPakanController extends Controller
 
     public function contoh()
     {
-        $data = HeaderPembagianPakan::with([
-            'detail_pembagian_pakan' => function ($query) {
-                $query->with(['detail_beli' => function ($query) {
-                    $query->with('produk');
-                }, 'tong']);
-            }
-        ])->orderBy('updated_at', 'desc')->get();
+        $data = DetailPembagianPakan::with(['detail_beli' => function ($query) {
+            $query->with('produk');
+        }, 'tong', 'tong_old', 'detail_pemberian_pakan'])->orderBy('updated_at', 'desc')->get();
+        foreach ($data as $key => $value) {
+            $value['quantity_terpakai'] = $value->quantityTerpakai;
+        }
         return response()->json(
             $data
         );
