@@ -56,7 +56,6 @@
                         data: 'detail_panen',
                         name: 'detail_panen',
                         render: function(data, type, row, meta) {
-                            console.log(data);
                             var panenList =
                                 '<select name="bibit" class="form-control" ><option value="" class="fst-italic" selected data-default>Daftar Panen ▼</option>';
                             $.each(data, function(index, value) {

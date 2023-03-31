@@ -43,4 +43,10 @@ class DetailPembagianBibit extends Model
     {
         return $this->belongsTo(MasterKolam::class, 'id_kolam');
     }
+
+    public function detail_panen()
+    {
+        return $this->hasMany(DetailPanen::class, 'id_detail_pembagian_bibit', 'id');
+    }
+    
 }

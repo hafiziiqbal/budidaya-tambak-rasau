@@ -19,7 +19,8 @@ class DetailPanen extends Model
         'posisi_kolam',
         'nama_jaring',
         'posisi_jaring',
-        'quantity'
+        'quantity',
+        'quantity_awal'
     ];
 
     protected $hidden = [
@@ -34,5 +35,16 @@ class DetailPanen extends Model
     public function header_panen()
     {
         return $this->belongsTo(HeaderPanen::class, 'id_header_panen');
+    }
+
+    public function detail_jual()
+    {
+        return $this->hasMany(DetailJual::class, 'id_detail_panen', 'id');
+    }
+
+    public function getQuantityAwalPanenAttribute()
+    {
+        $totalQuantity = $this->detail_jual->sum('quantity');
+        return $this->quantity + $totalQuantity;
     }
 }

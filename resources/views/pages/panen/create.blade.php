@@ -209,5 +209,45 @@
             index = index + 1
             loadElementDetailBeli(index)
         })
+
+        // start get share bibit
+        const cookies = document.cookie.split(";");
+        shareIdDetail = getCookie('sharePanenIkan');
+        shareTanggal = getCookie('sharePanenTanggal');
+        shareUrl = getCookie('sharePanenUrl');
+        shareIsMultiple = getCookie('sharePanenMultiple');
+        if (shareIdDetail != '') {
+            $('#inputTanggalPembagian').val(shareTanggal)
+            $('ol a').attr('href', `/${shareUrl}`);
+            $('ol a').html('Pembagian Bibit');
+            if (shareIsMultiple == true) {
+                let idPanen = shareIdDetail.split(',');
+                idPanen.forEach(item => {
+                    $('#btnTambahPembagian').trigger("click");
+                    $(`#selectIkan${index}`).select2("val", item);
+                });
+            } else {
+                $('#btnTambahPembagian').trigger("click");
+                $(`#selectIkan${index}`).val(shareIdDetail);
+                $(`#selectIkan${index}`).select2();
+
+
+            }
+
+            // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
+            $.removeCookie("sharePanenIkan", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePanenTanggal", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePanenUrl", {
+                path: "/pembagian-pakan/create"
+            });
+            $.removeCookie("sharePanenMultiple", {
+                path: "/pembagian-pakan/create"
+            });
+        }
+        // end get share bibit
     </script>
 @endpush

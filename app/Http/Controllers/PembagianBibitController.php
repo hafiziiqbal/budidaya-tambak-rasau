@@ -44,6 +44,27 @@ class PembagianBibitController extends Controller
         }
     }
 
+    public function datatableDetail(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'jaring', 'jaring_old', 'kolam', 'detail_panen.detail_jual'])->orderBy('updated_at', 'desc')->get();
+                foreach ($data as $key => $value) {
+                    // Menghitung total quantity dari ketiga tabel
+                    $totalQuantity = $value->detail_panen->sum(function ($panen) {
+                        return $panen->quantity + $panen->detail_jual->sum('quantity');
+                    }) + $value->quantity;
+                    $value['quantity_awal'] = $totalQuantity;
+                }
+                return DataTables::of($data)->addIndexColumn()->make(true);
+            }
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
     public function create()
     {
         $jaring = MasterJaring::where('id_kolam', null)->get();
@@ -703,14 +724,15 @@ class PembagianBibitController extends Controller
 
     public function contoh()
     {
-        // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
-        $data = HeaderPembagianBibit::with([
-            'detail_beli' => function ($query) {
-                $query->select('id', 'id_produk', 'id_header_beli')->with(['produk' => function ($query) {
-                    $query->select('id', 'nama');
-                }, 'header_beli']);
-            }
-        ])->orderBy('updated_at', 'desc')->get();
+        $data = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'jaring', 'jaring_old', 'kolam', 'detail_panen.detail_jual'])->orderBy('updated_at', 'desc')->get();
+        foreach ($data as $key => $value) {
+            // Menghitung total quantity dari ketiga tabel
+            $totalQuantity = $value->detail_panen->sum(function ($panen) {
+                return $panen->quantity + $panen->detail_jual->sum('quantity');
+            }) + $value->quantity;
+            $value['quantity_awal'] = $totalQuantity;
+        }
+
         return response()->json(
             $data
         );

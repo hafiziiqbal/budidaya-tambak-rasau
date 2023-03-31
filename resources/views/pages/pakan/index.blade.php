@@ -8,7 +8,7 @@
     {{-- <a href="{{ route('produk.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Bibit</a> --}}
 
     @include('components.alert')
-    <button class="btn btn-primary mb-3" id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan Pakan Yang
+    <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan Pakan Yang
         Dipilih</button>
     <table id="tblPakan" class="table table-striped  nowrap" style="width:100%">
         <thead>
@@ -44,6 +44,7 @@
                     render: function(data, type, row, meta) {
                         return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
                     },
+                    orderable: false
                 },
                 {
                     data: "updated_at",
@@ -178,5 +179,29 @@
 
             window.location.href = "{{ route('pembagian.pakan.create') }}";
         })
+
+        // Ketika terjadi perubahan pada setiap element input type check
+        table.on('change', 'input.checkbox', function() {
+            // Mengambil jumlah element input type check yang tercentang
+            let checkedCount = $('input.checkbox').filter(':checked').length;
+            // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
+            if (checkedCount >= 2) {
+                $('#shareMultiple').removeAttr('disabled');
+            } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
+                $('#shareMultiple').attr('disabled', true);
+            }
+        });
+
+        // Ketika terjadi perubahan pada setiap element input type check
+        table.on('click', '#checkAll', function() {
+            // Mengambil jumlah element input type check yang tercentang
+            let checkedCount = $('input.checkbox').filter(':checked').length;
+            // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
+            if (checkedCount >= 2) {
+                $('#shareMultiple').removeAttr('disabled');
+            } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
+                $('#shareMultiple').attr('disabled', true);
+            }
+        });
     </script>
 @endpush
