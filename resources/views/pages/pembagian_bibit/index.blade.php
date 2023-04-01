@@ -8,9 +8,7 @@
     <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
         Data</a>
     @include('components.alert')
-    <br>
-    <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan Pakan Yang
-        Dipilih</button>
+    
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
@@ -35,6 +33,10 @@
             </table>
         </div>
         <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
+            <br>
+            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan
+                Pakan Yang
+                Dipilih</button>
             <br>
             <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
                 <thead>

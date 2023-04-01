@@ -42,7 +42,12 @@
             columns: [{
                     data: "id",
                     render: function(data, type, row, meta) {
-                        return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
+                        if (row['quantity'] > 0) {
+                            return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
+                        } else {
+                            return ''
+                        }
+
                     },
                     orderable: false
                 },

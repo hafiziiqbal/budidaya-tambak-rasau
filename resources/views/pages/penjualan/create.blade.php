@@ -385,5 +385,44 @@
             // Menghitung kembalian
             hitungKembalian();
         });
+
+        // start get share bibit
+        const cookies = document.cookie.split(";");
+        shareIdDetail = getCookie('sharePanenIkan');
+        shareUrl = getCookie('sharePanenUrl');
+        shareIsMultiple = getCookie('sharePanenMultiple');
+        if (shareIdDetail != '') {
+            $('ol a').attr('href', `/${shareUrl}`);
+            $('ol a').html('Panen');
+            if (shareIsMultiple) {
+                let idPanen = shareIdDetail.split(',');
+
+                idPanen.forEach(item => {
+                    $('#btnTambahPembagian').trigger("click");
+                    $(`#selectProdukPanen${index}`).val(item);
+                    $(`#selectProdukPanen${index}`).select2()
+                });
+
+            } else {
+                $('#btnTambahPembagian').trigger("click");
+                $(`#selectProdukPanen${index}`).val(shareIdDetail);
+                $(`#selectProdukPanen${index}`).select2()
+            }
+
+            // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
+            $.removeCookie("sharePanenIkan", {
+                path: "/panen/create"
+            });
+            $.removeCookie("sharePanenTanggal", {
+                path: "/panen/create"
+            });
+            $.removeCookie("sharePanenUrl", {
+                path: "/panen/create"
+            });
+            $.removeCookie("sharePanenMultiple", {
+                path: "/panen/create"
+            });
+        }
+        // end get share bibit
     </script>
 @endpush

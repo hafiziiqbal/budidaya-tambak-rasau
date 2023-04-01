@@ -37,6 +37,24 @@ class PanenController extends Controller
         }
     }
 
+    public function datatableDetail(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual'])->orderBy('updated_at', 'desc')->get();
+                foreach ($data as $key => $value) {
+                    // Menghitung total quantity dari ketiga tabel         
+                    $value['quantity_awal'] = $value->quantityAwalPanen;
+                }
+                return DataTables::of($data)->addIndexColumn()->make(true);
+            }
+        } catch (\Throwable $th) {
+            return redirect('/')->withErrors([
+                'error' => 'Terdapat Kesalahan'
+            ]);
+        }
+    }
+
     public function create()
     {
         $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring'])
@@ -500,7 +518,11 @@ class PanenController extends Controller
     public function contoh()
     {
         // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
-        $data = HeaderPanen::with(['detail_panen.detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->orderBy('updated_at', 'desc')->get();
+        $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual'])->orderBy('updated_at', 'desc')->get();
+        foreach ($data as $key => $value) {
+            // Menghitung total quantity dari ketiga tabel         
+            $value['quantity_awal'] = $value->quantityAwalPanen;
+        }
         return response()->json(
             $data
         );

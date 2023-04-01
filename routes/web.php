@@ -203,7 +203,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'panen'], function () {
         Route::get('/', [PanenController::class, 'index'])->name('panen');
         Route::get('/create', [PanenController::class, 'create'])->name('panen.create');
-        // Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
+        Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
         Route::get('/{id}/edit', [PanenController::class, 'edit'])->name('panen.pakan.edit');
         Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.edit.json');
         Route::get('/delete/{id}', [PanenController::class, 'destroy'])->name('panen.destory');
@@ -212,6 +212,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::post('/', [PanenController::class, 'store'])->name('panen.store');
         Route::post('/{id}/update', [PanenController::class, 'update'])->name('panen.update');
         Route::post('/datatable', [PanenController::class, 'datatable'])->name('panen.datatable');
+        Route::post('/datatable/detail', [PanenController::class, 'datatableDetail'])->name('panen.datatable.detail');
 
         Route::group(['prefix' => 'detail'], function () {
             Route::post('/', [PanenController::class, 'storeDetail'])->name('panen.store.detail');
