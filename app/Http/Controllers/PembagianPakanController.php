@@ -19,6 +19,7 @@ class PembagianPakanController extends Controller
     {
         return view('pages.pembagian_pakan.index')->with([
             'title' => 'PEMBAGIAN PAKAN',
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -38,6 +39,7 @@ class PembagianPakanController extends Controller
             'produkPakan' => $produkPakan,
             'tong' => $tong,
             'id' => $id,
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -99,7 +101,8 @@ class PembagianPakanController extends Controller
         return view('pages.pembagian_pakan.create')->with([
             'title' => 'PEMBAGIAN PAKAN',
             'produkPakan' => $produkPakan,
-            'tong' => $tong
+            'tong' => $tong,
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -287,6 +290,7 @@ class PembagianPakanController extends Controller
             'produkPakan' => $produkPakan,
             'tong' => $tong,
             'id' => $id,
+            'pekerjaan_toogle' => 1
         ]);
     }
 

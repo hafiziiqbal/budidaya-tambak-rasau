@@ -8,7 +8,7 @@
     <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
         Data</a>
     @include('components.alert')
-    
+
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
@@ -34,9 +34,8 @@
         </div>
         <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
             <br>
-            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan
-                Pakan Yang
-                Dipilih</button>
+            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Panen
+                Bibit Yang Dipilih</button>
             <br>
             <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
                 <thead>
@@ -210,7 +209,7 @@
                         let share = '';
                         if (row['quantity'] > 0) {
                             share =
-                                `<button title="Berikan Pakan" data-id="${id}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
+                                `<button title="Panen Bibit" data-id="${id}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
                         }
                         let show =
                             `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
@@ -310,7 +309,6 @@
 
             // memformat tanggal dengan format d-m-Y
             const formattedDate = `${day}-${month}-${year}`;
-
             document.cookie = `sharePanenTanggal=${formattedDate};path=/panen/create`;
             document.cookie = `sharePanenIkan=${id};path=/panen/create`;
             document.cookie = `sharePanenUrl=pembagian-bibit;path=/panen/create`;
@@ -320,7 +318,7 @@
         })
 
         // Ketika terjadi perubahan pada setiap element input type check
-        table.on('change', 'input.checkbox', function() {
+        tableDetail.on('change', 'input.checkbox', function() {
             // Mengambil jumlah element input type check yang tercentang
             let checkedCount = $('input.checkbox').filter(':checked').length;
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
@@ -332,7 +330,7 @@
         });
 
         // Ketika terjadi perubahan pada setiap element input type check
-        table.on('click', '#checkAll', function() {
+        tableDetail.on('click', '#checkAll', function() {
             // Mengambil jumlah element input type check yang tercentang
             let checkedCount = $('input.checkbox').filter(':checked').length;
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll

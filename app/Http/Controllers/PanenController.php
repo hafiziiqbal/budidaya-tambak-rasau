@@ -20,6 +20,7 @@ class PanenController extends Controller
     {
         return view('pages.panen.index')->with([
             'title' => 'PANEN',
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -41,10 +42,17 @@ class PanenController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual'])->orderBy('updated_at', 'desc')->get();
+                $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit'])->orderBy('updated_at', 'desc')->get();
                 foreach ($data as $key => $value) {
-                    // Menghitung total quantity dari ketiga tabel         
-                    $value['quantity_awal'] = $value->quantityAwalPanen;
+                    if (count($value->detail_jual) > 0) {
+                        $value['quantity_awal'] = $value->quantityAwalPanen;
+                    } else {
+                        $nilaiSementara = 0;
+                        foreach ($value->header_pembagian_bibit as $key => $bibit) {
+                            $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
+                        }
+                        $value['quantity_awal'] = $value->quantity + $nilaiSementara;
+                    }
                 }
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
@@ -65,7 +73,8 @@ class PanenController extends Controller
 
         return view('pages.panen.create')->with([
             'title' => 'PANEN',
-            'pembagianBibit' => $pembagianBibit
+            'pembagianBibit' => $pembagianBibit,
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -261,6 +270,7 @@ class PanenController extends Controller
             'title' => 'EDIT PANEN',
             'pembagianBibit' => $pembagianBibit,
             'id' => $id,
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -512,16 +522,24 @@ class PanenController extends Controller
             'title' => 'EDIT PANEN',
             'pembagianBibit' => $pembagianBibit,
             'id' => $id,
+            'pekerjaan_toogle' => 1
         ]);
     }
 
     public function contoh()
     {
         // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
-        $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual'])->orderBy('updated_at', 'desc')->get();
+        $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit'])->orderBy('updated_at', 'desc')->get();
         foreach ($data as $key => $value) {
-            // Menghitung total quantity dari ketiga tabel         
-            $value['quantity_awal'] = $value->quantityAwalPanen;
+            if (count($value->detail_jual) > 0) {
+                $value['quantity_awal'] = $value->quantityAwalPanen;
+            } else {
+                $nilaiSementara = 0;
+                foreach ($value->header_pembagian_bibit as $key => $bibit) {
+                    $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
+                }
+                $value['quantity_awal'] = $value->quantity + $nilaiSementara;
+            }
         }
         return response()->json(
             $data

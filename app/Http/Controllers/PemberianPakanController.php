@@ -17,6 +17,7 @@ class PemberianPakanController extends Controller
     {
         return view('pages.pemberian_pakan.index')->with([
             'title' => 'PEMBERIAN PAKAN',
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -26,6 +27,7 @@ class PemberianPakanController extends Controller
         return view('pages.pemberian_pakan.create')->with([
             'pembagianPakan' => $pembagianPakan,
             'title' => 'PEMBERIAN PAKAN',
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -100,6 +102,7 @@ class PemberianPakanController extends Controller
             'pembagianBibit' => $pembagianBibit,
             'data' => $data,
             'title' => 'PEMBERIAN PAKAN',
+            'pekerjaan_toogle' => 1
         ]);
     }
 

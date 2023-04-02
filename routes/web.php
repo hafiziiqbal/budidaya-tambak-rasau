@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\BibitController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JaringController;
 use App\Http\Controllers\KategoriControler;
 use App\Http\Controllers\KolamController;
@@ -41,9 +42,12 @@ Route::group(['middleware' => 'guest'], function () {
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/dashboard', function () {
-        return view('dashboard')->with(['title' => 'DASHBOARD']);
-    })->name('dashboard');
+
+    Route::group(['prefix' => 'dashboard'], function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/total', [DashboardController::class, 'totalDefault'])->name('dashboard.total.default');
+        Route::post('/total', [DashboardController::class, 'total'])->name('dashboard.total');
+    });
 
     Route::group(['prefix' => 'supplier'], function () {
         Route::get('/', [SupplierController::class, 'index'])->name('supplier');

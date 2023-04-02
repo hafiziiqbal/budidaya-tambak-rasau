@@ -21,6 +21,7 @@ class PembagianBibitController extends Controller
     {
         return view('pages.pembagian_bibit.index')->with([
             'title' => 'PEMBAGIAN BIBIT',
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -69,7 +70,7 @@ class PembagianBibitController extends Controller
     {
         $jaring = MasterJaring::where('id_kolam', null)->get();
         $kolam = MasterKolam::all();
-        $detailSortir = DetailPanen::where('status', 0)->with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
+        $detailSortir = DetailPanen::where('status', 0)->where('quantity', '>', '0')->with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
 
         $pembelian = DetailBeli::select(['id', 'id_header_beli', 'id_produk', 'updated_at', 'quantity', 'quantity_stok'])->with(['produk' => function ($query) {
             $query->select('id', 'nama', 'quantity');
@@ -84,7 +85,9 @@ class PembagianBibitController extends Controller
             'jaring' => $jaring,
             'kolam' => $kolam,
             'sortir' => $detailSortir,
-            'pembelian' => $pembelian
+            'pembelian' => $pembelian,
+            'pekerjaan_toogle' => 1
+
         ]);
     }
 
@@ -312,7 +315,7 @@ class PembagianBibitController extends Controller
         return view('pages.pembagian_bibit.show')->with([
             'title' => 'PEMBAGIAN BIBIT',
             'data' => $data,
-            'transaksi_toogle' => 1
+            'pekerjaan_toogle' => 1
         ]);
     }
 
@@ -573,7 +576,8 @@ class PembagianBibitController extends Controller
             'kolam' => $kolam,
             'id' => $id,
             'sortir' => $detailSortir,
-            'pembelian' => $pembelian
+            'pembelian' => $pembelian,
+            'pekerjaan_toogle' => 1
         ]);
     }
 

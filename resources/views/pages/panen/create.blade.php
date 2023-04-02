@@ -216,36 +216,36 @@
         shareTanggal = getCookie('sharePanenTanggal');
         shareUrl = getCookie('sharePanenUrl');
         shareIsMultiple = getCookie('sharePanenMultiple');
+
         if (shareIdDetail != '') {
             $('#inputTanggalPembagian').val(shareTanggal)
             $('ol a').attr('href', `/${shareUrl}`);
             $('ol a').html('Pembagian Bibit');
-            if (shareIsMultiple == true) {
+            if (shareIsMultiple == 'true') {
                 let idPanen = shareIdDetail.split(',');
                 idPanen.forEach(item => {
                     $('#btnTambahPembagian').trigger("click");
-                    $(`#selectIkan${index}`).select2("val", item);
+                    $(`#selectIkan${index}`).val(item);
+                    $(`#selectIkan${index}`).select2();
                 });
-            } else {
+            } else if (shareIsMultiple == 'false') {
                 $('#btnTambahPembagian').trigger("click");
                 $(`#selectIkan${index}`).val(shareIdDetail);
                 $(`#selectIkan${index}`).select2();
-
-
             }
 
             // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
             $.removeCookie("sharePanenIkan", {
-                path: "/pembagian-pakan/create"
+                path: "/panen/create"
             });
             $.removeCookie("sharePanenTanggal", {
-                path: "/pembagian-pakan/create"
+                path: "/panen/create"
             });
             $.removeCookie("sharePanenUrl", {
-                path: "/pembagian-pakan/create"
+                path: "/panen/create"
             });
             $.removeCookie("sharePanenMultiple", {
-                path: "/pembagian-pakan/create"
+                path: "/panen/create"
             });
         }
         // end get share bibit

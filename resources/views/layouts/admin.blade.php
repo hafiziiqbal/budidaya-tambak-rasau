@@ -69,35 +69,47 @@
                         </a>
 
                         <div class="sb-sidenav-menu-heading">Pekerjaan Kami</div>
-                        <a class="nav-link {{ $title == 'PEMBAGIAN BIBIT' || $title == 'TAMBAH PEMBAGIAN BIBIT' || $title == 'EDIT PEMBAGIAN BIBIT' ? 'active' : '' }}"
-                            href="{{ route('pembagian.bibit') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                            Pembagian Bibit
+                        <a class="nav-link {{ isset($pekerjaan_toogle) ? 'active' : 'collapsed' }}" href="#"
+                            data-bs-toggle="collapse" data-bs-target="#collapsePekerjaan" aria-expanded="false"
+                            aria-controls="collapsePekerjaan">
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-person-digging"></i></div>
+                            Pekerjaan
+                            <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
-                        <a class="nav-link {{ $title == 'PEMBAGIAN PAKAN' || $title == 'TAMBAH PEMBAGIAN PAKAN' || $title == 'EDIT PEMBAGIAN PAKAN' ? 'active' : '' }}"
-                            href="{{ route('pembagian.pakan') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                            Pembagian Pakan
-                        </a>
+                        <div class="collapse {{ isset($pekerjaan_toogle) ? 'show' : '' }}" id="collapsePekerjaan"
+                            aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PEMBAGIAN BIBIT' || $title == 'TAMBAH PEMBAGIAN BIBIT' || $title == 'EDIT PEMBAGIAN BIBIT' ? 'active' : '' }}"
+                                    href="{{ route('pembagian.bibit') }}">
+                                    Bagi Bibit
+                                </a>
+                            </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PEMBAGIAN PAKAN' || $title == 'TAMBAH PEMBAGIAN PAKAN' || $title == 'EDIT PEMBAGIAN PAKAN' ? 'active' : '' }}"
+                                    href="{{ route('pembagian.pakan') }}">
 
-                        <a class="nav-link {{ $title == 'PEMBERIAN PAKAN' || $title == 'TAMBAH PEMBERIAN PAKAN' || $title == 'EDIT PEMBERIAN PAKAN' ? 'active' : '' }}"
-                            href="{{ route('pemberian.pakan') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                            Pemberian Pakan
-                        </a>
-                        <a class="nav-link {{ $title == 'PANEN' || $title == 'TAMBAH PANEN' || $title == 'EDIT PANEN' ? 'active' : '' }}"
-                            href="{{ route('panen') }}">
-                            <div class="sb-nav-link-icon"><i class="fas fa-briefcase"></i></div>
-                            Panen
-                        </a>
-
-
+                                    Bagi Pakan
+                                </a>
+                            </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PEMBERIAN PAKAN' || $title == 'TAMBAH PEMBERIAN PAKAN' || $title == 'EDIT PEMBERIAN PAKAN' ? 'active' : '' }}"
+                                    href="{{ route('pemberian.pakan') }}">
+                                    Beri Pakan
+                                </a>
+                            </nav>
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link {{ $title == 'PANEN' || $title == 'TAMBAH PANEN' || $title == 'EDIT PANEN' ? 'active' : '' }}"
+                                    href="{{ route('panen') }}">
+                                    Panen
+                                </a>
+                            </nav>
+                        </div>
 
                         <div class="sb-sidenav-menu-heading">Produk Kami</div>
                         <a class="nav-link {{ isset($produk_toogle) ? 'active' : 'collapsed' }}" href="#"
                             data-bs-toggle="collapse" data-bs-target="#collapseProduk" aria-expanded="false"
                             aria-controls="collapseProduk">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-fish"></i></div>
                             Produk
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
@@ -122,7 +134,7 @@
                         <a class="nav-link {{ isset($transaksi_toogle) ? 'active' : 'collapsed' }}" href="#"
                             data-bs-toggle="collapse" data-bs-target="#collapseTransaksi" aria-expanded="false"
                             aria-controls="collapseTransaksi">
-                            <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
+                            <div class="sb-nav-link-icon"><i class="fa-solid fa-credit-card"></i></div>
                             Transaksi
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
                         </a>
@@ -195,6 +207,8 @@
 
     <script src="{{ asset('/js/script.js') }}"></script>
     <script src="{{ asset('/vendor/jquery/jquery-3.5.1.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="{{ asset('/vendor/jquery/jquery.countup.js') }}"></script>
     <script src="{{ asset('/vendor/jquery/jquery.cookie.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.bootstrap.min.js') }}"></script>

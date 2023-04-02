@@ -42,6 +42,11 @@ class DetailPanen extends Model
         return $this->hasMany(DetailJual::class, 'id_detail_panen', 'id');
     }
 
+    public function header_pembagian_bibit()
+    {
+        return $this->hasMany(HeaderPembagianBibit::class, 'id_detail_panen', 'id');
+    }
+
     public function getQuantityAwalPanenAttribute()
     {
         $totalQuantity = $this->detail_jual->sum('quantity');
