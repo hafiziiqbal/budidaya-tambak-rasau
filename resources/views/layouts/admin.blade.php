@@ -59,7 +59,7 @@
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
-                <div class="sb-sidenav-menu">
+                <div class="sb-sidenav-menu" id="sideBar">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Beranda</div>
                         <a class="nav-link {{ $title == 'DASHBOARD' ? 'active' : '' }}"
@@ -155,9 +155,9 @@
 
 
                         <div class="sb-sidenav-menu-heading">Database Kami</div>
-                        <a class="nav-link {{ isset($masterdata_toogle) ? 'active' : 'collapsed' }}" href="#"
-                            data-bs-toggle="collapse" data-bs-target="#collapseMasterData" aria-expanded="false"
-                            aria-controls="collapseMasterData">
+                        <a id="MasterData" class="nav-link {{ isset($masterdata_toogle) ? 'active' : 'collapsed' }}"
+                            href="#" data-bs-toggle="collapse" data-bs-target="#collapseMasterData"
+                            aria-expanded="false" aria-controls="collapseMasterData">
                             <div class="sb-nav-link-icon"><i class="fas fa-cog"></i></div>
                             Master Data
                             <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
@@ -232,6 +232,12 @@
                 }
             }
             return "";
+        }
+
+        if ($('#MasterData').hasClass('active')) {
+            let sidebarElement = document.getElementById("sideBar");
+            sidebarElement.scrollTop = 1000;
+
         }
     </script>
     @stack('script')
