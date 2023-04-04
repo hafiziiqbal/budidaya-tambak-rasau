@@ -249,9 +249,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/contoh', [BibitController::class, 'contoh'])->name('bibit.contoh');
         Route::get('/{id}/edit', [BibitController::class, 'edit'])->name('bibit.edit');
         Route::get('/delete/{id}', [BibitController::class, 'destroy'])->name('bibit.destory');
-
-        Route::post('/', [BibitController::class, 'store'])->name('bibit.store');
-        Route::post('/{id}/update', [BibitController::class, 'update'])->name('bibit.update');
         Route::post('/datatable', [BibitController::class, 'datatable'])->name('bibit.datatable');
     });
 
@@ -261,9 +258,6 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/create', [PakanController::class, 'create'])->name('pakan.create');
         Route::get('/{id}/edit', [PakanController::class, 'edit'])->name('pakan.edit');
         Route::get('/delete/{id}', [PakanController::class, 'destroy'])->name('pakan.destory');
-
-        Route::post('/', [PakanController::class, 'store'])->name('pakan.store');
-        Route::post('/{id}/update', [PakanController::class, 'update'])->name('pakan.update');
         Route::post('/datatable', [PakanController::class, 'datatable'])->name('pakan.datatable');
     });
 });

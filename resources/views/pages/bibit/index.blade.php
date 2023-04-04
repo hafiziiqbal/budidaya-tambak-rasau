@@ -74,7 +74,7 @@
                         let edit =
                             `<a title="Edit Data" href="/bibit/${data}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
-                            `<button onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" class="btn btn-danger btn-delete" data-id="${data}"><i class="fa fa-trash"></i></button>`
+                            `<button title="Hapus Data" class="btn btn-danger btn-delete" data-id="${data}"><i class="fa fa-trash"></i></button>`
                         return share + edit + deletebtn
                     },
                 },
@@ -94,8 +94,9 @@
             const today = new Date();
 
             // mengambil tanggal, bulan, dan tahun dari objek Date
-            const day = today.getDate();
-            const month = today.getMonth() + 1; // ingat bahwa index bulan dimulai dari 0
+            const day = today.getDate() < 10 ? ('0' + today.getDate()) : today.getDate();
+            const month = (today.getMonth() + 1) < 10 ? ('0' + (today.getMonth() + 1)) : today
+                .getMonth(); // ingat bahwa index bulan dimulai dari 0
             const year = today.getFullYear();
 
             // memformat tanggal dengan format d-m-Y
@@ -113,38 +114,40 @@
         });
 
         table.on('click', '.btn-delete', function() {
-            let id = $(this).data('id');
-            $.ajax({
-                url: `/pembelian/detail/delete/${id}`,
-                dataType: 'json', // what to expect back from the server
-                cache: false,
-                contentType: false,
-                processData: false,
-                type: 'GET',
+            if (confirm('Data ini akan dihapus') == true) {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: `/pembelian/detail/delete/${id}`,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'GET',
 
-                success: function(response) {
-                    if (response.success != undefined) {
-                        $('#alertNotif').removeClass('d-none');
-                        $('#alertNotif span').html(response.success);
-                        table.ajax.reload();
-                    }
+                    success: function(response) {
+                        if (response.success != undefined) {
+                            $('#alertNotif').removeClass('d-none');
+                            $('#alertNotif span').html(response.success);
+                            table.ajax.reload();
+                        }
 
-                },
-                error: function(
-                    response
-                ) { // handle the error                                                            
-                    let errors = response.responseJSON.errors
-                    $("small[id^='error']").html('');
-                    if (errors.general) {
-                        $(`#alert #alertNotifError`).removeClass('d-none');
-                        $(`#alert #alertNotifError span`).html(errors.general);
-                        $(`#alert`).append(`@include('components.alert')`);
-                    }
+                    },
+                    error: function(
+                        response
+                    ) { // handle the error                                                            
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+                        if (errors.general) {
+                            $(`#alert #alertNotifError`).removeClass('d-none');
+                            $(`#alert #alertNotifError span`).html(errors.general);
+                            $(`#alert`).append(`@include('components.alert')`);
+                        }
 
 
-                },
+                    },
 
-            })
+                })
+            }
         });
     </script>
 @endpush

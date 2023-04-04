@@ -5,9 +5,9 @@
         <li class="breadcrumb-item active">Pakan</li>
     </ol>
 
-    {{-- <a href="{{ route('produk.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Bibit</a> --}}
-
-    @include('components.alert')
+    <div id="alert">
+        @include('components.alert')
+    </div>
     <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan Pakan Yang
         Dipilih</button>
     <table id="tblPakan" class="table table-striped  nowrap" style="width:100%">
@@ -42,7 +42,7 @@
             columns: [{
                     data: "id",
                     render: function(data, type, row, meta) {
-                        if (row['quantity'] > 0) {
+                        if (row['quantity_stok'] > 0) {
                             return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
                         } else {
                             return ''
@@ -81,14 +81,11 @@
                             share =
                                 `<button title="Bagikan Pakan" data-id="${data}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
                         }
-
-                        let show =
-                            `<a title="Info Pakan" href="/pakan/${data}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
                         let edit =
                             `<a title="Edit Data" href="/pakan/${data}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
-                            `<a onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" href="/pakan/delete/${data}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                        return share
+                            `<button title="Hapus Data" class="btn btn-danger btn-delete" data-id="${data}"><i class="fa fa-trash"></i></button>`
+                        return share + edit + deletebtn
                     },
                 },
                 {
@@ -107,8 +104,9 @@
             const today = new Date();
 
             // mengambil tanggal, bulan, dan tahun dari objek Date
-            const day = today.getDate();
-            const month = today.getMonth() + 1; // ingat bahwa index bulan dimulai dari 0
+            const day = today.getDate() < 10 ? ('0' + today.getDate()) : today.getDate();
+            const month = (today.getMonth() + 1) < 10 ? ('0' + (today.getMonth() + 1)) : today
+                .getMonth(); // ingat bahwa index bulan dimulai dari 0
             const year = today.getFullYear();
 
             // memformat tanggal dengan format d-m-Y
@@ -207,6 +205,46 @@
             } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
                 $('#shareMultiple').attr('disabled', true);
             }
+        });
+
+
+        table.on('click', '.btn-delete', function() {
+
+            if (confirm('Data ini akan dihapus') == true) {
+                let id = $(this).data('id');
+                $.ajax({
+                    url: `/pembelian/detail/delete/${id}`,
+                    dataType: 'json', // what to expect back from the server
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'GET',
+
+                    success: function(response) {
+                        if (response.success != undefined) {
+                            $('#alertNotif').removeClass('d-none');
+                            $('#alertNotif span').html(response.success);
+                            table.ajax.reload();
+                        }
+
+                    },
+                    error: function(
+                        response
+                    ) { // handle the error                                                            
+                        let errors = response.responseJSON.errors
+                        $("small[id^='error']").html('');
+                        if (errors.general) {
+                            $(`#alert #alertNotifError`).removeClass('d-none');
+                            $(`#alert #alertNotifError span`).html(errors.general);
+                            $(`#alert`).append(`@include('components.alert')`);
+                        }
+
+
+                    },
+
+                })
+            }
+
         });
     </script>
 @endpush

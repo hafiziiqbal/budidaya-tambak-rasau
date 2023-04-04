@@ -215,16 +215,18 @@
             $('#inputTanggalPembagian').val(shareTanggal)
             $('ol a').attr('href', `/${shareUrl}`);
             $('ol a').html('Pakan');
-            if (shareIsMultiple) {
+            if (shareIsMultiple == 'true') {
                 let idPakan = shareIdDetail.split(',');
                 idPakan.forEach(item => {
                     $('#btnTambahPembagian').trigger("click");
-                    $(`#selectPakan${index}`).select2("val", item);
+                    $(`#selectPakan${index}`).val(item);
+                    $(`#selectPakan${index}`).select2();
                 });
 
-            } else {
+            } else if (shareIsMultiple != 'true') {
                 $('#btnTambahPembagian').trigger("click");
-                $(`#selectPakan${index}`).select2("val", shareIdDetail);
+                $(`#selectPakan${index}`).val(shareIdDetail);
+                $(`#selectPakan${index}`).select2();
             }
 
             // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"

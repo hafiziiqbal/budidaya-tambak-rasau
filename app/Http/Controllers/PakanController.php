@@ -77,7 +77,12 @@ class PakanController extends Controller
      */
     public function edit($id)
     {
-        //
+        $detailBeli = DetailBeli::with('produk')->where('id', $id)->first();
+        return view('pages.pakan.edit')->with([
+            'title' => 'EDIT PAKAN',
+            'detailBeli' => $detailBeli,
+            'produk_toogle' => 1
+        ]);
     }
 
     /**
