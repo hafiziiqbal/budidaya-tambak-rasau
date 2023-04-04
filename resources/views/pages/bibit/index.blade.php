@@ -5,9 +5,11 @@
         <li class="breadcrumb-item active">Bibit</li>
     </ol>
 
-    {{-- <a href="{{ route('produk.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Bibit</a> --}}
 
-    @include('components.alert')
+
+    <div id="alert">
+        @include('components.alert')
+    </div>
     <table id="tblBibit" class="table table-striped  nowrap" style="width:100%">
         <thead>
             <tr>
@@ -72,8 +74,8 @@
                         let edit =
                             `<a title="Edit Data" href="/bibit/${data}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
-                            `<a onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" href="/bibit/delete/${data}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                        return share
+                            `<button onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" class="btn btn-danger btn-delete" data-id="${data}"><i class="fa fa-trash"></i></button>`
+                        return share + edit + deletebtn
                     },
                 },
                 {
@@ -108,6 +110,41 @@
             document.cookie = `shareBibitUrl=bibit;path=/pembagian-bibit/create`;
 
             window.location.href = "{{ route('pembagian.bibit.create') }}";
+        });
+
+        table.on('click', '.btn-delete', function() {
+            let id = $(this).data('id');
+            $.ajax({
+                url: `/pembelian/detail/delete/${id}`,
+                dataType: 'json', // what to expect back from the server
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'GET',
+
+                success: function(response) {
+                    if (response.success != undefined) {
+                        $('#alertNotif').removeClass('d-none');
+                        $('#alertNotif span').html(response.success);
+                        table.ajax.reload();
+                    }
+
+                },
+                error: function(
+                    response
+                ) { // handle the error                                                            
+                    let errors = response.responseJSON.errors
+                    $("small[id^='error']").html('');
+                    if (errors.general) {
+                        $(`#alert #alertNotifError`).removeClass('d-none');
+                        $(`#alert #alertNotifError span`).html(errors.general);
+                        $(`#alert`).append(`@include('components.alert')`);
+                    }
+
+
+                },
+
+            })
         });
     </script>
 @endpush

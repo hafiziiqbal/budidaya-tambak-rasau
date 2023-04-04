@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DetailBeli;
+use App\Models\HeaderBeli;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -81,7 +82,12 @@ class BibitController extends Controller
      */
     public function edit($id)
     {
-        //
+        $detailBeli = DetailBeli::with('produk')->where('id', $id)->first();
+        return view('pages.bibit.edit')->with([
+            'title' => 'EDIT BIBIT',
+            'detailBeli' => $detailBeli,
+            'produk_toogle' => 1
+        ]);
     }
 
     /**

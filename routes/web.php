@@ -247,7 +247,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::group(['prefix' => 'bibit'], function () {
         Route::get('/', [BibitController::class, 'index'])->name('bibit');
         Route::get('/contoh', [BibitController::class, 'contoh'])->name('bibit.contoh');
-        Route::get('/create', [BibitController::class, 'create'])->name('bibit.create');
         Route::get('/{id}/edit', [BibitController::class, 'edit'])->name('bibit.edit');
         Route::get('/delete/{id}', [BibitController::class, 'destroy'])->name('bibit.destory');
 
