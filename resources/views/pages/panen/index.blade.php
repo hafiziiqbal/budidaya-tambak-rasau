@@ -197,14 +197,14 @@
                     render: function(data, type, row, meta) {
                         switch (data) {
                             case 1:
-                                return 'Siap Jual'
+                                return '<span class="p-2 bg-success rounded text-white">Siap Jual</span>'
                                 break;
 
                             case 0:
-                                return 'Sortir'
+                                return '<span class="p-2 bg-warning rounded">Sortir</span>'
                                 break;
                             case -1:
-                                return 'Mati'
+                                return '<span class="p-2 bg-danger rounded text-white">Mati</span>'
                                 break;
                         }
                     }
