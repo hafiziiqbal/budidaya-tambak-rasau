@@ -57,7 +57,7 @@
                                 `<a title="Edit Data" href="/kategori/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                             let deletebtn =
                                 `<a onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" href="/kategori/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                            return edit + deletebtn
+                            return edit
                         },
                     },
                     {

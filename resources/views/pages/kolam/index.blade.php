@@ -55,9 +55,11 @@
 
                             let edit =
                                 `<a title="Edit Data" href="/kolam/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
+                            let ikan =
+                                `<a title="Ikan Dalam Kolam" href="/kolam/${id}/daftar-ikan" class="btn btn-primary me-2"><i class="fa fa-fish"></i></a>`;
                             let deletebtn =
                                 `<a onclick="return confirm('Data ini akan dihapus')" title="Hapus Data" href="/kolam/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                            return edit + deletebtn
+                            return ikan + edit + deletebtn
                         },
                     },
                     {

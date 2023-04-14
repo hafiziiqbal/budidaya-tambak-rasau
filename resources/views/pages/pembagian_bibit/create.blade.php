@@ -198,18 +198,6 @@
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>                            
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
-                        <div class="mb-3 select-jaring">
-                            <label class="form-label">Pilih Jaring</label>
-                            <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="detail[${index}][id_jaring]" >
-                                <option></option>
-                                @foreach ($jaring as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <small class="text-danger" id="errorJaring${index}"></small>
-                        </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Kolam</label>
                             <select class="form-select" data-placeholder="Pilih Kolam" name="detail[${index}][id_kolam]" >
@@ -221,6 +209,18 @@
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorKolam${index}"></small>
+                        </div>                        
+                        <div class="mb-3 select-jaring">
+                            <label class="form-label">Pilih Jaring</label>
+                            <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="detail[${index}][id_jaring]" >
+                                <option></option>
+                                @foreach ($jaring as $value)
+                                    <option value="{{ $value->id }}">
+                                        {{ $value->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger" id="errorJaring${index}"></small>
                         </div>                        
                     </div>`
             )

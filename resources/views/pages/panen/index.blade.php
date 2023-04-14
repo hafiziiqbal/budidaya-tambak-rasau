@@ -33,9 +33,8 @@
         </div>
         <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
             <br>
-            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan
-                Pakan Yang
-                Dipilih</button>
+            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Pilih
+                Ikan Yang Akan Dijual</button>
             <br>
             <table id="tblDetailPanen" class="table table-striped table-bordered nowrap " style="width:100%">
                 <thead>

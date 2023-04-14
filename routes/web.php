@@ -75,6 +75,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/', [KolamController::class, 'index'])->name('kolam');
         Route::get('/create', [KolamController::class, 'create'])->name('kolam.create');
         Route::get('/{id}/edit', [KolamController::class, 'edit'])->name('kolam.edit');
+        Route::get('/{id}/daftar-ikan', [KolamController::class, 'daftarIkan'])->name('kolam.ikan');
         Route::get('/delete/{id}', [KolamController::class, 'destroy'])->name('kolam.destory');
 
         Route::post('/', [KolamController::class, 'store'])->name('kolam.store');

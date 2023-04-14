@@ -41,6 +41,43 @@ class KolamController extends Controller
         ]);
     }
 
+    public function daftarIkan($id)
+    {
+        $kolam = MasterKolam::with(['detail_pembagian_bibit' => function ($query) {
+            $query->select(['id', 'id_header_pembagian_bibit', 'quantity', 'id_kolam'])->with(['header_pembagian_bibit' => function ($query) {
+                $query->select(['id', 'id_detail_beli'])->with(['detail_beli' => function ($query) {
+                    $query->select(['id', 'id_produk'])->with('produk');
+                }]);
+            }]);
+        }])->whereHas('detail_pembagian_bibit', function ($query) {
+            $query->where('quantity', '>', 0);
+        })->where('id', $id)->first();
+
+        $daftarIkan = [];
+
+        if ($kolam) {
+            foreach ($kolam->detail_pembagian_bibit as $key => $value) {
+                if (array_key_exists($value->header_pembagian_bibit->detail_beli->id_produk, $daftarIkan)) {
+                    $daftarIkan[$value->header_pembagian_bibit->detail_beli->id_produk]->quantity += $value->quantity;
+                } else {
+                    $daftarIkan[$value->header_pembagian_bibit->detail_beli->id_produk] = (object)[
+                        'nama' => $value->header_pembagian_bibit->detail_beli->produk->nama,
+                        'quantity' => (int)$value->quantity,
+                    ];
+                }
+            }
+        } else {
+            $kolam = MasterKolam::findOrFail($id);
+        }
+
+        return view('pages.kolam.ikan')->with([
+            'title' => 'IKAN DALAM KOLAM',
+            'masterdata_toogle' => 1,
+            'kolam' => $kolam,
+            'daftarIkan' => $daftarIkan
+        ]);
+    }
+
     public function store(KolamRequest $request)
     {
         try {
@@ -93,31 +130,29 @@ class KolamController extends Controller
 
     public function destroy($id)
     {
-        try {
-            $jaring = MasterJaring::where('id_kolam', $id)->first();
-            if ($jaring != '') {
-                return redirect('kolam')->withErrors([
-                    'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
-                ]);
-            }
 
-            $tong = MasterTong::select(['id', 'id_kolam'])->where('id', $id)->first();
+        $jaring = MasterJaring::where('id_kolam', $id)->first();
+        if ($jaring != null) {
+            return redirect('kolam')->withErrors([
+                'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
+            ]);
+        }
+
+        $tong = MasterTong::select(['id', 'id_kolam'])->where('id', $id)->first();
+        if ($tong != null) {
             foreach ($tong->id_kolam as $key => $value) {
                 $kolam = MasterKolam::where('id', $value)->first();
                 if ($kolam) {
                     return redirect()->route('kolam')->withErrors(['error' => 'Tabel tong sedang menggunakan kolam ini']);
                 }
             }
-            $kolam = MasterKolam::find($id);
-            $kolam->delete();
-            return redirect()->route('kolam')->with(
-                'success',
-                'Berhasil Hapus Kolam'
-            );
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
-            ]);
         }
+
+        $kolam = MasterKolam::find($id);
+        $kolam->delete();
+        return redirect()->route('kolam')->with(
+            'success',
+            'Berhasil Hapus Kolam'
+        );
     }
 }

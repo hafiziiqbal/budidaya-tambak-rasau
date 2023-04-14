@@ -8,6 +8,7 @@ use App\Models\MasterKolam;
 use App\Models\MasterTong;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
+use App\Models\DetailPembagianBibit;
 
 class JaringController extends Controller
 {
@@ -100,7 +101,7 @@ class JaringController extends Controller
     public function destroy($id)
     {
         // try {
-        $tong = MasterKolam::where('id_jaring', $id)->first();
+        $tong = DetailPembagianBibit::where('id_jaring', $id)->first();
         if ($tong != '') {
             return redirect('jaring')->withErrors([
                 'alert' => 'Data Ini Digunakan Oleh Tabel Lain'
