@@ -49,7 +49,7 @@ class PembagianBibitController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'jaring', 'jaring_old', 'kolam', 'detail_panen.detail_jual'])->orderBy('updated_at', 'desc')->get();
+                $data = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'jaring', 'jaring_old', 'kolam', 'detail_panen.detail_jual', 'detail_pemberian_pakan'])->orderBy('updated_at', 'desc')->get();
                 foreach ($data as $key => $value) {
                     // Menghitung total quantity dari ketiga tabel
                     $totalQuantity = $value->detail_panen->sum(function ($panen) {

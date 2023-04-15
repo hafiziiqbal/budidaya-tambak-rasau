@@ -141,26 +141,19 @@
         const cookies = document.cookie.split(";");
         shareIdDetail = getCookie('sharePakanDetailBagi');
         shareUrl = getCookie('sharePakanUrl');
-        if (shareIdDetail != '') {
-            $('#selectBagiPakan').select2("val", shareIdDetail);
+        if (shareIdDetail != '') {            
+            $('#selectBagiPakan').val(shareIdDetail); // Change the value or make some change to the internal state
+            $('#selectBagiPakan').trigger('change.select2'); // Noti
             $('#selectBagiPakan').trigger('change');
             $('ol a').attr('href', `/${shareUrl}`);
             $('ol a').html('Pembagian Bibit');
 
-
-            $('#btnTambahPembagian').trigger("click");
             // Menghapus cookie dengan nama "nama_cookie" dan path "/admin"
-            $.removeCookie("shareBibitDetailBeli", {
-                path: "/pembagian-bibit/create"
+            $.removeCookie("sharePakanDetailBagi", {
+                path: "/pemberian-pakan/create"
             });
-            $.removeCookie("shareBibitTanggal", {
-                path: "/pembagian-bibit/create"
-            });
-            $.removeCookie("shareBibitJenis", {
-                path: "/pembagian-bibit/create"
-            });
-            $.removeCookie("shareBibitUrl", {
-                path: "/pembagian-bibit/create"
+            $.removeCookie("sharePakanUrl", {
+                path: "/pemberian-pakan/create"
             });
         }
         // end get share bibit

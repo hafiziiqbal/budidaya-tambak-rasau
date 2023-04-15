@@ -3,14 +3,18 @@
 namespace App\Http\Controllers;
 
 use stdClass;
+use App\Models\Hpp;
 use App\Models\Produk;
+use App\Models\DetailBeli;
+use App\Models\DetailJual;
 use App\Models\DetailPanen;
 use App\Models\HeaderPanen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\PanenRequest;
-use App\Models\DetailJual;
 use App\Models\DetailPembagianBibit;
+use App\Models\DetailPembagianPakan;
+use App\Models\DetailPemberianPakan;
 use App\Models\HeaderPembagianBibit;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -42,7 +46,7 @@ class PanenController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit'])->orderBy('updated_at', 'desc')->get();
+                $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit', 'hpp'])->orderBy('updated_at', 'desc')->get();
                 foreach ($data as $key => $value) {
                     if (count($value->detail_jual) > 0) {
                         $value['quantity_awal'] = $value->quantityAwalPanen;
@@ -156,8 +160,48 @@ class PanenController extends Controller
                 $detail_pembagian_bibit->id_jaring = null;
                 $detail_pembagian_bibit->save();
             }
+
+            if ($detail['status'] != -1) {
+
+                $tong = DB::table('master_tong')
+                    ->select('id', 'id_kolam')
+                    ->whereJsonContains('id_kolam', (string)$detail_pembagian_bibit->id_kolam)
+                    ->first();
+                $idTong = $tong->id;
+                $detailPembagianPakan = DB::table('detail_pembagian_pakan')
+                    ->select('id', 'id_tong', 'id_tong_old', 'id_detail_beli')
+                    ->where('id_tong', $idTong)
+                    ->orWhere(function ($query) use ($idTong) {
+                        $query->whereNull('id_tong')
+                            ->where('id_tong_old', $idTong);
+                    })
+                    ->first();
+                $quantityPemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_pakan', $detailPembagianPakan->id)->where('id_detail_pembagian_bibit', $detail_pembagian_bibit->id)->get()->sum('quantity');
+                $detailBeliPakan = DetailBeli::select('id', 'harga_satuan')->where('id', $detailPembagianPakan->id_detail_beli)->first();
+                $hargaSatuanIkan = DetailBeli::select('id', 'harga_satuan')->where('id', $detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli)->first()->harga_satuan;
+                $totalLeleSiapPanen = $detail_pembagian_bibit->quantity_awal * $hargaSatuanIkan;
+
+
+                if ($detail_pembagian_bibit->header_pembagian_bibit->id_detail_panen == null) {
+                    $totalPemberianPakan = $quantityPemberianPakan * $detailBeliPakan->harga_satuan;
+                    $hpp = ($totalLeleSiapPanen + $totalPemberianPakan) / $detail_pembagian_bibit->quantity_awal;
+                } else {
+                    $tabelHpp = Hpp::where('id_detail_panen', $detail_pembagian_bibit->header_pembagian_bibit->id_detail_panen)->first();
+                    $totalPemberianPakan = ($quantityPemberianPakan * $detailBeliPakan->harga_satuan) + $tabelHpp->total_biaya_pakan;
+                    $hpp = ($totalLeleSiapPanen + $totalPemberianPakan) / $detail_pembagian_bibit->quantity_awal;
+                }
+                Hpp::create([
+                    'id_detail_panen' => $detailPanen->id,
+                    'id_detail_pembagian_bibit' =>  $detail['id_detail_pembagian_bibit'],
+                    'id_detail_pemberian_pakan' =>  $detailPembagianPakan->id,
+                    'status' => $detail['status'],
+                    'total_biaya_bibit' => $totalLeleSiapPanen,
+                    'total_biaya_pakan' => $totalPemberianPakan,
+                    'hpp' => $hpp
+                ]);
+            }
         }
-        // exit();
+
         // Masukkan data ke dalam tabel produk
         $produk = [];
         foreach ($request->detail as $detail) {
@@ -528,8 +572,7 @@ class PanenController extends Controller
 
     public function contoh()
     {
-        // $data = DetailBeli::select('detail_beli.id_produk, detail_beli.qty, header_beli.tgl_beli, header_beli.tgl_beli, supplier.nama')->with('produk, header_beli.supplier')->orderBy('updated_at', 'desc')->get();
-        $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit'])->orderBy('updated_at', 'desc')->get();
+        $data = DetailPanen::with(['header_panen', 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit', 'hpp'])->orderBy('updated_at', 'desc')->get();
         foreach ($data as $key => $value) {
             if (count($value->detail_jual) > 0) {
                 $value['quantity_awal'] = $value->quantityAwalPanen;
@@ -541,6 +584,7 @@ class PanenController extends Controller
                 $value['quantity_awal'] = $value->quantity + $nilaiSementara;
             }
         }
+
         return response()->json(
             $data
         );

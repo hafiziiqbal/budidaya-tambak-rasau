@@ -18,6 +18,7 @@ class Hpp extends Model
         'status',
         'total_biaya_bibit',
         'total_biaya_pakan',
+        'hpp'
     ];
 
     protected $hidden = [

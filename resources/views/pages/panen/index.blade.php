@@ -233,13 +233,13 @@
                     name: "quantity",
                 },
                 {
-                    data: "quantity",
+                    data: "hpp",
                     render: function(data, type, row, meta) {
                         hpp = ''
                         if (row['status'] == -1) {
                             hpp = ''
                         } else {
-                            hpp = 'NILAI HPP'
+                            hpp = data.hpp
                         }
                         return hpp
                     }

@@ -48,5 +48,20 @@ class DetailPembagianBibit extends Model
     {
         return $this->hasMany(DetailPanen::class, 'id_detail_pembagian_bibit', 'id');
     }
-    
+
+    public function detail_pemberian_pakan()
+    {
+        return $this->hasMany(DetailPemberianPakan::class, 'id_detail_pembagian_bibit', 'id');
+    }
+
+    public function getQuantityAwalAttribute()
+    {
+        $totalQuantity = $this->detail_panen->sum('quantity');
+        return $this->quantity + $totalQuantity;
+    }
+
+    public function getQuantityPanenAttribute()
+    {
+        return  $this->detail_panen->sum('quantity');
+    }
 }

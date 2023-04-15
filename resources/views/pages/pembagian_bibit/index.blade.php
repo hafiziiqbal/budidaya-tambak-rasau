@@ -152,7 +152,7 @@
             columns: [{
                     data: "id",
                     render: function(data, type, row, meta) {
-                        if (row['quantity'] > 0) {
+                        if (row['quantity'] > 0 && row['detail_pemberian_pakan'].length > 0) {
                             return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
                         } else {
                             return ''
@@ -206,8 +206,9 @@
                 {
                     data: "id",
                     render: function(id, type, row, meta) {
+
                         let share = '';
-                        if (row['quantity'] > 0) {
+                        if (row['quantity'] > 0 && row['detail_pemberian_pakan'].length > 0) {
                             share =
                                 `<button title="Panen Bibit" data-id="${id}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
                         }
@@ -228,6 +229,11 @@
                 {
                     data: "jaring_old",
                     name: "jaring_old",
+                    visible: false,
+                },
+                {
+                    data: "detail_pemberian_pakan",
+                    name: "detail_pemberian_pakan",
                     visible: false,
                 },
             ]
@@ -305,7 +311,7 @@
             // mengambil tanggal, bulan, dan tahun dari objek Date
             const day = today.getDate() < 10 ? ('0' + today.getDate()) : today.getDate();
             const month = (today.getMonth() + 1) < 10 ? ('0' + (today.getMonth() + 1)) : (today.getMonth() +
-            1); // ingat bahwa index bulan dimulai dari 0
+                1); // ingat bahwa index bulan dimulai dari 0
             const year = today.getFullYear();
 
             // memformat tanggal dengan format d-m-Y
