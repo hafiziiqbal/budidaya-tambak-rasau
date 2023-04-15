@@ -63,7 +63,17 @@ class TongController extends Controller
 
     public function create()
     {
-        $kolam = MasterKolam::all();
+        $id_kolam = DB::table('master_tong')
+            ->select('id_kolam')
+            ->get()
+            ->pluck('id_kolam')
+            ->flatten()
+            ->unique()
+            ->implode(',');
+
+        $tong = str_replace(array('[', ']', '"'), "", $id_kolam);
+
+        $kolam = MasterKolam::whereNotIn('id', preg_split("/\,/", $tong))->get();
         return view('pages.tong.create')->with([
             'title' => 'TAMBAH TONG',
             'kolam' => $kolam,
@@ -94,8 +104,20 @@ class TongController extends Controller
 
     public function edit($id)
     {
-        $kolam = MasterKolam::all();
         $tong = MasterTong::find($id);
+
+        $id_kolam = DB::table('master_tong')
+            ->select('id_kolam')
+            ->where('id', '!=', $id)
+            ->get()
+            ->pluck('id_kolam')
+            ->flatten()
+            ->unique()
+            ->implode(',');
+
+        $dataTong = str_replace(array('[', ']', '"'), "", $id_kolam);
+
+        $kolam = MasterKolam::whereNotIn('id', preg_split("/\,/", $dataTong))->get();
 
         $checkboxes = [];
 
@@ -136,13 +158,8 @@ class TongController extends Controller
     public function destroy($id)
     {
         try {
-            $pembagianPakan = DetailPembagianPakan::where('id_tong', $id)->first();
-            if ($pembagianPakan) {
-                return redirect('tong')->withErrors([
-                    'error' => 'Tong sedang digunakan'
-                ]);
-            }
             $tong = MasterTong::find($id);
+
             $tong->delete();
             return redirect()->route('tong')->with(
                 'success',

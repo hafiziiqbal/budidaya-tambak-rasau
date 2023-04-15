@@ -18,7 +18,7 @@
                 <small class="text-danger">*{{ $errors->first('name') }}</small>
             @endif
         </div>
-        <div class="mb-3">
+        {{-- <div class="mb-3">
             <label for="selectKolam" class="form-label">Kolam</label>
             <select class="form-select" id="selectKolam" data-placeholder="Pilih Kolam" name="id_kolam">
                 <option></option>
@@ -28,7 +28,7 @@
                     </option>
                 @endforeach
             </select>
-        </div>
+        </div> --}}
         <div class="mb-3">
             <label for="inputPosisi" class="form-label">Posisi</label>
             <textarea class="form-control" id="inputPosisi" rows="3" placeholder="Masukkan Posisi" name="posisi" required>{{ old('posisi') ?? $jaring->posisi }}</textarea>

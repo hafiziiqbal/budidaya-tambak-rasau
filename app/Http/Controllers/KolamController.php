@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\KolamRequest;
-use App\Models\MasterJaring;
-use App\Models\MasterKolam;
 use App\Models\MasterTong;
+use App\Models\MasterKolam;
+use App\Models\MasterJaring;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\KolamRequest;
 use Yajra\DataTables\Facades\DataTables;
 
 class KolamController extends Controller
@@ -138,14 +139,11 @@ class KolamController extends Controller
             ]);
         }
 
-        $tong = MasterTong::select(['id', 'id_kolam'])->where('id', $id)->first();
+        $tong = DB::table('master_tong')
+            ->whereRaw("FIND_IN_SET('$id', id_kolam) > 0")
+            ->get();
         if ($tong != null) {
-            foreach ($tong->id_kolam as $key => $value) {
-                $kolam = MasterKolam::where('id', $value)->first();
-                if ($kolam) {
-                    return redirect()->route('kolam')->withErrors(['error' => 'Tabel tong sedang menggunakan kolam ini']);
-                }
-            }
+            return redirect()->route('kolam')->withErrors(['error' => 'Tabel tong sedang menggunakan kolam ini']);
         }
 
         $kolam = MasterKolam::find($id);
