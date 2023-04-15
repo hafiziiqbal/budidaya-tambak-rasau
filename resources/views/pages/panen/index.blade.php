@@ -48,6 +48,7 @@
                         <th>Kolam</th>
                         <th>Quantity</th>
                         <th>Sisa Quantity</th>
+                        <th>HPP</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -230,6 +231,18 @@
                 {
                     data: "quantity",
                     name: "quantity",
+                },
+                {
+                    data: "quantity",
+                    render: function(data, type, row, meta) {
+                        hpp = ''
+                        if (row['status'] == -1) {
+                            hpp = ''
+                        } else {
+                            hpp = 'NILAI HPP'
+                        }
+                        return hpp
+                    }
                 },
                 {
                     data: "id",
