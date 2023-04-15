@@ -246,8 +246,9 @@
             const today = new Date();
 
             // mengambil tanggal, bulan, dan tahun dari objek Date
-            const day = today.getDate();
-            const month = today.getMonth() + 1; // ingat bahwa index bulan dimulai dari 0
+            const day = today.getDate() < 10 ? ('0' + today.getDate()) : today.getDate();
+            const month = (today.getMonth() + 1) < 10 ? ('0' + (today.getMonth() + 1)) : today
+                .getMonth(); // ingat bahwa index bulan dimulai dari 0
             const year = today.getFullYear();
 
             // memformat tanggal dengan format d-m-Y
