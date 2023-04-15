@@ -87,7 +87,7 @@
                             <small class="text-danger" id="errorPakan${index}"></small>
                         </div>
                         <div>
-                            <label class="form-label">Pilih Tong</label>
+                            <label class="form-label">Pilih Tong <span class="nama-kolam"></span></label>
                             <select class="form-select select-tong" id="selectTong${index}" data-placeholder="Pilih Tong" name="detail[${index}][id_tong]" >
                                 <option></option>
                                 @foreach ($tong as $value)

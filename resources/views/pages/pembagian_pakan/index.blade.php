@@ -188,8 +188,17 @@
                         name: 'detail_beli.produk.nama',
                     },
                     {
-                        data: 'tong.nama',
-                        name: 'tong.nama',
+                        data: 'tong',
+                        render: function(data, type, row, meta) {
+                            result = ''
+                            if (data == null) {
+                                result = row['tong_old'].nama
+                            } else {
+                                result = data.nama
+                            }
+                            return result
+
+                        }
                     },
                     {
                         data: 'quantity_terpakai',
@@ -219,6 +228,11 @@
                     {
                         data: "updated_at",
                         name: "updated_at",
+                        visible: false,
+                    },
+
+                    {
+                        data: "tong_old",
                         visible: false,
                     }
                 ],
