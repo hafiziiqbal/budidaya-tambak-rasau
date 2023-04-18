@@ -16,6 +16,7 @@ use App\Models\DetailPembagianBibit;
 use App\Models\DetailPembagianPakan;
 use App\Models\DetailPemberianPakan;
 use App\Models\HeaderPembagianBibit;
+use App\Models\MasterKolam;
 use Yajra\DataTables\Facades\DataTables;
 
 class PanenController extends Controller
@@ -69,17 +70,27 @@ class PanenController extends Controller
 
     public function create()
     {
-        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring'])
-            ->where('quantity', '>', '0')->get();
+
+        $kolam = MasterKolam::all();
 
         // return response()->json($pembagianBibit);
 
 
         return view('pages.panen.create')->with([
             'title' => 'PANEN',
-            'pembagianBibit' => $pembagianBibit,
+            'kolam' => $kolam,
             'pekerjaan_toogle' => 1
         ]);
+    }
+
+    public function pembagianBibitByKolam($id)
+    {
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring', 'detail_pemberian_pakan'])
+            ->where('quantity', '>', '0')->where('id_kolam', $id)->whereHas('detail_pemberian_pakan', function ($query) {
+                $query->whereNotNull('id');
+            })->get();
+
+        return response()->json($pembagianBibit);
     }
 
     public function store(PanenRequest $request)
@@ -119,7 +130,13 @@ class PanenController extends Controller
             if ($totalQuantity > $detailPembagianBibit->quantity) {
                 return response()->json([
                     'errors' => [
-                        "detail.$idDetail.quantity-all" => "Total Quantity tadak boleh lebih dari $detailPembagianBibit->quantity"
+                        "detail.$idDetail.quantity-all" => "Total Quantity tidak boleh lebih dari $detailPembagianBibit->quantity"
+                    ],
+                ], 422);
+            } else if ($totalQuantity < $detailPembagianBibit->quantity) {
+                return response()->json([
+                    'errors' => [
+                        "detail.$idDetail.quantity-all" => "Total Quantity tidak boleh kurang dari $detailPembagianBibit->quantity"
                     ],
                 ], 422);
             }
@@ -346,8 +363,14 @@ class PanenController extends Controller
 
     public function edit($id)
     {
+        $detailPanen = DetailPanen::select('id', 'id_header_panen', 'id_detail_pembagian_bibit')->with(['detail_pembagian_bibit' => function ($query) {
+            $query->select('id', 'id_kolam');
+        }])->where('id_header_panen', $id)->first();
 
-        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring', 'jaring_old'])->get();
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring', 'detail_pemberian_pakan'])
+            ->where('quantity', '>', '0')->where('id_kolam', $detailPanen->detail_pembagian_bibit->id_kolam)->whereHas('detail_pemberian_pakan', function ($query) {
+                $query->whereNotNull('id');
+            })->get();
 
 
         return view('pages.panen.edit')->with([
@@ -360,7 +383,10 @@ class PanenController extends Controller
 
     public function editJson($id)
     {
-        $data = HeaderPanen::with(['detail_panen.detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->where('id', $id)->first();
+        $data = HeaderPanen::with(['detail_panen' => function ($query) {
+            $query->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk']);
+        }])->where('id', $id)->first();
+
         return response()->json($data);
     }
 
@@ -495,7 +521,7 @@ class PanenController extends Controller
             if ($jual) {
                 return redirect()->route('panen')->withErrors([
                     'error' =>
-                    'Terdapat data yang sudah dipanen'
+                    'Terdapat data yang sudah dijual'
                 ]);
             }
 

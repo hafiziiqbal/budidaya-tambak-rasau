@@ -150,9 +150,9 @@
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
                                 </label>
-                                <label class="text-danger fw-bold status-error-header d-none  mb-2">
+                                <label class="text-danger fw-bold status-error-header mb-2 ${item.detail_pembagian_bibit.quantity == 0 ? 'd-none' : ''}">
                                     <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
-                                    <span></span>
+                                    <span>Sisa Bibit Masih Tersisa ${item.detail_pembagian_bibit.quantity} di Kolam</span>
                                 </label>
                             </div>
                             <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
@@ -266,6 +266,14 @@
                             $(`#alert${index}`).append(`@include('components.alert')`);
                             loadDataHeader();
 
+                            setTimeout(function() {
+                                loadDataHeader();
+                                $('#detail').empty();
+                                detailPanen.forEach((item, index) => {
+                                    loadElementDetailBagi(item, index)
+                                });
+                            }, 500);
+
 
                         }
 
@@ -298,6 +306,15 @@
                             $(`#formDetail${index}`).attr('action',
                                 `/panen/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+
+                            setTimeout(function() {
+                                loadDataHeader();
+                                $('#detail').empty();
+                                detailPanen.forEach((item, index) => {
+                                    loadElementDetailBagi(item, index)
+                                });
+                            }, 500);
+
                         }
                     },
                     error: function(response) { // handle the error            
@@ -387,7 +404,10 @@
             idHeader = {!! $id !!}
             loadElementDetailBagi({
                 id_jaring: null,
-                id_kolam: null
+                id_kolam: null,
+                detail_pembagian_bibit: {
+                    quantity: 0
+                }
             }, number)
 
             // hapus semua nilai input

@@ -361,20 +361,21 @@ class PembagianBibitController extends Controller
             ->where('id_kolam', $request->id_kolam)
             ->first();
 
+
         $cekJaringDetailBibit = DB::table('detail_pembagian_bibit')->where('id', $id)->first()->id_jaring;
-        if ($cekJaringDetailBibit != null) {
-            $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
-            if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
-                if ($request->detail == null) {
-                    return response()->json([
-                        'errors' => [
-                            'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                        ],
-                    ], 422);
-                }
+        // if ($cekJaringDetailBibit != null) {
+        $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
+        $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
+        if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
+            if ($request->detail == null) {
+                return response()->json([
+                    'errors' => [
+                        'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+                    ],
+                ], 422);
             }
         }
+        // }
 
         if ($request->id_jaring != null) {
             $jaring = MasterJaring::find($request->id_jaring);

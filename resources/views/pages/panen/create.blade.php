@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+
 @section('content')
     <h1 class="mt-4">Tambah Data Panen</h1>
     <ol class="breadcrumb mb-4">
@@ -33,6 +34,18 @@
             <div class="bg-info p-2 border-dark border-bottom mb-3">
                 <label class="fw-bold">Detail Panen</label>
             </div>
+            <div class="mb-3">
+                <label class="form-label">Pilih Kolam</label>
+                <br>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    @foreach ($kolam as $key => $kolam)
+                        <input type="radio" class="btn-check" name="kolam" id="{{ $key }}"
+                            value="{{ $kolam->id }}" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="{{ $key }}">{{ $kolam->nama }}</label>
+                    @endforeach
+
+                </div>
+            </div>
             <div id="alertGeneral">
                 @include('components.alert')
             </div>
@@ -54,13 +67,43 @@
 @push('script')
     <script>
         let index = 0;
-        let detailPembagianBibit = {!! $pembagianBibit !!}
+        let detailPembagianBibit = []
 
         // inisialisasi form select 2
         $(".form-select").select2({
             theme: "bootstrap-5",
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
+        });
+
+        $('input[type=radio][name=kolam]').change(function() {
+            $.ajax({
+                url: `/panen/pembagian-bibit/${this.value}`,
+                dataType: 'json', // what to expect back from the server
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'GET',
+
+                success: function(response) {
+                    detailPembagianBibit = response
+
+                    $('select.select-ikan').find('option').remove()
+
+                    detailPembagianBibit.forEach(element => {
+                        console.log(element.id);
+                        $('select.select-ikan')
+                            .append(
+                                `<option value="${element.id}">${element.header_pembagian_bibit.tgl_pembagian} | ${element.header_pembagian_bibit.detail_beli.produk.nama } (${element.quantity}) | ${element.kolam.nama} ${element.jaring == null ? '' : (' & ' + element.jaring.nama)}</option>`
+                            )
+                    });
+
+                },
+                error: function(response) { // handle the error            
+
+                },
+
+            })
         });
 
         // membuat element detail pembagian
@@ -80,11 +123,7 @@
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="detail[${index}][id_detail_pembagian_bibit]" >
                                 <option></option>
-                                @foreach ($pembagianBibit as $value)
-                                    <option value="{{ $value->id }}">
-                                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity . ')' . ' | ' . $value->kolam->nama . ' ' . ($value->jaring == null ? '' : '& ' . $value->jaring->nama) }}
-                                    </option>
-                                @endforeach
+                            
                             </select>    
                             <small class="text-danger" id="errorIkan${index}"></small>
                         </div>                        
@@ -208,6 +247,15 @@
         $('#btnTambahPembagian').click(function() {
             index = index + 1
             loadElementDetailBeli(index)
+            $('select.select-ikan').find('option').remove()
+
+            detailPembagianBibit.forEach(element => {
+                $('select.select-ikan')
+                    .append(
+                        `<option value="${element.id}">${element.header_pembagian_bibit.tgl_pembagian} | ${element.header_pembagian_bibit.detail_beli.produk.nama } (${element.quantity}) | ${element.kolam.nama} ${element.jaring == null ? '' : (' & '+element.jaring.nama)}</option>`
+                    )
+            });
+
         })
 
         // start get share bibit
@@ -216,19 +264,29 @@
         shareTanggal = getCookie('sharePanenTanggal');
         shareUrl = getCookie('sharePanenUrl');
         shareIsMultiple = getCookie('sharePanenMultiple');
+        shareKolam = getCookie('shareKolam');
 
         if (shareIdDetail != '') {
             $('#inputTanggalPembagian').val(shareTanggal)
             $('ol a').attr('href', `/${shareUrl}`);
             $('ol a').html('Pembagian Bibit');
+
+
             if (shareIsMultiple == 'true') {
                 let idPanen = shareIdDetail.split(',');
+                let idKolam = shareKolam.split(',');
+
+                $("input[type=radio][name=kolam][value=" + idKolam[0] + "]").prop('checked', true).trigger('change');
+
                 idPanen.forEach(item => {
+
                     $('#btnTambahPembagian').trigger("click");
                     $(`#selectIkan${index}`).val(item);
                     $(`#selectIkan${index}`).select2();
+                    $(`#selectIkan${index}`).trigger("change");
                 });
             } else if (shareIsMultiple == 'false') {
+                $(`input[type=radio][name=kolam][value='${shareKolam}']`).attr('checked', 'checked').trigger('change');
                 $('#btnTambahPembagian').trigger("click");
                 $(`#selectIkan${index}`).val(shareIdDetail);
                 $(`#selectIkan${index}`).select2();

@@ -53,6 +53,7 @@ class DetailPanen extends Model
         return $this->quantity + $totalQuantity;
     }
 
+
     public function hpp()
     {
         return $this->hasOne(Hpp::class, 'id_detail_panen', 'id');

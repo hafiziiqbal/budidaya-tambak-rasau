@@ -213,6 +213,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.edit.json');
         Route::get('/delete/{id}', [PanenController::class, 'destroy'])->name('panen.destory');
         Route::get('/{id}/show', [PanenController::class, 'show'])->name('panen.show');
+        Route::get('/pembagian-bibit/{id}', [PanenController::class, 'pembagianBibitByKolam'])->name('panen.pembagian.bibit');
 
         Route::post('/', [PanenController::class, 'store'])->name('panen.store');
         Route::post('/{id}/update', [PanenController::class, 'update'])->name('panen.update');

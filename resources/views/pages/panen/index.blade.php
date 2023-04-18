@@ -195,18 +195,18 @@
                 {
                     data: "status",
                     render: function(data, type, row, meta) {
-                        switch (data) {
-                            case 1:
-                                return '<span class="p-2 bg-success rounded text-white">Siap Jual</span>'
-                                break;
-
-                            case 0:
-                                return '<span class="p-2 bg-warning rounded">Sortir</span>'
-                                break;
-                            case -1:
-                                return '<span class="p-2 bg-danger rounded text-white">Mati</span>'
-                                break;
+                        if (data == 1) {
+                            return '<span class="p-2 bg-success rounded text-white">Siap Jual</span>'
+                        } else if (data == 0) {
+                            return '<span class="p-2 bg-warning rounded">Sortir</span>'
+                        } else if (data == -1) {
+                            return '<span class="p-2 bg-danger rounded text-white">Mati</span>'
+                        } else {
+                            return ''
                         }
+
+
+
                     }
                 },
                 {

@@ -37,6 +37,7 @@
             <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Panen
                 Bibit Yang Dipilih</button>
             <br>
+            <label class="alert-label text-danger d-none">Panen Harus Dari Kolam Yang Sama</label>
             <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
                 <thead>
                     <tr>
@@ -58,10 +59,10 @@
 
 @push('script')
     <script>
-        alert = getCookie('success');
-        if (alert != '') {
+        alertCustom = getCookie('success');
+        if (alertCustom != '') {
             $('#alertNotif').removeClass('d-none');
-            $('#alertNotif span').html(alert);
+            $('#alertNotif span').html(alertCustom);
             document.cookie = `success=;path=/pembagian-bibit`;
         }
 
@@ -153,7 +154,7 @@
                     data: "id",
                     render: function(data, type, row, meta) {
                         if (row['quantity'] > 0 && row['detail_pemberian_pakan'].length > 0) {
-                            return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
+                            return `<input class="form-check-input checkbox" data-id="${data}" data-kolam="${row['kolam'].id}" type="checkbox" >`
                         } else {
                             return ''
                         }
@@ -210,7 +211,7 @@
                         let share = '';
                         if (row['quantity'] > 0 && row['detail_pemberian_pakan'].length > 0) {
                             share =
-                                `<button title="Panen Bibit" data-id="${id}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
+                                `<button title="Panen Bibit" data-id="${id}" data-kolam="${row['kolam'].id}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
                         }
                         let show =
                             `<a title="Info Pembelian" href="/pembagian-bibit/${id}/show" class="btn btn-info me-2"><i class="fa fa-info"></i></a>`;
@@ -236,12 +237,14 @@
                     name: "detail_pemberian_pakan",
                     visible: false,
                 },
+
             ]
         });
 
 
 
         tableDetail.on('click', '.btn-share', function() {
+
             // membuat objek Date dengan tanggal saat ini
             const today = new Date();
 
@@ -255,28 +258,34 @@
             const formattedDate = `${day}-${month}-${year}`;
 
             let id = $(this).data('id');
+            let kolam = $(this).data('kolam');
 
             document.cookie = `sharePanenTanggal=${formattedDate};path=/panen/create`;
             document.cookie = `sharePanenIkan=${id};path=/panen/create`;
             document.cookie = `sharePanenUrl=pembagian-bibit;path=/panen/create`;
             document.cookie = `sharePanenMultiple=false;path=/panen/create`;
+            document.cookie = `shareKolam=${kolam};path=/panen/create`;
 
             window.location.href = "{{ route('panen.create') }}";
         });
 
-        let id = []; // array untuk menyimpan nilai data-id yang terseleksi
+        let id = [];
+        let kolamArray = []; // array untuk menyimpan nilai data-id yang terseleksi
 
         // ketika checkbox di klik
         tableDetail.on('click', '.checkbox', function() {
             var dataId = $(this).data('id'); // ambil nilai data-id dari checkbox yang diklik
+            var dataKolam = $(this).data('kolam'); // ambil nilai data-id dari checkbox yang diklik
 
             // jika checkbox terseleksi, tambahkan nilai data-id ke dalam array id
             if ($(this).is(':checked')) {
                 id.push(dataId);
+                kolamArray.push(dataKolam)
             }
             // jika checkbox tidak terseleksi, hapus nilai data-id dari array id
             else {
                 id.splice($.inArray(dataId, id), 1);
+                kolamArray.splice($.inArray(dataKolam, kolamArray), 1);
             }
         });
 
@@ -287,12 +296,13 @@
                 $('.checkbox').prop('checked', true);
                 $('.checkbox').each(function() {
                     var dataId = $(this).data('id');
-
+                    var dataKolam = $(this).data('kolam');
                     if ($.inArray(dataId, id) === -1) {
                         id.push(dataId);
                     }
-
-
+                    if ($.inArray(dataKolam, kolamArray) === -1) {
+                        kolamArray.push(dataKolam);
+                    }
                 });
             }
             // jika checkbox di header tabel tidak terseleksi, hapus semua nilai data-id dari array id dan hilangkan centang dari semua checkbox di baris tabel
@@ -300,7 +310,9 @@
                 $('.checkbox').prop('checked', false);
                 $('.checkbox').each(function() {
                     var dataId = $(this).data('id');
+                    let dataKolam = $(this).data('kolam');
                     id.splice($.inArray(dataId, id), 1);
+                    kolamArray.splice($.inArray(dataKolam, kolamArray), 1);
                 });
             }
         });
@@ -308,12 +320,25 @@
         $('#shareMultiple').click(function() {
             // membuat objek Date dengan tanggal saat ini
             const today = new Date();
-
+            let result = true
             // mengambil tanggal, bulan, dan tahun dari objek Date
             const day = today.getDate() < 10 ? ('0' + today.getDate()) : today.getDate();
             const month = (today.getMonth() + 1) < 10 ? ('0' + (today.getMonth() + 1)) : (today.getMonth() +
                 1); // ingat bahwa index bulan dimulai dari 0
             const year = today.getFullYear();
+
+            kolamArray.forEach(kolamItem => {
+                if (kolamArray[0] != kolamItem) {
+                    $('.alert-label').removeClass('d-none')
+                    result = false;
+                } else {
+                    $('.alert-label').addClass('d-none')
+                    result = true;
+                }
+            });
+            if (!result) {
+                return false;
+            }
 
             // memformat tanggal dengan format d-m-Y
             const formattedDate = `${day}-${month}-${year}`;
@@ -321,6 +346,7 @@
             document.cookie = `sharePanenIkan=${id};path=/panen/create`;
             document.cookie = `sharePanenUrl=pembagian-bibit;path=/panen/create`;
             document.cookie = `sharePanenMultiple=true;path=/panen/create`;
+            document.cookie = `shareKolam=${kolamArray};path=/panen/create`;
 
             window.location.href = "{{ route('panen.create') }}";
         })
@@ -329,6 +355,9 @@
         tableDetail.on('change', 'input.checkbox', function() {
             // Mengambil jumlah element input type check yang tercentang
             let checkedCount = $('input.checkbox').filter(':checked').length;
+
+
+
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
             if (checkedCount >= 2) {
                 $('#shareMultiple').removeAttr('disabled');
@@ -341,6 +370,8 @@
         tableDetail.on('click', '#checkAll', function() {
             // Mengambil jumlah element input type check yang tercentang
             let checkedCount = $('input.checkbox').filter(':checked').length;
+
+
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
             if (checkedCount >= 2) {
                 $('#shareMultiple').removeAttr('disabled');
