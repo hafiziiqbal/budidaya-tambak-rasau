@@ -1,88 +1,88 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Jual</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
-        <li class="breadcrumb-item active">Edit Jual</li>
-    </ol>
+<h1 class="mt-4">Edit Jual</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
+    <li class="breadcrumb-item active">Edit Jual</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
-        @csrf
-        <input type="hidden" name="type" value="update-header">
-        <div id="headerPembelian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Jual</label>
-            </div>
-            <div id="alertJs">
-                @include('components.alert')
-            </div>
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-
-            <div class="mb-3">
-                <label for="selectCustomer" class="form-label">Customer</label>
-                <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
-                    <option></option>
-                    @foreach ($customer as $value)
-                        <option value="{{ $value->id }}">
-                            {{ $value->nama }}
-                        </option>
-                    @endforeach
-                </select>
-                <small class="text-danger" id="errorCustomer"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputTotalBruto" class="form-label">Total Bruto</label>
-                <input type="number" class="form-control" id="inputTotalBruto" name="total_bruto" readonly>
-                <small class="text-danger" id="errorTotalBruto"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga">
-                <small class="text-danger" id="errorPotonganHarga"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputTotalNetto" class="form-label">Total Netto</label>
-                <input type="number" class="form-control" id="inputTotalNetto" name="total_netto" readonly>
-                <small class="text-danger" id="errorTotalNetto"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputPay" class="form-label">Bayar</label>
-                <input type="number" class="form-control" id="inputPay" name="pay">
-                <small class="text-danger" id="errorPay"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputChange" class="form-label">Kembali</label>
-                <input type="number" class="form-control" id="inputChange" name="change" readonly>
-                <small class="text-danger" id="errorChange"></small>
-            </div>
-            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-                Perubahan</button>
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
+    @csrf
+    <input type="hidden" name="type" value="update-header">
+    <div id="headerPembelian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Jual</label>
         </div>
-    </form>
-    <div id="detail">
-
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Jual</label>
-        </div>
-        <div id="alertGeneral">
+        <div id="alertJs">
             @include('components.alert')
         </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+
+        <div class="mb-3">
+            <label for="selectCustomer" class="form-label">Customer</label>
+            <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
+                <option></option>
+                @foreach ($customer as $value)
+                <option value="{{ $value->id }}">
+                    {{ $value->nama }}
+                </option>
+                @endforeach
+            </select>
+            <small class="text-danger" id="errorCustomer"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputTotalBruto" class="form-label">Total Bruto</label>
+            <input type="number" class="form-control money-format" id="inputTotalBruto" name="total_bruto" readonly>
+            <small class="text-danger" id="errorTotalBruto"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
+            <input type="number" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga">
+            <small class="text-danger" id="errorPotonganHarga"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputTotalNetto" class="form-label">Total Netto</label>
+            <input type="number" class="form-control money-format" id="inputTotalNetto" name="total_netto" readonly>
+            <small class="text-danger" id="errorTotalNetto"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputPay" class="form-label">Bayar</label>
+            <input type="number" class="form-control money-format" id="inputPay" name="pay">
+            <small class="text-danger" id="errorPay"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputChange" class="form-label">Kembali</label>
+            <input type="number" class="form-control money-format" id="inputChange" name="change" readonly>
+            <small class="text-danger" id="errorChange"></small>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+            Perubahan</button>
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-    </button>
+</form>
+<div id="detail">
+
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Jual</label>
+    </div>
+    <div id="alertGeneral">
+        @include('components.alert')
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
+<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+</button>
 @endsection
 
 @push('script')
-    <script>
-        let detailJual
-        let number = 0
+<script>
+    let detailJual
+    let number = 0
 
         // inisialisasi form select 2
         $(".form-select").select2({
@@ -124,7 +124,7 @@
                     // pay
                     $(`#inputChange`).val(response.change);
 
-
+                    $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
 
                 },
                 error: function(response) { // handle the error
@@ -135,6 +135,8 @@
                 },
 
             })
+
+            
         }
         loadDataHeader()
 
@@ -147,8 +149,10 @@
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
             let form_data = new FormData($(this)[0]); // convert form into formdata        
-
-
+            for (var pair of form_data.entries())
+                {
+                    form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));       
+                }
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
@@ -167,12 +171,14 @@
                         $('#alertNotif span').html(response.success);
                         $('#alertJs').append(`@include('components.alert')`);
                         loadDataHeader();
+                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                     }
                 },
                 error: function(response) { // handle the error            
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     loadDataHeader();
+                    $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                     let errors = response.responseJSON.errors
                     $("small[id^='error']").html('');
 
@@ -255,12 +261,12 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Harga Satuan</label>
-                            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
+                            <input type="text" class="form-control money-format harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
                             <small class="text-danger" id="errorhargaSatuan${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Diskon</label>
-                            <input type="text" class="form-control diskon" name="diskon" value="${item.diskon}" required>
+                            <input type="text" readonly class="form-control diskon" name="diskon" value="${item.diskon}" required>
                             <small class="text-danger" id="errorDiskon${index}"></small>                            
                         </div>                       
                         <div class="mb-3">
@@ -270,7 +276,7 @@
                         </div>                       
                         <div class="mb-3">
                             <label class="form-label">Subtotal</label>
-                            <input type="text" class="form-control subtotal" name="subtotal" value="${item.sub_total}" required readonly>
+                            <input type="text" class="form-control subtotal money-format" name="subtotal" value="${item.sub_total}" required readonly>
                             <small class="text-danger" id="errorSubtotal${index}"></small>
                         </div>                       
                         <div class="btn-update-content">
@@ -317,7 +323,12 @@
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
-
+                for (var pair of form_data.entries())
+                {
+                    if (pair[0] != 'quantity' && pair[0] != 'diskon') {
+                        form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));           
+                    }
+                }
                 $.ajax({
                     url: action,
                     dataType: 'json', // what to expect back from the server
@@ -348,7 +359,7 @@
                                 });
                             }, 500);
 
-
+                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                         }
 
                         if (response.save_detail != undefined) {
@@ -365,6 +376,7 @@
                             $(`#formDetail${index} input.alt`).attr('name', 'id_detail_panen');
                             $(`#formDetail${index} select.select-panen${index}`).removeAttr('name');
                             $(`#formDetail${index} input[name='type']`).val('update-detail');
+                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                         }
                     },
                     error: function(response) { // handle the error            
@@ -374,7 +386,7 @@
                         $(`#btnSaveDetail${index}`).children().addClass('d-none')
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
                         loadDataHeader();
-
+                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                         let errors = response.responseJSON.errors
                         $("small[id^='error']").html('');
 
@@ -433,6 +445,8 @@
                             detailJual.forEach((item, index) => {
                                 loadElementDetailJual(item, index)
                             });
+
+                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                         }
 
                     },
@@ -445,6 +459,7 @@
                                 "d-none");
                         }, 3000);
                         loadDataHeader();
+                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
                     },
 
                 })
@@ -454,7 +469,9 @@
         number = detailJual.length;
         detailJual.forEach((item, index) => {
             loadElementDetailJual(item, index)
+
         });
+        
 
         // tambah element detail
         $('#btnTambahPembagian').click(function() {
@@ -490,7 +507,8 @@
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
-
+            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
         })
-    </script>
+        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+</script>
 @endpush

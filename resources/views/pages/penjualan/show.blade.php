@@ -1,71 +1,72 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Info Jual</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
-        <li class="breadcrumb-item active">Info Jual</li>
-    </ol>
+<h1 class="mt-4">Info Jual</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
+    <li class="breadcrumb-item active">Info Jual</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
-        @csrf
-        <div id="headerPembelian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Jual</label>
-            </div>
-
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-
-            <div class="mb-3">
-                <label for="selectCustomer" class="form-label">Customer</label>
-                <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer" disabled>
-                    <option></option>
-                    @foreach ($customer as $value)
-                        <option value="{{ $value->id }}">
-                            {{ $value->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="inputTotalBruto" class="form-label">Total Bruto</label>
-                <input type="number" class="form-control" id="inputTotalBruto" name="total_bruto" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="number" class="form-control" id="inputPotonganHarga" name="potongan_harga" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="inputTotalNetto" class="form-label">Total Netto</label>
-                <input type="number" class="form-control" id="inputTotalNetto" name="total_netto" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="inputPay" class="form-label">Bayar</label>
-                <input type="number" class="form-control" id="inputPay" name="pay" disabled>
-            </div>
-            <div class="mb-3">
-                <label for="inputChange" class="form-label">Kembali</label>
-                <input type="number" class="form-control" id="inputChange" name="change" disabled>
-            </div>
-
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
+    @csrf
+    <div id="headerPembelian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Jual</label>
         </div>
-    </form>
-    <div id="detail">
 
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Jual</label>
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+
+        <div class="mb-3">
+            <label for="selectCustomer" class="form-label">Customer</label>
+            <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer" disabled>
+                <option></option>
+                @foreach ($customer as $value)
+                <option value="{{ $value->id }}">
+                    {{ $value->nama }}
+                </option>
+                @endforeach
+            </select>
         </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+        <div class="mb-3">
+            <label for="inputTotalBruto" class="form-label">Total Bruto</label>
+            <input type="number" class="form-control money-format" id="inputTotalBruto" name="total_bruto" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
+            <input type="number" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga"
+                disabled>
+        </div>
+        <div class="mb-3">
+            <label for="inputTotalNetto" class="form-label">Total Netto</label>
+            <input type="number" class="form-control money-format" id="inputTotalNetto" name="total_netto" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="inputPay" class="form-label">Bayar</label>
+            <input type="number" class="form-control money-format" id="inputPay" name="pay" disabled>
+        </div>
+        <div class="mb-3">
+            <label for="inputChange" class="form-label">Kembali</label>
+            <input type="number" class="form-control money-format" id="inputChange" name="change" disabled>
+        </div>
+
     </div>
+</form>
+<div id="detail">
+
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Jual</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
 @endsection
 
 @push('script')
-    <script>
-        let detailJual
+<script>
+    let detailJual
         let number = 0
 
         // inisialisasi form select 2
@@ -184,7 +185,7 @@
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Beli</span>
+                                <span class="me-2 title">Detail Jual</span>
                                 <label class="text-success fw-bold status-header d-none mb-2">
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
@@ -213,7 +214,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Harga Satuan</label>
-                            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required disabled>
+                            <input type="text" class="form-control money-format harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required disabled>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Diskon</label>
@@ -225,7 +226,7 @@
                         </div>                       
                         <div class="mb-3">
                             <label class="form-label">Subtotal</label>
-                            <input type="text" class="form-control subtotal" name="subtotal" value="${item.sub_total}" required readonly disabled>                    
+                            <input type="text" class="form-control subtotal money-format" name="subtotal" value="${item.sub_total}" required readonly disabled>                    
                         </div>                       
                         
                     </div>`
@@ -394,7 +395,8 @@
             $(`#formDetail${number} .btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
-
         })
-    </script>
+
+        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+</script>
 @endpush
