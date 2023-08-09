@@ -1,89 +1,87 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembelian</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembelian') }}">Pembelian</a></li>
-        <li class="breadcrumb-item active">Edit Pembelian</li>
-    </ol>
+<h1 class="mt-4">Edit Pembelian</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('pembelian') }}">Pembelian</a></li>
+    <li class="breadcrumb-item active">Edit Pembelian</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembelian.update', $id) }}" name="form_header">
-        @csrf
-        <div id="alertJs">
-            @include('components.alert')
-        </div>
-        <div id="headerPembelian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Pembelian</label>
-            </div>
-
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-
-            <div class="mb-3">
-                <input type="hidden" name="type" value="update-header">
-                <label for="inputNama" class="form-label">Tanggal Beli</label>
-                <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
-                </div>
-                <small class="text-danger" id="errorTglBeli"></small>
-            </div>
-
-            <div class="mb-3">
-                <label for="selectSupplier" class="form-label">Supplier</label>
-                <select class="form-select" id="selectSupplier" data-placeholder="Pilih Supplier" name="supplier">
-                    <option></option>
-
-                    @foreach ($supplier as $supplier)
-                        <option value="{{ $supplier->id }}">
-                            {{ $supplier->nama }}
-                        </option>
-                    @endforeach
-                </select>
-                <small class="text-danger" id="errorSupplier"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Bruto</label>
-                <input type="text" class="form-control mata-uang" id="inputBruto" value="" readonly
-                    name="total_bruto">
-                <small class="text-danger" id="errorTotalBruto"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-                <input type="text" class="form-control number mata-uang" id="inputPotonganHarga" name="potongan_harga"
-                    value="">
-                <small class="text-danger" id="errorPotonganHarga"></small>
-            </div>
-            <div class="mb-3">
-                <label for="inputBruto" class="form-label">Total Netto</label>
-                <input type="text" class="form-control mata-uang" id="inputNetto" name="total_netto" value=""
-                    readonly>
-                <small class="text-danger" id="errorTotalNetto"></small>
-            </div>
-            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-                Perubahan</button>
-        </div>
-    </form>
-    <div id="detail">
-
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Pembelian</label>
-        </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('pembelian.update', $id) }}" name="form_header">
+    @csrf
+    <div id="alertJs">
+        @include('components.alert')
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-    </button>
+    <div id="headerPembelian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Pembelian</label>
+        </div>
+
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+
+        <div class="mb-3">
+            <input type="hidden" name="type" value="update-header">
+            <label for="inputNama" class="form-label">Tanggal Beli</label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
+                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+            </div>
+            <small class="text-danger" id="errorTglBeli"></small>
+        </div>
+
+        <div class="mb-3">
+            <label for="selectSupplier" class="form-label">Supplier</label>
+            <select class="form-select" id="selectSupplier" data-placeholder="Pilih Supplier" name="supplier">
+                <option></option>
+
+                @foreach ($supplier as $supplier)
+                <option value="{{ $supplier->id }}">
+                    {{ $supplier->nama }}
+                </option>
+                @endforeach
+            </select>
+            <small class="text-danger" id="errorSupplier"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputBruto" class="form-label">Total Bruto</label>
+            <input type="text" class="form-control mata-uang" id="inputBruto" value="" readonly name="total_bruto">
+            <small class="text-danger" id="errorTotalBruto"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
+            <input type="text" class="form-control number mata-uang money-format" id="inputPotonganHarga"
+                name="potongan_harga" value="">
+            <small class="text-danger" id="errorPotonganHarga"></small>
+        </div>
+        <div class="mb-3">
+            <label for="inputBruto" class="form-label">Total Netto</label>
+            <input type="text" class="form-control mata-uang" id="inputNetto" name="total_netto" value="" readonly>
+            <small class="text-danger" id="errorTotalNetto"></small>
+        </div>
+        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+            Perubahan</button>
+    </div>
+</form>
+<div id="detail">
+
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Pembelian</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
+<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+</button>
 @endsection
 
 @push('script')
-    <script>
-        let detailBeli
+<script>
+    let detailBeli
         let number = 0
 
         // inisialisasi form select 2
@@ -115,13 +113,13 @@
                     $(`input[name='tanggal_beli']`).val(response.tgl_beli.split("-").reverse().join("-"));
 
                     // default total bruto
-                    $(`#inputBruto`).val(response.total_bruto);
+                    $(`#inputBruto`).val(response.total_bruto.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
 
                     // default potongan harga
-                    $(`input[name='potongan_harga']`).val(response.potongan_harga);
+                    $(`input[name='potongan_harga']`).val(response.potongan_harga.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
 
                     // default total netto
-                    $(`#inputNetto`).val(response.total_netto);
+                    $(`#inputNetto`).val(response.total_netto.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
 
                 },
                 error: function(response) { // handle the error
@@ -144,7 +142,11 @@
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
             let form_data = new FormData($(this)[0]); // convert form into formdata                    
-
+            for (var pair of form_data.entries())
+                {
+                    form_data.set(pair[0], pair[1].toString().replace(/\./g, '')); 
+                
+                }
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
@@ -196,6 +198,7 @@
 
         // membuat element detail beli
         function loadElementDetailBeli(item, index) {
+           
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembelian/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
@@ -241,7 +244,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Harga Satuan</label>
-                            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
+                            <input type="text" class="form-control mata-uang harga-satuan money-format" name="harga_satuan" value="${item.harga_satuan}" required>
                             <small class="text-danger" id="errorHargaSatuan${index}"></small>
                         </div>
                         <div class="mb-3">
@@ -260,7 +263,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label ">Diskon Rupiah</label>
-                            <input type="number" class="form-control diskon-rupiah mata-uang" name="diskon_rupiah" value="${item.diskon_rupiah ?? ''}">
+                            <input type="number" class="form-control diskon-rupiah mata-uang money-format" name="diskon_rupiah" value="${item.diskon_rupiah ?? ''}">
                             <small class="text-danger" id="errorDiskonRupiah${index}"></small>
                         </div>
 
@@ -308,7 +311,10 @@
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
-
+                for (var pair of form_data.entries())
+                {
+                    form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));       
+                }
                 $.ajax({
                     url: action,
                     dataType: 'json', // what to expect back from the server
@@ -438,6 +444,7 @@
         detailBeli.forEach((item, index) => {
             loadElementDetailBeli(item, index)
         });
+       
 
         // tambah element detail
         $('#btnTambahPembagian').click(function() {
@@ -470,6 +477,10 @@
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
+
+            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
         })
-    </script>
+
+        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+</script>
 @endpush

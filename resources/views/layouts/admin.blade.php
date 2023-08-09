@@ -43,8 +43,8 @@
         <!-- Navbar-->
         <ul class="navbar-nav ms-auto me-0 me-md-3 my-2 my-md-0">
             <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button"
-                    data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown"
+                    aria-expanded="false"><i class="fas fa-user fa-fw"></i></a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                     <li><a class="dropdown-item" href="#!">Settings</a></li>
                     <li><a class="dropdown-item" href="#!">Activity Log</a></li>
@@ -62,8 +62,7 @@
                 <div class="sb-sidenav-menu" id="sideBar">
                     <div class="nav">
                         <div class="sb-sidenav-menu-heading">Beranda</div>
-                        <a class="nav-link {{ $title == 'DASHBOARD' ? 'active' : '' }}"
-                            href="{{ route('dashboard') }}">
+                        <a class="nav-link {{ $title == 'DASHBOARD' ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                             Dashboard
                         </a>
@@ -210,6 +209,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
     <script src="{{ asset('/vendor/jquery/jquery.countup.js') }}"></script>
     <script src="{{ asset('/vendor/jquery/jquery.cookie.min.js') }}"></script>
+    <script src="{{ asset('/vendor/jquerymask/dist/jquery.mask.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.bootstrap.min.js') }}"></script>
     <script src="{{ asset('/vendor/datatables/js/dataTables.responsive.min.js') }}"></script>
