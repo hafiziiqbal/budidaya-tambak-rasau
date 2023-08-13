@@ -1,78 +1,79 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembagian Bibit</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
-        <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
-    </ol>
+<h1 class="mt-4">Edit Pembagian Bibit</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('pembagian.bibit') }}">Pembagian Bibit</a></li>
+    <li class="breadcrumb-item active">Edit Pembagian Bibit</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
-        @csrf
-        <div id="headerPembagian" class="mb-4">
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('pembagian.bibit.update', $id) }}" name="form_header">
+    @csrf
+    <div id="headerPembagian" class="mb-4">
 
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Pembagian</label>
-            </div>
-
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-            <div id="alertHeader">
-                @include('components.alert')
-            </div>
-            <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Pembagian</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" required>
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
-                <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
-                    <option></option>
-                    @foreach ($pembelian as $value)
-                        <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
-                            @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="inputPanen" class="form-label">Sortir Kembali</label>
-                <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
-                    <option></option>
-                    @foreach ($sortir as $value)
-                        <option value="{{ $value->id }}">
-                            @DateIndo($value->header_panen->tgl_panen){{ ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-                Perubahan</button>
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Pembagian</label>
         </div>
-    </form>
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Pembagian</label>
+
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+        <div id="alertHeader">
+            @include('components.alert')
         </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+        <div class="mb-3">
+            <label for="inputNama" class="form-label">Tanggal Pembagian</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
+                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="inputDetailBeli" class="form-label">Bibit Yang Dibagikan</label>
+            <select class="form-select" id="inputDetailBeli" data-placeholder="Pilih Bibit" name="id_detail_beli">
+                <option></option>
+                @foreach ($pembelian as $value)
+                <option value="{{ $value->id }}" data-quantity="{{ $value->quantity }}">
+                    @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="inputPanen" class="form-label">Sortir Kembali</label>
+            <select class="form-select" id="inputPanen" data-placeholder="Pilih Ikan" name="id_detail_panen">
+                <option></option>
+                @foreach ($sortir as $value)
+                <option value="{{ $value->id }}">
+                    @DateIndo($value->header_panen->tgl_panen){{ ' | ' .
+                    $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
+                </option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+            Perubahan</button>
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-    </button>
+</form>
+<div id="detail">
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Pembagian</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
+<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+</button>
 @endsection
 
 @push('script')
-    <script>
-        let detailBagi
+<script>
+    let detailBagi
         let number = 0
 
         // inisialisasi form select 2
@@ -199,12 +200,12 @@
                         <input type="hidden" name="id_header_pembagian_bibit" id="idHeader${index}" value="${item.id_header_pembagian_bibit}">
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
+                            <input type="text" disabled class="form-control quantity" name="quantity" required value="${item.quantity}">
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3 select-jaring">
                             <label class="form-label">Pilih Jaring</label>
-                            <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="id_jaring" >
+                            <select disabled class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="id_jaring" >
                                 <option></option>
                                 @foreach ($jaring as $value)
                                     <option value="{{ $value->id }}">
@@ -216,7 +217,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Kolam</label>
-                            <select class="form-select" id="selectKolam${index}" data-placeholder="Pilih Kolam" name="id_kolam" >
+                            <select class="form-select" disabled id="selectKolam${index}" data-placeholder="Pilih Kolam" name="id_kolam" >
                                 <option></option>
                                 @foreach ($kolam as $value)
                                     <option value="{{ $value->id }}">
@@ -227,10 +228,7 @@
                             <small class="text-danger" id="errorKolam${index}"></small>
                         </div>       
                         <div class="btn-update-content">
-                            <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
-                                <i class="fas fa-spinner fa-spin d-none"></i>
-                                Perbarui
-                            </button>
+                            
                             <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
@@ -244,6 +242,11 @@
                         </div>                 
                     </div>`
             )
+
+            // <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
+            //                     <i class="fas fa-spinner fa-spin d-none"></i>
+            //                     Perbarui
+            //                 </button>
 
             $('#detail').append(form)
             $(`#formDetail${index} .card`).append(cardHeader, cardBody)
@@ -274,7 +277,7 @@
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
                 let form_data = new FormData($(this)[0]); // convert form into formdata        
-                console.log(form_data);
+                
 
                 $.ajax({
                     url: action,
@@ -296,7 +299,10 @@
                             $(`#alert${index} #alertNotif`).removeClass('d-none');
                             $(`#alert${index} #alertNotif span`).html(response.success);
                             $(`#alert${index}`).append(`@include('components.alert')`);
+                            $(`#selectJaring${index}`)
                             loadDataHeader();
+                            $(`#formDetail${index} .quantity`).attr('disabled', true);
+                            $(`#formDetail${index} select`).attr('disabled', true);
                         }
 
                         if (response.error != undefined) {
@@ -306,6 +312,7 @@
                             $(`#btnSaveDetail${index}`).children().addClass('d-none')
                             $(`#btnDeleteDetail${index}`).removeAttr('disabled')
                             loadDataHeader();
+                            
                         }
 
                         if (response.save_detail != undefined) {
@@ -320,7 +327,10 @@
                             $(`#formDetail${index} .btn-card.btn-close`).addClass('d-none');
                             $(`#formDetail${index}`).attr('action',
                                 `/pembagian-bibit/detail/${response.id}/edit`)
+                                $(`#formDetail${index} .quantity`).attr('disabled', true);
+                            $(`#formDetail${index} select`).attr('disabled', true);
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+                           
                         }
                     },
                     error: function(response) { // handle the error            
@@ -427,11 +437,12 @@
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
-
+            $(`#formDetail${number} .quantity`).removeAttr('disabled');
+            $(`#formDetail${number} select`).removeAttr('disabled');
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
 
         })
-    </script>
+</script>
 @endpush

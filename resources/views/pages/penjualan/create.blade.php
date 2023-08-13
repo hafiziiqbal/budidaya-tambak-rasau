@@ -111,14 +111,14 @@
                         <option></option>
                         @foreach ($panen as $value)
                             <option value="{{ $value->id }}">
-                                {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity . ')' }}
+                                {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity_berat . ')' }}
                             </option>
                         @endforeach
                     </select>
                     <small class="text-danger" id="errorPanen${index}"></small>
                 </div>                
                 <div class="mb-3">
-                    <label class="form-label">Harga Satuan</label>
+                    <label class="form-label">Harga Per-Kg</label>
                     <input type="text" class="form-control harga-satuan money-format" name="detail[${index}][harga_satuan]" required>                    
                     <small class="text-danger" id="errorhargaSatuan${index}"></small>
                 </div>                       
@@ -128,7 +128,7 @@
                     <small class="text-danger" id="errorDiskon${index}"></small>
                 </div>                       
                 <div class="mb-3">
-                    <label class="form-label">Quantity</label>
+                    <label class="form-label">Quantity (Kg)</label>
                     <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>                    
                     <label id="errorQuantity${index}" class="text-danger"></label>
                 </div>                       

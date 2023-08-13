@@ -260,7 +260,7 @@
                             <small class="text-danger" id="errorPanen${index}"></small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Harga Satuan</label>
+                            <label class="form-label">Harga Per-Kg</label>
                             <input type="text" class="form-control money-format harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
                             <small class="text-danger" id="errorhargaSatuan${index}"></small>
                         </div>
@@ -478,8 +478,12 @@
             number = number + 1
             idHeader = {!! $id !!}
             loadElementDetailJual({
-                id_produk: null
+                id_produk: null,
+                id_heder_panen: idHeader
+
             }, number)
+            $('input[name="id_detail_panen"]').attr('disabled',true)
+            $('input.diskon').removeAttr('readonly')
 
             // hapus semua nilai input
             $(':input', `#formDetail${number}`)

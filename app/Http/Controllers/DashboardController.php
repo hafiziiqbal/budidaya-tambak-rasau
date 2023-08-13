@@ -7,6 +7,8 @@ use App\Models\DetailBeli;
 use App\Models\DetailJual;
 use App\Models\HeaderBeli;
 use App\Models\DetailPanen;
+use App\Models\HeaderJual;
+use App\Models\HeaderPanen;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -18,23 +20,24 @@ class DashboardController extends Controller
 
     public function totalDefault()
     {
-        $detailBeli = DetailBeli::select('id')->get()->count();
-        $detailJual = DetailJual::select('id')->get()->count();
+        $detailBeli = HeaderBeli::select('id')->get()->count();
+        $detailJual = HeaderJual::select('id')->get()->count();
         $detailPanen = DetailPanen::select('id', 'id_header_panen', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
             $query->select('id', 'id_header_pembagian_bibit', 'quantity');
         }])->orderBy('updated_at', 'desc')->get();
-        $totalPanen = 0;
-        foreach ($detailPanen as $key => $value) {
-            if (count($value->detail_jual) > 0) {
-                $totalPanen += $value->quantityAwalPanen;
-            } else {
-                $nilaiSementara = 0;
-                foreach ($value->header_pembagian_bibit as $key => $bibit) {
-                    $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
-                }
-                $totalPanen += $value->quantity + $nilaiSementara;
-            }
-        }
+        $totalPanen = HeaderPanen::select('id')->get()->count();
+
+        // foreach ($detailPanen as $key => $value) {
+        //     if (count($value->detail_jual) > 0) {
+        //         $totalPanen += $value->quantityAwalPanen;
+        //     } else {
+        //         $nilaiSementara = 0;
+        //         foreach ($value->header_pembagian_bibit as $key => $bibit) {
+        //             $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
+        //         }
+        //         $totalPanen += $value->quantity + $nilaiSementara;
+        //     }
+        // }
 
         $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
             $query->select('id', 'id_header_pembagian_bibit', 'quantity');
@@ -54,7 +57,7 @@ class DashboardController extends Controller
 
         $detailPanenSortir = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
             $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-        }])->where('status', 0)->orderBy('updated_at', 'desc')->get();
+        }])->where('status', 0)->where('quantity', '>', 0)->orderBy('updated_at', 'desc')->get();
         $totalPanenSortir = 0;
         foreach ($detailPanenSortir as $key => $value) {
             if (count($value->detail_jual) > 0) {
@@ -97,22 +100,23 @@ class DashboardController extends Controller
     public function total(Request $request)
     {
 
-        if ($request->start_range != null && $request->end_range != null) {
-            $startRange = $request->start_range;
-            $endRange = $request->end_range;
 
-            list($startMonth, $startYear) = explode('-', $startRange);
-            list($endMonth, $endYear) = explode('-', $endRange);
+        if ($request->start_range != null && $request->end_range != null) {
+            $startRange = date("Y-m-d", strtotime($request->start_range));
+            $endRange = date("Y-m-d", strtotime($request->end_range));
+
+            // list($startMonth, $startYear) = explode('-', $startRange);
+            // list($endMonth, $endYear) = explode('-', $endRange);
 
             $totalDetailBeli = DetailBeli::join('header_beli', 'header_beli.id', '=', 'detail_beli.id_header_beli')
-                ->whereBetween('header_beli.tgl_beli', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"])
+                ->whereBetween('header_beli.tgl_beli', ["$startRange 00:00:00", "$endRange 23:59:59"])
                 ->count();
-            $totalDetailJual = DetailJual::select('id', 'created_at')->whereBetween('created_at', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"])->count();
+            $totalDetailJual = DetailJual::select('id', 'created_at')->whereBetween('created_at', ["$startRange 00:00:00", "$endRange 23:59:59"])->count();
 
             $detailPanen = DetailPanen::select('id', 'id_header_panen', 'id_detail_pembagian_bibit', 'quantity')->with(['header_panen', 'detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
                 $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-            }])->whereHas('header_panen', function ($query) use ($startMonth, $startYear, $endYear, $endMonth) {
-                $query->whereBetween('tgl_panen', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"]);
+            }])->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
+                $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
             })->orderBy('updated_at', 'desc')->get();
 
             $totalPanen = 0;
@@ -130,8 +134,8 @@ class DashboardController extends Controller
 
             $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
                 $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-            }])->where('status', 1)->whereHas('header_panen', function ($query) use ($startMonth, $startYear, $endYear, $endMonth) {
-                $query->whereBetween('tgl_panen', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"]);
+            }])->where('status', 1)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
+                $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
             })->orderBy('updated_at', 'desc')->get();
             $totalPanenHidup = 0;
             foreach ($detailPanenHidup as $key => $value) {
@@ -148,8 +152,8 @@ class DashboardController extends Controller
 
             $detailPanenSortir = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
                 $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-            }])->where('status', 0)->whereHas('header_panen', function ($query) use ($startMonth, $startYear, $endYear, $endMonth) {
-                $query->whereBetween('tgl_panen', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"]);
+            }])->where('status', 0)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
+                $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
             })->orderBy('updated_at', 'desc')->get();
             $totalPanenSortir = 0;
             foreach ($detailPanenSortir as $key => $value) {
@@ -166,8 +170,8 @@ class DashboardController extends Controller
 
             $detailPanenMati = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
                 $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-            }])->where('status', -1)->whereHas('header_panen', function ($query) use ($startMonth, $startYear, $endYear, $endMonth) {
-                $query->whereBetween('tgl_panen', ["$startYear-$startMonth-01", "$endYear-$endMonth-31"]);
+            }])->where('status', -1)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
+                $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
             })->orderBy('updated_at', 'desc')->get();
             $totalPanenMati = 0;
             foreach ($detailPanenMati as $key => $value) {

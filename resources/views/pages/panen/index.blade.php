@@ -1,66 +1,66 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Panen</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Panen</li>
-    </ol>
+<h1 class="mt-4">Panen</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Panen</li>
+</ol>
 
-    <a href="{{ route('panen.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
-        Data</a>
-    @include('components.alert')
+<a href="{{ route('panen.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
+    Data</a>
+@include('components.alert')
 
-    <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
-                role="tab" aria-controls="header" aria-selected="true">Header</button>
-            <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
-                role="tab" aria-controls="detail" aria-selected="false">Detail</button>
-        </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab" tabindex="0">
-            <br>
-            <table id="tblPembagianPakan" class="table table-striped table-bordered nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Panen</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
-            <br>
-            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Pilih
-                Ikan Yang Akan Dijual</button>
-            <br>
-            <table id="tblDetailPanen" class="table table-striped table-bordered nowrap " style="width:100%">
-                <thead>
-                    <tr>
-                        <th><input class="form-check-input" type="checkbox" id="checkAll"></th>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Produk</th>
-                        <th>Status</th>
-                        <th>Jaring</th>
-                        <th>Kolam</th>
-                        <th>Quantity</th>
-                        <th>Sisa Quantity</th>
-                        <th>HPP</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
+            role="tab" aria-controls="header" aria-selected="true">Header</button>
+        <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab"
+            aria-controls="detail" aria-selected="false">Detail</button>
     </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab" tabindex="0">
+        <br>
+        <table id="tblPembagianPakan" class="table table-striped table-bordered nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Panen</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
+        <br>
+        <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Pilih
+            Ikan Yang Akan Dijual</button>
+        <br>
+        <table id="tblDetailPanen" class="table table-striped table-bordered nowrap " style="width:100%">
+            <thead>
+                <tr>
+                    <th><input class="form-check-input" type="checkbox" id="checkAll"></th>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Produk</th>
+                    <th>Status</th>
+                    <th>Jaring</th>
+                    <th>Kolam</th>
+                    <th>Quantity</th>
+                    <th>Sisa Quantity</th>
+                    <th>HPP</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+</div>
 @endsection
 
 @push('script')
-    <script>
-        alert = getCookie('success');
+<script>
+    alert = getCookie('success');
         if (alert != '') {
             $('#alertNotif').removeClass('d-none');
             $('#alertNotif span').html(alert);
@@ -139,7 +139,7 @@
                             `<a title="Edit Data" href="/panen/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
                             `<a title="Hapus Data" href="/panen/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                        return show + edit + deletebtn
+                        return show + deletebtn
                     },
                 },
                 {
@@ -204,9 +204,6 @@
                         } else {
                             return ''
                         }
-
-
-
                     }
                 },
                 {
@@ -225,21 +222,21 @@
                     name: "nama_kolam",
                 },
                 {
-                    data: "quantity_awal",
-                    name: "quantity_awal",
-                },
-                {
                     data: "quantity",
                     name: "quantity",
+                },
+                {
+                    data: "quantity_berat",
+                    name: "quantity_berat",
                 },
                 {
                     data: "hpp",
                     render: function(data, type, row, meta) {
                         hpp = ''
-                        if (row['status'] == -1) {
-                            hpp = ''
-                        } else {
+                        if (row['status'] == 1) {
                             hpp = data.hpp
+                        } else {
+                            hpp = ''
                         }
                         return hpp
                     }
@@ -353,5 +350,5 @@
                 $('#shareMultiple').attr('disabled', true);
             }
         });
-    </script>
+</script>
 @endpush

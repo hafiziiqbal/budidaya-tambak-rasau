@@ -21,7 +21,8 @@ return new class extends Migration
             $table->foreignId('id_detail_panen')->constrained('detail_panen');
             $table->bigInteger('harga_satuan');
             $table->decimal('diskon');
-            $table->decimal('quantity');
+            $table->decimal('quantity')->default(0);
+            $table->decimal('quantity_berat')->default(0);
             $table->bigInteger('sub_total');
             $table->timestamps();
         });

@@ -1,65 +1,65 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Pembagian Bibit</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Pembagian Bibit</li>
-    </ol>
+<h1 class="mt-4">Pembagian Bibit</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Pembagian Bibit</li>
+</ol>
 
-    <a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
-        Data</a>
-    @include('components.alert')
+<a href="{{ route('pembagian.bibit.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah
+    Data</a>
+@include('components.alert')
 
-    <nav>
-        <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
-                role="tab" aria-controls="header" aria-selected="true">Header</button>
-            <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button"
-                role="tab" aria-controls="detail" aria-selected="false">Detail</button>
-        </div>
-    </nav>
-    <div class="tab-content" id="nav-tabContent">
-        <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab" tabindex="0">
-            <br>
-            <table id="tblPembagianBibit" class="table table-striped table-bordered nowrap" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Produk</th>
-                        <th>Tanggal Beli</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
-        <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
-            <br>
-            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Panen
-                Bibit Yang Dipilih</button>
-            <br>
-            <label class="alert-label text-danger d-none">Panen Harus Dari Kolam Yang Sama</label>
-            <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
-                <thead>
-                    <tr>
-                        <th><input class="form-check-input" type="checkbox" id="checkAll"></th>
-                        <th>No</th>
-                        <th>Tanggal</th>
-                        <th>Produk</th>
-                        <th>Jaring</th>
-                        <th>Kolam</th>
-                        <th>Quantity</th>
-                        <th>Sisa Quantity</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-            </table>
-        </div>
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <button class="nav-link active" id="header-tab" data-bs-toggle="tab" data-bs-target="#header" type="button"
+            role="tab" aria-controls="header" aria-selected="true">Header</button>
+        <button class="nav-link" id="detail-tab" data-bs-toggle="tab" data-bs-target="#detail" type="button" role="tab"
+            aria-controls="detail" aria-selected="false">Detail</button>
     </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="header" role="tabpanel" aria-labelledby="header-tab" tabindex="0">
+        <br>
+        <table id="tblPembagianBibit" class="table table-striped table-bordered nowrap" style="width:100%">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Produk</th>
+                    <th>Tanggal Beli</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
+        <br>
+        <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Panen
+            Bibit Yang Dipilih</button>
+        <br>
+        <label class="alert-label text-danger d-none">Panen Harus Dari Kolam Yang Sama</label>
+        <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
+            <thead>
+                <tr>
+                    <th><input class="form-check-input" type="checkbox" id="checkAll"></th>
+                    <th>No</th>
+                    <th>Tanggal</th>
+                    <th>Produk</th>
+                    <th>Jaring</th>
+                    <th>Kolam</th>
+                    <th>Quantity</th>
+                    <th>Sisa Quantity</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
 @endsection
 
 @push('script')
-    <script>
-        alertCustom = getCookie('success');
+<script>
+    alertCustom = getCookie('success');
         if (alertCustom != '') {
             $('#alertNotif').removeClass('d-none');
             $('#alertNotif span').html(alertCustom);
@@ -361,6 +361,7 @@
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
             if (checkedCount >= 2) {
                 $('#shareMultiple').removeAttr('disabled');
+                $('.btn-share').attr('disabled', true)
             } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
                 $('#shareMultiple').attr('disabled', true);
             }
@@ -379,5 +380,5 @@
                 $('#shareMultiple').attr('disabled', true);
             }
         });
-    </script>
+</script>
 @endpush

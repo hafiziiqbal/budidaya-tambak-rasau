@@ -25,13 +25,20 @@ class PanenRequest extends FormRequest
     {
         $validate = '';
         if ($this->type == 'store-all') {
-            $validate =
-                [
-                    'tgl_panen' => 'required|date_format:d-m-Y',
-                    'detail.*.quantity' => 'required|numeric|between:0,99999999.99',
-                    'detail.*.status' => 'required',
-                    'detail.*.id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
-                ];
+            $rules = [];
+            $rules['tgl_panen'] = 'required|date_format:d-m-Y';
+            foreach ($this->input('detail') as $key => $detail) {
+                $rules["detail.$key.status"] = 'required';
+                $rules["detail.$key.id_detail_pembagian_bibit"] = 'required|exists:detail_pembagian_bibit,id';
+                if ($detail['status'] == 1) {
+                    $rules["detail.$key.quantity_berat"] = 'required|numeric|between:0,99999999.99';
+                    $rules["detail.$key.quantity"] = 'nullable|numeric|between:0,99999999.99';
+                } else {
+                    $rules["detail.$key.quantity_berat"] = 'nullable|numeric|between:0,99999999.99';
+                    $rules["detail.$key.quantity"] = 'required|numeric|between:0,99999999.99';
+                }
+            }
+            $validate = $rules;
         }
         if ($this->type == 'update-detail') {
             $validate =
@@ -42,12 +49,20 @@ class PanenRequest extends FormRequest
                 ];
         }
         if ($this->type == 'store-detail') {
-            $validate =
-                [
+            if ($this->status  == 1) {
+                $validate =  [
+                    'quantity_berat' => 'required|numeric|between:0,99999999.99',
                     'quantity' => 'required|numeric|between:0,99999999.99',
                     'status' => 'required',
                     'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
                 ];
+            } else {
+                $validate =  [
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                    'status' => 'required',
+                    'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                ];
+            }
         }
         return $validate;
     }

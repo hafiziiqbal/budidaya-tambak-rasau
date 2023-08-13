@@ -1,72 +1,72 @@
 @extends('layouts.admin')
 
 @section('content')
-    <h1 class="mt-4">Tambah Data Panen</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-        <li class="breadcrumb-item active">Tambah Data Panen</li>
-    </ol>
+<h1 class="mt-4">Tambah Data Panen</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+    <li class="breadcrumb-item active">Tambah Data Panen</li>
+</ol>
 
 
-    <form id="formPembagian" name="form_pembagian" action="{{ route('panen.store') }}" method="POST">
-        @csrf
+<form id="formPembagian" name="form_pembagian" action="{{ route('panen.store') }}" method="POST">
+    @csrf
 
-        <div id="headerPembelian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Panen</label>
+    <div id="headerPembelian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Panen</label>
+        </div>
+        <input type="hidden" name="type" value="store-all">
+        <div class="mb-3">
+            <label for="inputTanggalPembagian" class="form-label">Tanggal Panen</label>
+            <div class="input-group">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tgl_panen" id="inputTanggalPembagian" class="form-control"
+                    aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
             </div>
-            <input type="hidden" name="type" value="store-all">
-            <div class="mb-3">
-                <label for="inputTanggalPembagian" class="form-label">Tanggal Panen</label>
-                <div class="input-group">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_panen" id="inputTanggalPembagian" class="form-control"
-                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
-                </div>
-                <small class="text-danger" id="errorTglPanen"></small>
-
-            </div>
-
+            <small class="text-danger" id="errorTglPanen"></small>
 
         </div>
 
-        <div id="detail">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Detail Panen</label>
-            </div>
-            <div class="mb-3">
-                <label class="form-label">Pilih Kolam</label>
-                <br>
-                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                    @foreach ($kolam as $key => $kolam)
-                        <input type="radio" class="btn-check" name="kolam" id="{{ $key }}"
-                            value="{{ $kolam->id }}" autocomplete="off">
-                        <label class="btn btn-outline-primary" for="{{ $key }}">{{ $kolam->nama }}</label>
-                    @endforeach
 
-                </div>
-            </div>
-            <div id="alertGeneral">
-                @include('components.alert')
-            </div>
-            <div class="error-element">
+    </div>
+
+    <div id="detail">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Detail Panen</label>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Pilih Kolam</label>
+            <br>
+            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                @foreach ($kolam as $key => $kolam)
+                <input type="radio" class="btn-check" name="kolam" id="{{ $key }}" value="{{ $kolam->id }}"
+                    autocomplete="off">
+                <label class="btn btn-outline-primary" for="{{ $key }}">{{ $kolam->nama }}</label>
+                @endforeach
 
             </div>
-
+        </div>
+        <div id="alertGeneral">
+            @include('components.alert')
+        </div>
+        <div class="error-element">
 
         </div>
-        <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-        </button>
 
-        <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
-            <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-        </button>
-    </form>
+
+    </div>
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+    </button>
+
+    <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
+        <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+    </button>
+</form>
 @endsection
 
 @push('script')
-    <script>
-        let index = 0;
+<script>
+    let index = 0;
         let detailPembagianBibit = []
 
         // inisialisasi form select 2
@@ -140,6 +140,11 @@
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger">wajib diisi jika status panen adalah ikan</span></label>
+                            <input type="text" class="form-control quantity-berat" name="detail[${index}][quantity_berat]" >
+                            <small class="text-danger" id="errorQuantityBerat${index}"></small>
                         </div>                       
                     </div>`
             )
@@ -212,6 +217,9 @@
                     for (let x = 0; x < index + 1; x++) {
                         if (`detail.${x}.quantity` in errors) {
                             $(`#errorQuantity${x}`).html(`*${errors[`detail.${x}.quantity`]}`)
+                        }
+                        if (`detail.${x}.quantity_berat` in errors) {
+                            $(`#errorQuantityBerat${x}`).html(`*${errors[`detail.${x}.quantity_berat`]}`)
                         }
                         if (`detail.${x}.id_detail_pembagian_bibit` in errors) {
                             $(`#errorIkan${x}`).html(
@@ -307,5 +315,5 @@
             });
         }
         // end get share bibit
-    </script>
+</script>
 @endpush

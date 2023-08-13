@@ -1,51 +1,58 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Produk</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item active">Produk</li>
-    </ol>
+<h1 class="mt-4">Produk</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item active">Produk</li>
+</ol>
 
-    <div class="mb-5">
-        <label class="form-label">Pilih Kategori Produk</label>
-        <select class="form-select" id="selectKategori" data-placeholder="Pilih Produk">
-            <option></option>
-            @foreach ($kategori as $produk)
-                <option value="{{ $produk->id }}" {{ $produk->id == 3 ? 'selected="selected"' : '' }}>{{ $produk->nama }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+<div class="mb-5">
+    <label class="form-label">Pilih Kategori Produk</label>
+    <select class="form-select" id="selectKategori" data-placeholder="Pilih Produk">
+        <option></option>
+        @foreach ($kategori as $produk)
+        <option value="{{ $produk->id }}" {{ $produk->id == 3 ? 'selected="selected"' : '' }}>{{ $produk->nama }}
+        </option>
+        @endforeach
+    </select>
+</div>
 
-    <a href="{{ route('produk.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Produk</a>
+<a href="{{ route('produk.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Produk</a>
 
-    @include('components.alert')
-    <table id="tblProduk" class="table table-striped  nowrap" style="width:100%">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th>Nama</th>
-                <th>Quantity</th>
-                <th>Aksi</th>
-            </tr>
-        </thead>
-    </table>
+@include('components.alert')
+<table id="tblProduk" class="table table-striped  nowrap" style="width:100%">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Nama</th>
+            <th>Quantity <span id="quantityBerat" class="d-none"> (Kg)</span></th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+</table>
 @endsection
 
 @push('script')
-    <script>
-        $("#selectKategori").select2({
+<script>
+    $("#selectKategori").select2({
             theme: "bootstrap-5",
             containerCssClass: "select2--medium",
             dropdownCssClass: "select2--medium",
         });
 
         let idKategori = $("#selectKategori").find(":selected").val();
+       
         let cookieKategori = getCookie('kategori');
         if (cookieKategori == '') {
             document.cookie = `kategori=${idKategori};path=/produk;`;
         } else {
             $("#selectKategori").val(cookieKategori).change();
+            
             idKategori = cookieKategori
+            if (idKategori == 6) {
+            $('#quantityBerat').removeClass('d-none');
+             }else{
+                $('#quantityBerat').addClass('d-none');
+             }
         }
 
 
@@ -103,8 +110,13 @@
         $('#selectKategori').on('change', function(e) {
             let optionSelected = $("option:selected", this);
             idKategori = this.value;
+            if (idKategori == 6) {
+            $('#quantityBerat').removeClass('d-none');
+             }else{
+                $('#quantityBerat').addClass('d-none');
+             }
             table.ajax.url(`/produk/${idKategori}/datatable`).load();
             document.cookie = `kategori=${idKategori};path=/produk;`;
         });
-    </script>
+</script>
 @endpush

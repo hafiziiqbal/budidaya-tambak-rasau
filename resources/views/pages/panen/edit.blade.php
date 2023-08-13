@@ -1,52 +1,52 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Panen</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-        <li class="breadcrumb-item active">Edit Pakan</li>
-    </ol>
+<h1 class="mt-4">Edit Panen</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+    <li class="breadcrumb-item active">Edit Pakan</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
-        @csrf
-        <div id="headerPembagian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Panen</label>
-            </div>
-
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-
-            <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Panen</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-                Perubahan</button>
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
+    @csrf
+    <div id="headerPembagian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Panen</label>
         </div>
-    </form>
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Panen</label>
+
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+
+        <div class="mb-3">
+            <label for="inputNama" class="form-label">Tanggal Panen</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
+                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+            </div>
         </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+
+        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+            Perubahan</button>
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPanen"><i class="fa fa-plus"></i> Tambah
-    </button>
+</form>
+<div id="detail">
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Panen</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
+<button type="button" class="btn btn-dark my-3" id="btnTambahPanen"><i class="fa fa-plus"></i> Tambah
+</button>
 @endsection
 
 @push('script')
-    <script>
-        let detailPanen
+<script>
+    let detailPanen
         let number = 0
 
         // inisialisasi form select 2
@@ -137,6 +137,7 @@
 
         // membuat element detail panen
         function loadElementDetailBagi(item, index) {
+            
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/panen/detail/${item.id}/edit" class=" mb-5">
                     <div class="card mb-4"></div>    
@@ -162,7 +163,7 @@
                 `<div class="card-body border">
                     <div id="alert${index}">
                             @include('components.alert')
-                    </div>        
+                    </div>
                     @csrf    
                         <input type="hidden" name="type" value="update-detail">
                         <input type="hidden" name="id" value="${item.id}">                        
@@ -173,7 +174,7 @@
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="id_detail_pembagian_bibit" >
                                 <option></option>
                                 @foreach ($pembagianBibit as $value)
-                                    <option value="{{ $value->id }}" data-hide="{{ $value->quantity > 0 ? 'false' : 'true' }}">
+                                    <option   value="{{ $value->id }}"  data-hide={{ $value->quantity > 0 ? 'false' : 'true' }}">
                                         {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' | ' . $value->kolam->nama . ' ' . ($value->jaring == null ? '' : '& ' . $value->jaring->nama) . ($value->jaring_old == null ? '' : '& ' . $value->jaring_old->nama) }}
                                     </option>
                                 @endforeach
@@ -191,15 +192,16 @@
                         </div>                        
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
+                            <input type="text" class="form-control quantity" readonly name="quantity" value="${item.quantity}" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
-                        </div>    
+                        </div>  
+                        <div class="mb-3">
+                            <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger">wajib diisi jika status panen adalah ikan</span></label>
+                            <input type="text" class="form-control quantity-berat" readonly name="quantity_berat" value="${item.quantity_berat}" >
+                            <small class="text-danger" id="errorQuantityBerat${index}"></small>
+                        </div>
                         <div class="btn-update-content">
-                            <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
-                                <i class="fas fa-spinner fa-spin d-none"></i>
-                                Perbarui
-                            </button>
-                            <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
+                            <button type="button" class="btn btn-danger " data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
                             </button>
@@ -212,7 +214,10 @@
                         </div>                 
                     </div>`
             )
-
+            // <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
+            //                     <i class="fas fa-spinner fa-spin d-none"></i>
+            //                     Perbarui
+            //                 </button>
             $('#detail').append(form)
             $(`#formDetail${index} .card`).append(cardHeader, cardBody)
 
@@ -225,10 +230,12 @@
             });
 
             $(`#selectIkan${index}`).val(item.id_detail_pembagian_bibit)
-            $(`#selectIkan${index}`).select2("enable", false);
             $(`#selectIkan${index}`).trigger('change');
+            $(`#selectIkan${index}`).select2("enable", false);
+   
             $(`#selectStatus${index}`).val(item.status)
             $(`#selectStatus${index}`).trigger('change');
+            $(`#selectStatus${index}`).select2("enable", false);
 
 
             // handle sumbit
@@ -333,6 +340,11 @@
                                 `*${errors.quantity}`)
                         }
 
+                        if (errors.quantity_berat) {
+                            $(`#errorQuantityBerat${index}`).html(
+                                `*${errors.quantity}`)
+                        }
+
                         if (errors.id_detail_pembagian_bibit) {
                             $(`#errorIkan${index}`).html(
                                 `*${errors.id_detail_pembagian_bibit}`)
@@ -357,6 +369,7 @@
 
             $(`#btnDeleteDetail${index}`).click(function(e) {
                 let id = $(this).data('id');
+                
                 $.ajax({
                     url: `/panen/detail/delete/${id}`,
                     dataType: 'json', // what to expect back from the server
@@ -426,6 +439,8 @@
             $(`#formDetail${number} .btn-update-content`).addClass('d-none');
             $(`#formDetail${number} .btn-store-content`).removeClass('d-none');
             $(`#formDetail${number} .btn-card.btn-close`).removeClass('d-none');
+            $('input').removeAttr('readonly');
+            $(`#selectStatus${number}`).removeAttr('disabled');
 
 
             $(`#formDetail${number} input.alt[name='id_detail_pembagian_bibit']`).removeAttr('name');
@@ -436,5 +451,5 @@
             })
 
         })
-    </script>
+</script>
 @endpush

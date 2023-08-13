@@ -1,52 +1,52 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Edit Pembagian Pakan</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
-        <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
-    </ol>
+<h1 class="mt-4">Edit Pembagian Pakan</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
+    <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
-        @csrf
-        <div id="headerPembagian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Pembagian</label>
-            </div>
-
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
-
-            <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Pembagian</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-                Perubahan</button>
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
+    @csrf
+    <div id="headerPembagian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Pembagian</label>
         </div>
-    </form>
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Pembagian</label>
+
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
+
+        <div class="mb-3">
+            <label for="inputNama" class="form-label">Tanggal Pembagian</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
+                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+            </div>
         </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+
+        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+            Perubahan</button>
     </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-    </button>
+</form>
+<div id="detail">
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Pembagian</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
+<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+</button>
 @endsection
 
 @push('script')
-    <script>
-        let detailBagi
+<script>
+    let detailBagi
         let number = 0
 
         // inisialisasi form select 2
@@ -179,7 +179,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Tong</label>
-                            <select class="form-select" id="selectTong${index}" data-placeholder="Pilih Tong" name="id_tong" >
+                            <select disabled class="form-select" id="selectTong${index}" data-placeholder="Pilih Tong" name="id_tong" >
                                 <option></option>
                                 @foreach ($tong as $value)
                                     <option value="{{ $value->id }}">
@@ -191,14 +191,11 @@
                         </div>       
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
+                            <input disabled type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="btn-update-content">
-                            <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
-                                <i class="fas fa-spinner fa-spin d-none"></i>
-                                Perbarui
-                            </button>
+                           
                             <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
@@ -212,6 +209,10 @@
                         </div>                 
                     </div>`
             )
+            // <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
+            //                     <i class="fas fa-spinner fa-spin d-none"></i>
+            //                     Perbarui
+            //                 </button>
 
             $('#detail').append(form)
             $(`#formDetail${index} .card`).append(cardHeader, cardBody)
@@ -265,6 +266,8 @@
                             $(`#alert${index} #alertNotif span`).html(response.success);
                             $(`#alert${index}`).append(`@include('components.alert')`);
                             loadDataHeader();
+                            $(`#formDetail${index} .quantity`).attr('disabled', true);
+                            $(`#formDetail${index} select`).attr('disabled', true);
                         }
 
                         if (response.error != undefined) {
@@ -302,6 +305,8 @@
                             $(`#formDetail${index}`).attr('action',
                                 `/pembagian-pakan/detail/${response.id}/edit`)
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
+                            $(`#formDetail${index} .quantity`).attr('disabled', true);
+                            $(`#formDetail${index} select`).attr('disabled', true);
                         }
                     },
                     error: function(response) { // handle the error            
@@ -412,12 +417,13 @@
 
             $(`#formDetail${number} input.alt[name='id_detail_beli']`).removeAttr('name');
             $(`#formDetail${number} select#selectPakan${number}`).attr('name', 'id_detail_beli');
-
+            $(`#formDetail${number} .quantity`).removeAttr('disabled');
+            $(`#formDetail${number} select`).removeAttr('disabled');
 
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
 
         })
-    </script>
+</script>
 @endpush

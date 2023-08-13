@@ -69,7 +69,7 @@ class PenjualanRequest extends FormRequest
         if ($this->type == 'store-detail') {
             $validate =
                 [
-                    'id_detail_panen' => 'required|exists:detail_panen,id',
+                    'id_detail_panen' => 'required',
                     'harga_satuan' => 'required|numeric|digits_between:0,20',
                     'quantity' => 'required|numeric|between:0,99999999.99',
                     'diskon' => 'required|numeric|between:0,99999999.99',

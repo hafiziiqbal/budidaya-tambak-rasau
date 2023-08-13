@@ -22,7 +22,8 @@ return new class extends Migration
             $table->string('posisi_kolam');
             $table->string('nama_jaring')->nullable();
             $table->string('posisi_jaring')->nullable();
-            $table->decimal('quantity');
+            $table->decimal('quantity')->default(0);
+            $table->decimal('quantity_berat')->default(0);
             $table->timestamps();
         });
     }

@@ -80,10 +80,10 @@ class PenjualanController extends Controller
         // validate total quantity against detail_pembagian_bibit
         foreach ($totalQuantities as $idDetail => $totalQuantity) {
             $detailPanen = DB::table('detail_panen')->where('id', $idDetail)->first();
-            if ($totalQuantity > $detailPanen->quantity) {
+            if ($totalQuantity > $detailPanen->quantity_berat) {
                 return response()->json([
                     'errors' => [
-                        "detail.$idDetail.quantity-all" => "Total Quantity tadak boleh lebih dari $detailPanen->quantity"
+                        "detail.$idDetail.quantity-all" => "quantity yang tersisa tidak valid, quantity tidak boleh lebih / kurang dari $detailPanen->quantity"
                     ],
                 ], 422);
             }
@@ -120,12 +120,12 @@ class PenjualanController extends Controller
             ]);
             // update quantity produk
             $produkIkan->update([
-                'quantity' => DB::raw("quantity-" . $value->quantity),
+                'quantity' => DB::raw("quantity - " . $value->quantity),
             ]);
 
             // update quantity produk
             $detailPanen->update([
-                'quantity' => DB::raw("quantity-" . $value->quantity),
+                'quantity_berat' => DB::raw("quantity_berat - " . $value->quantity),
             ]);
         }
 
@@ -187,7 +187,7 @@ class PenjualanController extends Controller
 
         // update quantity produk
         $detailPanen->update([
-            'quantity' => DB::raw("quantity-" . $request->quantity),
+            'quantity_berat' => DB::raw("quantity_berat-" . $request->quantity),
         ]);
 
         // update quantity produk
@@ -262,7 +262,7 @@ class PenjualanController extends Controller
         $detailJualUpdate = DetailJual::find($id);
         $panen = DetailPanen::find($detailJualUpdate->id_detail_panen);
 
-        $jumlahQuantityPanenAwal = $panen->quantity + $detailJualUpdate->quantity;
+        $jumlahQuantityPanenAwal = $panen->quantity_berat + $detailJualUpdate->quantity;
 
         if ($request->quantity > $jumlahQuantityPanenAwal) {
             return response()->json([
@@ -306,9 +306,9 @@ class PenjualanController extends Controller
         ]);
 
 
-        $jumlahPanen = ($panen->quantity + $quantityProdukOld) - $request->quantity;
+        $jumlahPanen = ($panen->quantity_berat + $quantityProdukOld) - $request->quantity;
         $panen->update([
-            'quantity' => $jumlahPanen,
+            'quantity_berat' => $jumlahPanen,
         ]);
 
         $headerJual = HeaderJual::find($detailJualUpdate->id_header_jual);

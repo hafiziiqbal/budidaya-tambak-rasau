@@ -15,11 +15,9 @@ return new class extends Migration
     {
         Schema::create('hpp', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('id_detail_panen')->constrained('detail_panen')->cascadeOnDelete();
-            $table->text('id_detail_pembagian_bibit');
-            $table->text('id_detail_pemberian_pakan');
-            $table->string('status');
-            $table->integer('total_biaya_bibit');
+            $table->foreignId('id_detail_panen')->constrained('detail_panen')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('id_detail_pembagian_bibit')->constrained('detail_pembagian_bibit');
+            $table->integer('jumlah_ikan_panen');
             $table->integer('total_biaya_pakan');
             $table->integer('hpp');
             $table->timestamps();

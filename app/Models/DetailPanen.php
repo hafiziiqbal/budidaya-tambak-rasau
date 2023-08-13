@@ -20,6 +20,7 @@ class DetailPanen extends Model
         'nama_jaring',
         'posisi_jaring',
         'quantity',
+        'quantity_berat',
         'quantity_awal'
     ];
 

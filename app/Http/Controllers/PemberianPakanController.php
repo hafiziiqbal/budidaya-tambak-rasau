@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PemberianPakanRequest;
+use App\Models\DetailPanen;
 use App\Models\MasterTong;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -155,6 +156,15 @@ class PemberianPakanController extends Controller
     {
         $detailPemberianPakan = DetailPemberianPakan::findOrFail($id);
         $detailPembagianPakan = DetailPembagianPakan::findOrFail($detailPemberianPakan->id_detail_pembagian_pakan);
+        $detailPanen = DetailPanen::where('id_detail_pembagian_bibit', $detailPemberianPakan->id_detail_pembagian_bibit)->first();
+
+        if ($detailPanen) {
+            return redirect()->route('pemberian.pakan')->withErrors(
+                [
+                    'error' => "Data ini digunakan oleh tabel panen"
+                ]
+            );
+        }
 
         $detailPembagianPakan->quantity += $detailPemberianPakan->quantity;
         $detailPembagianPakan->save();

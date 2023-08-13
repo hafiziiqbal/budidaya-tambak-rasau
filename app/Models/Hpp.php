@@ -14,9 +14,7 @@ class Hpp extends Model
     protected $fillable = [
         'id_detail_panen',
         'id_detail_pembagian_bibit',
-        'id_detail_pemberian_pakan',
-        'status',
-        'total_biaya_bibit',
+        'jumlah_ikan_panen',
         'total_biaya_pakan',
         'hpp'
     ];
