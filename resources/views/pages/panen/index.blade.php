@@ -46,8 +46,7 @@
                     <th>Status</th>
                     <th>Jaring</th>
                     <th>Kolam</th>
-                    <th>Quantity</th>
-                    <th>Sisa Quantity</th>
+                    <th>Sisa Quantity (Kg)</th>
                     <th>HPP</th>
                     <th>Aksi</th>
                 </tr>
@@ -221,10 +220,10 @@
                     data: "nama_kolam",
                     name: "nama_kolam",
                 },
-                {
-                    data: "quantity",
-                    name: "quantity",
-                },
+                // {
+                //     data: "quantity",
+                //     name: "quantity",
+                // },
                 {
                     data: "quantity_berat",
                     name: "quantity_berat",

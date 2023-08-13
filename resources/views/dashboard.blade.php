@@ -71,7 +71,7 @@ use Carbon\Carbon;
             <div class="col-xl-2 col-md-6">
                 <div class="card bg-info text-white mb-4">
                     <div class="card-header">
-                        Total Ikan Hidup
+                        Ikan Siap Jual Satuan KG
                     </div>
                     <div class="card-body">
                         <h2 class="fw-bold counter" id="totalPanenHidup">0</h2>

@@ -1,46 +1,46 @@
 @extends('layouts.admin')
 @section('content')
-    <h1 class="mt-4">Info Panen</h1>
-    <ol class="breadcrumb mb-4">
-        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-        <li class="breadcrumb-item active">Info Pakan</li>
-    </ol>
+<h1 class="mt-4">Info Panen</h1>
+<ol class="breadcrumb mb-4">
+    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+    <li class="breadcrumb-item active">Info Pakan</li>
+</ol>
 
-    {{-- header beli --}}
-    <form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
-        @csrf
-        <div id="headerPembagian" class="mb-4">
-            <div class="bg-info p-2 border-dark border-bottom mb-3">
-                <label class="fw-bold">Header Panen</label>
-            </div>
+{{-- header beli --}}
+<form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
+    @csrf
+    <div id="headerPembagian" class="mb-4">
+        <div class="bg-info p-2 border-dark border-bottom mb-3">
+            <label class="fw-bold">Header Panen</label>
+        </div>
 
-            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-                <span></span></label>
-            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                    aria-hidden="true"></i>
-                <span></span></label>
+        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+            <span></span></label>
+        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                aria-hidden="true"></i>
+            <span></span></label>
 
-            <div class="mb-3">
-                <label for="inputNama" class="form-label">Tanggal Panen</label>
-                <div class="input-group mb-3">
-                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                    <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
-                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" disabled>
-                </div>
+        <div class="mb-3">
+            <label for="inputNama" class="form-label">Tanggal Panen</label>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
+                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" disabled>
             </div>
         </div>
-    </form>
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-            <label class="fw-bold">Detail Panen</label>
-        </div>
-        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
+</form>
+<div id="detail">
+    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+        <label class="fw-bold">Detail Panen</label>
+    </div>
+    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
+</div>
 @endsection
 
 @push('script')
-    <script>
-        let detailPanen
+<script>
+    let detailPanen
         let number = 0
 
         // inisialisasi form select 2
@@ -176,8 +176,8 @@
                             </select>                            
                         </div>                        
                         <div class="mb-3">
-                            <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required disabled>
+                            <label class="form-label">Quantity (Kg)</label>
+                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity_berat}" required disabled>
                             <label class="error-quantity"></label>
                         </div>    
                         
@@ -366,5 +366,5 @@
             })
 
         })
-    </script>
+</script>
 @endpush

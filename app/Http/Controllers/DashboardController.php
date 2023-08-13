@@ -38,22 +38,23 @@ class DashboardController extends Controller
         //         $totalPanen += $value->quantity + $nilaiSementara;
         //     }
         // }
+        $totalPanenHidup  = DetailPanen::where('status', 1)->sum('quantity_berat');
 
-        $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
-            $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-        }])->where('status', 1)->orderBy('updated_at', 'desc')->get();
-        $totalPanenHidup = 0;
-        foreach ($detailPanenHidup as $key => $value) {
-            if (count($value->detail_jual) > 0) {
-                $totalPanenHidup += $value->quantityAwalPanen;
-            } else {
-                $nilaiSementara = 0;
-                foreach ($value->header_pembagian_bibit as $key => $bibit) {
-                    $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
-                }
-                $totalPanenHidup += $value->quantity + $nilaiSementara;
-            }
-        }
+        // $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity', 'quantity_berat')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
+        //     $query->select('id', 'id_header_pembagian_bibit', 'quantity', 'quantity_berat');
+        // }])->where('status', 1)->orderBy('updated_at', 'desc')->get();
+        // $totalPanenHidup = 0;
+        // foreach ($detailPanenHidup as $key => $value) {
+        //     if (count($value->detail_jual) > 0) {
+        //         $totalPanenHidup += $value->quantityAwalPanen;
+        //     } else {
+        //         $nilaiSementara = 0;
+        //         foreach ($value->header_pembagian_bibit as $key => $bibit) {
+        //             $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity_berat');
+        //         }
+        //         $totalPanenHidup += $value->quantity_berat + $nilaiSementara;
+        //     }
+        // }
 
         $detailPanenSortir = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
             $query->select('id', 'id_header_pembagian_bibit', 'quantity');
@@ -132,26 +133,29 @@ class DashboardController extends Controller
                 }
             }
 
-            $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
-                $query->select('id', 'id_header_pembagian_bibit', 'quantity');
-            }])->where('status', 1)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
-                $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
-            })->orderBy('updated_at', 'desc')->get();
-            $totalPanenHidup = 0;
-            foreach ($detailPanenHidup as $key => $value) {
-                if (count($value->detail_jual) > 0) {
-                    $totalPanenHidup += $value->quantityAwalPanen;
-                } else {
-                    $nilaiSementara = 0;
-                    foreach ($value->header_pembagian_bibit as $key => $bibit) {
-                        $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity');
-                    }
-                    $totalPanenHidup += $value->quantity + $nilaiSementara;
-                }
-            }
 
-            $detailPanenSortir = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
-                $query->select('id', 'id_header_pembagian_bibit', 'quantity');
+            $totalPanenHidup  = DetailPanen::where('status', 1)->whereBetween('updated_at', ["$startRange 00:00:00", "$endRange 23:59:59"])->sum('quantity_berat');
+
+            // $detailPanenHidup = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity', 'quantity_berat')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
+            //     $query->select('id', 'id_header_pembagian_bibit', 'quantity', 'quantity_berat');
+            // }])->where('status', 1)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
+            //     $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
+            // })->orderBy('updated_at', 'desc')->get();
+            // $totalPanenHidup = 0;
+            // foreach ($detailPanenHidup as $key => $value) {
+            //     if (count($value->detail_jual) > 0) {
+            //         $totalPanenHidup += $value->quantityAwalPanen;
+            //     } else {
+            //         $nilaiSementara = 0;
+            //         foreach ($value->header_pembagian_bibit as $key => $bibit) {
+            //             $nilaiSementara += $bibit->detail_pembagian_bibit->sum('quantity_berat');
+            //         }
+            //         $totalPanenHidup += $value->quantity_berat + $nilaiSementara;
+            //     }
+            // }
+
+            $detailPanenSortir = DetailPanen::select('id', 'id_header_panen', 'status', 'id_detail_pembagian_bibit', 'quantity', 'quantity_berat')->with(['detail_jual', 'header_pembagian_bibit.detail_pembagian_bibit' => function ($query) {
+                $query->select('id', 'id_header_pembagian_bibit', 'quantity', 'quantity_berat');
             }])->where('status', 0)->whereHas('header_panen', function ($query) use ($startRange, $endRange) {
                 $query->whereBetween('tgl_panen', ["$startRange 00:00:00", "$endRange 23:59:59"]);
             })->orderBy('updated_at', 'desc')->get();
