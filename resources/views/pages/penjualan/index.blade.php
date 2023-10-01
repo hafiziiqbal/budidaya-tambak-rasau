@@ -1,35 +1,36 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Penjualan</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item active">Penjualan</li>
-</ol>
+    <h1 class="mt-4">Penjualan</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item active">Penjualan</li>
+    </ol>
 
-<a href="{{ route('jual.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Data</a>
-@include('components.alert')
-<div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
-        <table id="tblPenjualan" class="table table-striped table-bordered nowrap" style="width:100%">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Invoice</th>
-                    <th>Customer</th>
-                    <th>Total Netto</th>
-                    <th>Pay</th>
-                    <th>Change</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-        </table>
+    <a href="{{ route('jual.create') }}" class="btn btn-primary mb-4"><i class="fa fa-plus"></i>&emsp; Tambah Data</a>
+    @include('components.alert')
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active py-3" id="detail" role="tabpanel" aria-labelledby="detail-tab">
+            <table id="tblPenjualan" class="table table-striped table-bordered nowrap" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Invoice</th>
+                        <th>Customer</th>
+                        <th>Total Netto</th>
+                        <th>Pay</th>
+                        <th>Change</th>
+                        <th>Created At</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
     </div>
-    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">...</div>
-</div>
 @endsection
 
 @push('script')
-<script>
-    alert = getCookie('success');
+    <script>
+        alert = getCookie('success');
         if (alert != '') {
             $('#alertNotif').removeClass('d-none');
             $('#alertNotif span').html(alert);
@@ -81,6 +82,24 @@
                         }
                     },
                     {
+                        data: "created_at",
+                        render: function(data, type, row, meta) {
+                            const date = new Date(data);
+                            // Dapatkan komponen tanggal, bulan, tahun, jam, menit, dan detik
+                            const tanggal = date.getDate();
+                            const bulan = date.getMonth() +
+                                1; // Ingatlah bahwa bulan dimulai dari 0 (Januari) hingga 11 (Desember)
+                            const tahun = date.getFullYear();
+                            const jam = date.getHours();
+                            const menit = date.getMinutes();
+                            const detik = date.getSeconds();
+                            const formattedDate =
+                                `${tanggal}-${bulan}-${tahun} ${jam}:${menit}:${detik}`;
+                            return formattedDate
+                        },
+
+                    },
+                    {
                         data: "id",
                         render: function(id) {
                             let show =
@@ -102,5 +121,5 @@
 
             // $.fn.dataTable.ext.errMode = 'none';
         });
-</script>
+    </script>
 @endpush

@@ -19,10 +19,6 @@ class HeaderBeli extends Model
         'total_netto',
     ];
 
-    protected $hidden = [
-        'created_at'
-    ];
-
     public function detail_beli()
     {
         return $this->hasMany(DetailBeli::class, 'id_header_beli');

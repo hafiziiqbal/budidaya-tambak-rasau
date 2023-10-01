@@ -67,13 +67,13 @@
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Pembagian</span>                                
+                                <span class="me-2 title">Detail Pembagian</span>
                             </div>
                             <button type="button" class="btn-close"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">                                     
+                `<div class="card-body border">
                         <div class="mb-3 select-pakan">
                             <label class="form-label">Pilih Pakan</label>
                             <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="detail[${index}][id_detail_beli]" >
@@ -83,7 +83,7 @@
                                         {{ $value->produk->nama }}
                                     </option>
                                 @endforeach
-                            </select>    
+                            </select>
                             <small class="text-danger" id="errorPakan${index}"></small>
                         </div>
                         <div>
@@ -97,12 +97,12 @@
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorTong${index}"></small>
-                        </div> 
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
-                        </div>                       
+                        </div>
                     </div>`
             )
 
@@ -124,14 +124,14 @@
         }
 
         // handle sumbit
-        $(`#formPembagian`).on("submit", function(e) { //id of form 
+        $(`#formPembagian`).on("submit", function(e) { //id of form
             e.preventDefault();
             $(`#btnSimpan`).attr('disabled', 'disabled')
             $(`#btnSimpan`).children().removeClass('d-none')
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
             $.ajax({
@@ -166,7 +166,7 @@
                         window.location.href = "{{ route('pembagian.pakan') }}";
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
 
@@ -242,6 +242,24 @@
             $.removeCookie("sharePakanMultiple", {
                 path: "/pembagian-pakan/create"
             });
+        } else {
+            $('#inputTanggalPembagian').val(getDateNow());
+        }
+
+        function getDateNow() {
+            const today = new Date();
+
+            // Dapatkan komponen tanggal, bulan, dan tahun dari objek tanggal
+            const tanggal = today.getDate();
+            const bulan = today.getMonth() + 1; // Ingatlah bahwa bulan dimulai dari 0 (Januari) hingga 11 (Desember)
+            const tahun = today.getFullYear();
+
+            // Buat fungsi untuk menambahkan "0" di depan angka jika kurang dari 10
+            const tambahkanNol = (nilai) => (nilai < 10 ? "0" + nilai : nilai);
+
+            // Buat tanggal dalam format "d-m-y"
+            return tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+
         }
         // end get share bibit
     </script>

@@ -64,7 +64,9 @@
                     },
                     {
                         data: 'quantity',
-                        name: 'quantity'
+                        render: function(data, type, row, meta) {
+                            return pembatasKoma(data.toString())
+                        }
                     },
                     {
                         data: "id",
@@ -90,5 +92,9 @@
 
             // $.fn.dataTable.ext.errMode = 'none';
         });
+
+        function pembatasKoma(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     </script>
 @endpush

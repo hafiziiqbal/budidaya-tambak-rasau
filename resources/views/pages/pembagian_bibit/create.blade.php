@@ -186,16 +186,16 @@
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Pembagian</span>                                
+                                <span class="me-2 title">Detail Pembagian</span>
                             </div>
                             <button type="button" class="btn-close"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">             
+                `<div class="card-body border">
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>                            
+                            <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3">
@@ -209,7 +209,7 @@
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorKolam${index}"></small>
-                        </div>                        
+                        </div>
                         <div class="mb-3 select-jaring">
                             <label class="form-label">Pilih Jaring</label>
                             <select class="form-select select-jaring" id="selectJaring${index}" data-placeholder="Pilih Jaring" name="detail[${index}][id_jaring]" >
@@ -221,7 +221,7 @@
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorJaring${index}"></small>
-                        </div>                        
+                        </div>
                     </div>`
             )
 
@@ -243,7 +243,7 @@
             $('body').on('change', '.quantity', function() {
                 console.log(bagi);
 
-                // inisialisasi variabel total                
+                // inisialisasi variabel total
                 var total = 0;
 
                 // ulangi semua elemen dengan class yang sama
@@ -264,20 +264,19 @@
                 }
 
             });
-
         }
 
 
 
         // handle sumbit
-        $(`#formPembagian`).on("submit", function(e) { //id of form 
+        $(`#formPembagian`).on("submit", function(e) { //id of form
             e.preventDefault();
             // $(`#btnSimpan`).attr('disabled', 'disabled')
             // $(`#btnSimpan`).children().removeClass('d-none')
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
             $.ajax({
@@ -299,7 +298,7 @@
                         window.location.href = "{{ route('pembagian.bibit') }}";
                     }
                 },
-                error: function(response) { // handle the error      
+                error: function(response) { // handle the error
                     let errors = response.responseJSON.errors
                     $("small[id^='error']").html('');
                     $(`#btnSimpan`).removeAttr('disabled')
@@ -376,6 +375,24 @@
             $.removeCookie("shareBibitUrl", {
                 path: "/pembagian-bibit/create"
             });
+        } else {
+            $('#inputTanggalPembagian').val(getDateNow());
+        }
+
+        function getDateNow() {
+            const today = new Date();
+
+            // Dapatkan komponen tanggal, bulan, dan tahun dari objek tanggal
+            const tanggal = today.getDate();
+            const bulan = today.getMonth() + 1; // Ingatlah bahwa bulan dimulai dari 0 (Januari) hingga 11 (Desember)
+            const tahun = today.getFullYear();
+
+            // Buat fungsi untuk menambahkan "0" di depan angka jika kurang dari 10
+            const tambahkanNol = (nilai) => (nilai < 10 ? "0" + nilai : nilai);
+
+            // Buat tanggal dalam format "d-m-y"
+            return tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+
         }
         // end get share bibit
     </script>

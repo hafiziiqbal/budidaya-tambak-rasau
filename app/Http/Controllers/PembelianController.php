@@ -255,7 +255,7 @@ class PembelianController extends Controller
     {
         try {
             if ($request->ajax()) {
-                $data = HeaderBeli::with('supplier')->orderBy('updated_at', 'desc')->get();
+                $data = HeaderBeli::with('supplier')->orderBy('created_at', 'desc')->get();
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {

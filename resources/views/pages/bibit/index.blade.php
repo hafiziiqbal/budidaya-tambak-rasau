@@ -50,15 +50,21 @@
                 },
                 {
                     data: "quantity",
-                    name: "quantity",
+                    render: function(data, type, row, meta) {
+                        return pembatasKoma(parseInt(data).toString())
+                    }
                 },
                 {
                     data: "quantity_stok",
-                    name: "quantity_stok",
+                    render: function(data, type, row, meta) {
+                        return pembatasKoma(parseInt(data).toString())
+                    }
                 },
                 {
                     data: "subtotal",
-                    name: "subtotal",
+                    render: function(data, type, row, meta) {
+                        return pembatasKoma(parseInt(data).toString())
+                    }
                 },
                 {
                     data: "id",
@@ -134,7 +140,7 @@
                     },
                     error: function(
                         response
-                    ) { // handle the error                                                            
+                    ) { // handle the error
                         let errors = response.responseJSON.errors
                         $("small[id^='error']").html('');
                         if (errors.general) {
@@ -149,5 +155,9 @@
                 })
             }
         });
+
+        function pembatasKoma(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     </script>
 @endpush

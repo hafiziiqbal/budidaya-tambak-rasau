@@ -21,29 +21,30 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Harga Satuan</label>
-            <input type="text" class="form-control mata-uang harga-satuan" name="harga_satuan"
+            <input type="text" id="inputHargaSatuan" class="form-control mata-uang harga-satuan" name="harga_satuan"
                 value="{{ $detailBeli->harga_satuan }}" required>
             <small class="text-danger" id="errorHargaSatuan"></small>
         </div>
         <div class="mb-3">
             <label class="form-label">Quantity</label>
-            <input type="number" class="form-control quantity" name="quantity" value="{{ $detailBeli->quantity }}"
-                required>
+            <input type="text" class="form-control quantity" id="inputQuantity" name="quantity"
+                value="{{ $detailBeli->quantity }}" required>
             <small class="text-danger" id="errorQuantity"></small>
         </div>
         <div class="mb-3 quantity_stok">
             <label class="form-label">Quantity Stok</label>
-            <input type="text" class="form-control quantity-stok" disabled value="{{ $detailBeli->quantity_stok }}">
+            <input type="text" id="inputQuantityStok" class="form-control quantity-stok" disabled
+                value="{{ $detailBeli->quantity_stok }}">
         </div>
         <div class="mb-3">
             <label class="form-label">Diskon Persen</label>
-            <input type="number" class="form-control diskon-persen" name="diskon_persen"
+            <input type="number" id="inputDiskonPersen" class="form-control diskon-persen" name="diskon_persen"
                 value="{{ $detailBeli->diskon_persen }}">
             <small class="text-danger" id="errorDiskonPersen"></small>
         </div>
         <div class="mb-3">
             <label class="form-label ">Diskon Rupiah</label>
-            <input type="number" class="form-control diskon-rupiah mata-uang" name="diskon_rupiah"
+            <input type="text" class="form-control diskon-rupiah mata-uang" id="inputDiskonRupiah" name="diskon_rupiah"
                 value="{{ $detailBeli->diskon_rupiah }}">
             <small class="text-danger" id="errorDiskonRupiah"></small>
         </div>
@@ -60,14 +61,53 @@
 @push('script')
     <script>
         // handle sumbit
-        $(`#formDetail`).on("submit", function(e) { //id of form 
+        const inputHargaSatuan = $("#inputHargaSatuan");
+        const inputQuantity = $("#inputQuantity");
+        const inputQuantityStok = $('#inputQuantityStok')
+        const inputDiskonRupiah = $("#inputDiskonRupiah");
+        const inputDiskonPersen = $("#inputDiskonPersen");
+        inputHargaSatuan.val(pembatasKoma(inputHargaSatuan.val().toString()))
+        inputQuantity.val(pembatasKoma(parseInt(inputQuantity.val()).toString()))
+        inputQuantityStok.val(pembatasKoma(parseInt(inputQuantityStok.val()).toString()))
+        inputDiskonRupiah.val(pembatasKoma(parseInt(inputDiskonRupiah.val()).toString()))
+        inputDiskonPersen.val(parseInt(inputDiskonPersen.val()))
+
+
+        // Tambahkan event listener untuk event "input"
+        inputHargaSatuan.on('change',
+            function() {
+                inputHargaSatuan.val(pembatasKoma(inputHargaSatuan.val().toString()))
+            });
+
+        inputQuantity.on('change',
+            function() {
+                inputQuantity.val(pembatasKoma(inputQuantity.val().toString()))
+            });
+        inputDiskonRupiah.on('change',
+            function() {
+                inputDiskonRupiah.val(pembatasKoma(inputDiskonRupiah.val().toString()))
+            });
+
+        function pembatasKoma(angka) {
+            return angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+        }
+
+        $(`#formDetail`).on("submit", function(e) { //id of form
             e.preventDefault();
+
+            inputHargaSatuan.val(inputHargaSatuan.val().replace(/\./g, ""))
+            inputQuantity.val(inputQuantity.val().replace(/\./g, ""))
+            inputQuantityStok.val(inputQuantityStok.val().replace(/\./g, ""))
+            inputDiskonRupiah.val(inputDiskonRupiah.val().replace(/\./g, ""))
+            inputDiskonPersen.val(inputDiskonPersen.val().replace(/\./g, ""))
+
             $(`#btnUpdateDetail`).attr('disabled', 'disabled')
             $(`#btnUpdateDetail`).children().removeClass('d-none')
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
             $.ajax({
                 url: action,
@@ -79,8 +119,16 @@
                 type: method,
 
                 success: function(response) {
-                    console.log(response);
+
                     if (response.success != undefined) {
+                        inputHargaSatuan.val(pembatasKoma(inputHargaSatuan.val().toString()))
+                        inputQuantity.val(pembatasKoma(parseInt(inputQuantity.val()).toString()))
+                        inputQuantityStok.val(pembatasKoma(parseInt(inputQuantityStok.val())
+                            .toString()))
+                        inputDiskonRupiah.val(pembatasKoma(parseInt(inputDiskonRupiah.val())
+                            .toString()))
+                        inputDiskonPersen.val(parseInt(inputDiskonPersen.val()))
+
                         $(`#btnUpdateDetail`).removeAttr('disabled')
                         $(`#btnUpdateDetail`).children().addClass('d-none')
 
@@ -89,8 +137,15 @@
                         $(`#alert`).append(`@include('components.alert')`);
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     let errors = response.responseJSON.errors
+
+                    inputHargaSatuan.val(pembatasKoma(inputHargaSatuan.val().toString()))
+                    inputQuantity.val(pembatasKoma(parseInt(inputQuantity.val()).toString()))
+                    inputQuantityStok.val(pembatasKoma(parseInt(inputQuantityStok.val()).toString()))
+                    inputDiskonRupiah.val(pembatasKoma(parseInt(inputDiskonRupiah.val()).toString()))
+                    inputDiskonPersen.val(parseInt(inputDiskonPersen.val()))
+
                     $("small[id^='error']").html('');
                     $(`#btnUpdateDetail`).removeAttr('disabled')
                     $(`#btnUpdateDetail`).children().addClass('d-none')

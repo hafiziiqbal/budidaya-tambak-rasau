@@ -22,9 +22,7 @@ class HeaderJual extends Model
         'change'
     ];
 
-    protected $hidden = [
-        'created_at'
-    ];
+
 
     public function detail_jual()
     {

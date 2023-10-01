@@ -1,134 +1,137 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Tambah Pembelian</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('pembelian') }}">Pembelian</a></li>
-    <li class="breadcrumb-item active">Tambah Pembelian</li>
-</ol>
+    <h1 class="mt-4">Tambah Pembelian</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('pembelian') }}">Pembelian</a></li>
+        <li class="breadcrumb-item active">Tambah Pembelian</li>
+    </ol>
 
 
-<form id="formBeli" action="{{ route('pembelian.store') }}" method="POST">
-    @csrf
-    <div id="headerPembelian" class="mb-4">
-        <input type="hidden" name="type" value="store-all">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Pembelian</label>
-        </div>
-        <div class="mb-3">
-            <label for="inputNama" class="form-label">Tanggal Beli</label>
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tanggal_beli" class="form-control" aria-describedby="basic-addon1"
-                    data-date-format="dd-mm-yyyy" data-provide="datepicker">
+    <form id="formBeli" action="{{ route('pembelian.store') }}" method="POST">
+        @csrf
+        <div id="headerPembelian" class="mb-4">
+            <input type="hidden" name="type" value="store-all">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Pembelian</label>
             </div>
-            <small class="text-danger" id="errorTglBeli"></small>
+            <div class="mb-3">
+                <label for="inputNama" class="form-label">Tanggal Beli</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                    <input id="tanggalBeli" type="text" name="tanggal_beli" class="form-control"
+                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">
+                </div>
+                <small class="text-danger" id="errorTglBeli"></small>
 
-        </div>
+            </div>
 
-        <div class="mb-3">
-            <label for="inputAlamat" class="form-label">Supplier</label>
-            <select class="form-select" id="selectSupplier" data-placeholder="Pilih Supplier" name="supplier">
-                <option></option>
-                @foreach ($supplier as $supplier)
-                <option value="{{ $supplier->id }}">
-                    {{ $supplier->nama }}
-                </option>
-                @endforeach
-            </select>
-            <small class="text-danger" id="errorSupplier"></small>
-        </div>
-
-
-    </div>
-
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Detail Pembelian</label>
-        </div>
-        <div class="mb-4 detail-pembelian" id="detailPembelianFirst">
-            <div class="card-header border d-flex justify-content-end"></div>
-            <div class="card-body border">
-                <div class="mb-3">
-                    <label for="selectProduk" class="form-label">Produk</label>
-                    <select class="form-select produk" data-placeholder="Pilih Produk" required>
-                        <option></option>
-                        @foreach ($produk as $produk)
-                        <option value="{{ $produk->id }}">
-                            {{ $produk->nama }}
+            <div class="mb-3">
+                <label for="inputAlamat" class="form-label">Supplier</label>
+                <select class="form-select" id="selectSupplier" data-placeholder="Pilih Supplier" name="supplier">
+                    <option></option>
+                    @foreach ($supplier as $supplier)
+                        <option value="{{ $supplier->id }}">
+                            {{ $supplier->nama }}
                         </option>
-                        @endforeach
-                    </select>
-                    <small class="text-danger error-produk"></small>
+                    @endforeach
+                </select>
+                <small class="text-danger" id="errorSupplier"></small>
+            </div>
+
+
+        </div>
+
+        <div id="detail">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Detail Pembelian</label>
+            </div>
+            <div class="mb-4 detail-pembelian" id="detailPembelianFirst">
+                <div class="card-header border d-flex justify-content-end"></div>
+                <div class="card-body border">
+                    <div class="mb-3">
+                        <label for="selectProduk" class="form-label">Produk</label>
+                        <select class="form-select produk" data-placeholder="Pilih Produk" required>
+                            <option></option>
+                            @foreach ($produk as $produk)
+                                <option value="{{ $produk->id }}">
+                                    {{ $produk->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger error-produk"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputHargaSatuan" class="form-label">Harga Satuan</label>
+                        <input type="text" class="form-control money-format" id="inputHargaSatuan" required
+                            value="">
+                        <small class="text-danger error-harga-satuan"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputQuantity" class="form-label">Quantity <span
+                                class="text-small fst-italic text-secondary">Bibit(ekor/pcs) -
+                                Pakan(kg)</span></label>
+                        <input type="number" class="form-control" id="inputQuantity" required value="">
+                        <small class="text-danger error-quantity"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputDiskonPersen" class="form-label">Diskon Persen</label>
+                        <input type="number" class="form-control" id="inputDiskonPersen" name="detail_beli[]diskon_persen"
+                            value="0">
+                        <small class="text-danger error-diskon-persen"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputDiskonRupiah" class="form-label">Diskon Rupiah</label>
+                        <input type="text" class="form-control money-format" id="inputDiskonRupiah"
+                            name="detail_beli[]diskon_rupiah" value="0">
+                        <small class="text-danger error-diskon-rupiah"></small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subtotal</label>
+                        <input type="text" class="form-control subtotal money-format" id="inputSubtotal"
+                            name="detail[][subtotal]" required readonly>
+                        <small class="text-danger error-subtotal"></small>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="inputHargaSatuan" class="form-label">Harga Satuan</label>
-                    <input type="text" class="form-control money-format" id="inputHargaSatuan" required value="">
-                    <small class="text-danger error-harga-satuan"></small>
-                </div>
-                <div class="mb-3">
-                    <label for="inputQuantity" class="form-label">Quantity <span
-                            class="text-small fst-italic text-secondary">Bibit(ekor/pcs) -
-                            Pakan(kg)</span></label>
-                    <input type="number" class="form-control" id="inputQuantity" required value="">
-                    <small class="text-danger error-quantity"></small>
-                </div>
-                <div class="mb-3">
-                    <label for="inputDiskonPersen" class="form-label">Diskon Persen</label>
-                    <input type="number" class="form-control" id="inputDiskonPersen" name="detail_beli[]diskon_persen"
-                        value="0">
-                    <small class="text-danger error-diskon-persen"></small>
-                </div>
-                <div class="mb-3">
-                    <label for="inputDiskonRupiah" class="form-label">Diskon Rupiah</label>
-                    <input type="text" class="form-control money-format" id="inputDiskonRupiah"
-                        name="detail_beli[]diskon_rupiah" value="0">
-                    <small class="text-danger error-diskon-rupiah"></small>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Subtotal</label>
-                    <input type="text" class="form-control subtotal money-format" id="inputSubtotal"
-                        name="detail[][subtotal]" required readonly>
-                    <small class="text-danger error-subtotal"></small>
-                </div>
+            </div>
+
+
+        </div>
+
+
+        <button type="button" class="btn btn-dark my-3" id="btnTambahBarang"><i class="fa fa-plus"></i> Tambah
+            Barang</button>
+
+        <div class="mb-3">
+            <div class="mb-3">
+                <label for="inputTotalBruto" class="form-label">Total Bruto</label>
+                <input type="text" class="form-control" id="inputTotalBruto" name="total_bruto" readonly
+                    value="0">
+                <small class="text-danger" id="errorTotalBruto"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
+                <input type="text" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga"
+                    value="{{ old('potongan_harga') ?? 0 }}">
+                <small class="text-danger" id="errorPotonganHarga"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputTotalNetto" class="form-label">Total Netto</label>
+                <input type="text" class="form-control" id="inputTotalNetto" name="total_netto" readonly
+                    value="0">
+                <small class="text-danger" id="errorTotalNetto"></small>
             </div>
         </div>
 
-
-    </div>
-
-
-    <button type="button" class="btn btn-dark my-3" id="btnTambahBarang"><i class="fa fa-plus"></i> Tambah
-        Barang</button>
-
-    <div class="mb-3">
-        <div class="mb-3">
-            <label for="inputTotalBruto" class="form-label">Total Bruto</label>
-            <input type="text" class="form-control" id="inputTotalBruto" name="total_bruto" readonly value="0">
-            <small class="text-danger" id="errorTotalBruto"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-            <input type="text" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga"
-                value="{{ old('potongan_harga') ?? 0 }}">
-            <small class="text-danger" id="errorPotonganHarga"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputTotalNetto" class="form-label">Total Netto</label>
-            <input type="text" class="form-control" id="inputTotalNetto" name="total_netto" readonly value="0">
-            <small class="text-danger" id="errorTotalNetto"></small>
-        </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
-        <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-    </button>
-</form>
+        <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
+            <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+        </button>
+    </form>
 @endsection
 
 @push('script')
-<script>
-    let i = 0;
-
+    <script>
+        let i = 0;
+        $('#tanggalBeli').val(getDateNow());
         // $('select.produk').attr('name', `detail_beli[${i}]produk`);
         $('select.produk').attr('name', `detail_beli[${i}][id_produk]`);
         $('#inputHargaSatuan').attr('name', `detail_beli[${i}][harga_satuan]`);
@@ -144,25 +147,42 @@
         $('.error-diskon-rupiah').attr('id', `errorDiskonRupiah${i}`);
         $('.error-subtotal').attr('id', `errorSubtotal${i}`);
 
-    
-  $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+
+        $('input.money-format').mask('000.000.000.000.000', {
+            reverse: true
+        });
+
+        function getDateNow() {
+            const today = new Date();
+
+            // Dapatkan komponen tanggal, bulan, dan tahun dari objek tanggal
+            const tanggal = today.getDate();
+            const bulan = today.getMonth() + 1; // Ingatlah bahwa bulan dimulai dari 0 (Januari) hingga 11 (Desember)
+            const tahun = today.getFullYear();
+
+            // Buat fungsi untuk menambahkan "0" di depan angka jika kurang dari 10
+            const tambahkanNol = (nilai) => (nilai < 10 ? "0" + nilai : nilai);
+
+            // Buat tanggal dalam format "d-m-y"
+            return tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+
+        }
 
         // handle sumbit
-        $(`#formBeli`).on("submit", function(e) { //id of form 
+        $(`#formBeli`).on("submit", function(e) { //id of form
             e.preventDefault();
             $(`#btnSimpan`).attr('disabled', 'disabled')
             $(`#btnSimpan`).children().removeClass('d-none')
-            
+
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
-            for (var pair of form_data.entries())
-{
-    form_data.set(pair[0], pair[1].toString().replace(/\./g, '')); 
- 
-}
-           
+            let form_data = new FormData($(this)[0]); // convert form into formdata
+            for (var pair of form_data.entries()) {
+                form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));
+
+            }
+
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
@@ -182,7 +202,7 @@
                         window.location.href = "{{ route('pembelian') }}";
                     }
                 },
-                error: function(e) { // handle the error     
+                error: function(e) { // handle the error
                     let errors = e.responseJSON.errors
                     $("small[id^='error']").html('');
                     if (errors.tanggal_beli) {
@@ -304,7 +324,7 @@
 
         // Fungsi untuk menghitung subtotal
         function hitungSubtotal(index) {
-            
+
             let harga_satuan = $("input.money-format[name='detai_beli[" + index + "][harga_satuan]']").val() != '' ? $(
                 "input.money-format[name='detail_beli[" + index + "][harga_satuan]']").val() : 0;
             let quantity = $("input[name='detail_beli[" + index + "][quantity]']").val() != '' ? parseFloat($(
@@ -324,7 +344,8 @@
             }
 
             let subtotal = total_harga - diskonhitung;
-            $("input[name='detail_beli[" + index + "][subtotal]']").val(subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."));
+            $("input[name='detail_beli[" + index + "][subtotal]']").val(subtotal.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                "."));
         }
 
         // Fungsi untuk menghitung total bruto
@@ -369,5 +390,5 @@
             // Menghitung total netto
             hitungTotalNetto();
         });
-</script>
+    </script>
 @endpush

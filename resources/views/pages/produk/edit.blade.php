@@ -25,21 +25,32 @@
                 <small class="text-danger">*{{ $errors->first('quantity') }}</small>
             @endif
         </div>
-
-        <button type="submit" class="btn btn-primary  w-100">Perbarui</button>
+        <button id="submitButton" type="submit" class="d-none"></button>
+        <button type="button" id="sendButton" class="btn btn-primary  w-100">Perbarui</button>
     </form>
 @endsection
 
 @push('script')
     <script>
         $(document).ready(function() {
-
-
+            const inputQuantity = $("#inputQuantity");
+            inputQuantity.val(pembatasKoma(parseInt(inputQuantity.val()).toString()))
 
             // $("#inputQuantity").change(function() {
             //     $(this).val(parseFloat($(this).val()).toFixed(2));
             // });
 
+            $('#sendButton').on('click', function() {
+                inputQuantity.val(inputQuantity.val().replace(/\./g, ""))
+                $("form").trigger("submit");
+            })
+
+
         });
+
+
+        function pembatasKoma(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     </script>
 @endpush

@@ -1,72 +1,72 @@
 @extends('layouts.admin')
 
 @section('content')
-<h1 class="mt-4">Tambah Data Panen</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-    <li class="breadcrumb-item active">Tambah Data Panen</li>
-</ol>
+    <h1 class="mt-4">Tambah Data Panen</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+        <li class="breadcrumb-item active">Tambah Data Panen</li>
+    </ol>
 
 
-<form id="formPembagian" name="form_pembagian" action="{{ route('panen.store') }}" method="POST">
-    @csrf
+    <form id="formPembagian" name="form_pembagian" action="{{ route('panen.store') }}" method="POST">
+        @csrf
 
-    <div id="headerPembelian" class="mb-4">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Panen</label>
-        </div>
-        <input type="hidden" name="type" value="store-all">
-        <div class="mb-3">
-            <label for="inputTanggalPembagian" class="form-label">Tanggal Panen</label>
-            <div class="input-group">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tgl_panen" id="inputTanggalPembagian" class="form-control"
-                    aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
+        <div id="headerPembelian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Panen</label>
             </div>
-            <small class="text-danger" id="errorTglPanen"></small>
-
-        </div>
-
-
-    </div>
-
-    <div id="detail">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Detail Panen</label>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Pilih Kolam</label>
-            <br>
-            <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                @foreach ($kolam as $key => $kolam)
-                <input type="radio" class="btn-check" name="kolam" id="{{ $key }}" value="{{ $kolam->id }}"
-                    autocomplete="off">
-                <label class="btn btn-outline-primary" for="{{ $key }}">{{ $kolam->nama }}</label>
-                @endforeach
+            <input type="hidden" name="type" value="store-all">
+            <div class="mb-3">
+                <label for="inputTanggalPembagian" class="form-label">Tanggal Panen</label>
+                <div class="input-group">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                    <input type="text" name="tgl_panen" id="inputTanggalPembagian" class="form-control"
+                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
+                </div>
+                <small class="text-danger" id="errorTglPanen"></small>
 
             </div>
-        </div>
-        <div id="alertGeneral">
-            @include('components.alert')
-        </div>
-        <div class="error-element">
+
 
         </div>
 
+        <div id="detail">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Detail Panen</label>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Pilih Kolam</label>
+                <br>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    @foreach ($kolam as $key => $kolam)
+                        <input type="radio" class="btn-check" name="kolam" id="{{ $key }}"
+                            value="{{ $kolam->id }}" autocomplete="off">
+                        <label class="btn btn-outline-primary" for="{{ $key }}">{{ $kolam->nama }}</label>
+                    @endforeach
 
-    </div>
-    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-    </button>
+                </div>
+            </div>
+            <div id="alertGeneral">
+                @include('components.alert')
+            </div>
+            <div class="error-element">
 
-    <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
-        <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-    </button>
-</form>
+            </div>
+
+
+        </div>
+        <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+        </button>
+
+        <button type="submit" class="btn btn-primary  w-100" id="btnSimpan">
+            <i class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+        </button>
+    </form>
 @endsection
 
 @push('script')
-<script>
-    let index = 0;
+    <script>
+        let index = 0;
         let detailPembagianBibit = []
 
         // inisialisasi form select 2
@@ -99,7 +99,7 @@
                     });
 
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
 
                 },
 
@@ -112,30 +112,30 @@
             let cardHeader = $(
                 `<div class="card-header border d-flex justify-content-between align-items-center">
                             <div class="fw-bold">
-                                <span class="me-2 title">Detail Panen</span>                                
+                                <span class="me-2 title">Detail Panen</span>
                             </div>
                             <button type="button" class="btn-close"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">                                     
+                `<div class="card-body border">
                         <div class="mb-3 select-ikan">
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="detail[${index}][id_detail_pembagian_bibit]" >
                                 <option></option>
-                            
-                            </select>    
+
+                            </select>
                             <small class="text-danger" id="errorIkan${index}"></small>
-                        </div>                        
+                        </div>
                         <div class="mb-3 select-status">
                             <label class="form-label">Pilih Status</label>
                             <select class="form-select select-status" id="selectStatus${index}" data-placeholder="Pilih Status" name="detail[${index}][status]" >
                                 <option value="-1">Mati</option>
                                 <option value="0">Sortir</option>
-                                <option value="1">Ikan</option>                                
+                                <option value="1">Ikan</option>
                             </select>
                             <small class="text-danger" id="errorStatus${index}"></small>
-                        </div>                        
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
@@ -145,7 +145,7 @@
                             <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger">wajib diisi jika status panen adalah ikan</span></label>
                             <input type="text" class="form-control quantity-berat" name="detail[${index}][quantity_berat]" >
                             <small class="text-danger" id="errorQuantityBerat${index}"></small>
-                        </div>                       
+                        </div>
                     </div>`
             )
 
@@ -167,14 +167,14 @@
         }
 
         // handle sumbit
-        $(`#formPembagian`).on("submit", function(e) { //id of form 
+        $(`#formPembagian`).on("submit", function(e) { //id of form
             e.preventDefault();
             $(`#btnSimpan`).attr('disabled', 'disabled')
             $(`#btnSimpan`).children().removeClass('d-none')
 
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
             $.ajax({
@@ -197,7 +197,7 @@
 
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $(`#btnSimpan`).removeAttr('disabled')
                     $(`#btnSimpan`).children().addClass('d-none')
 
@@ -219,7 +219,8 @@
                             $(`#errorQuantity${x}`).html(`*${errors[`detail.${x}.quantity`]}`)
                         }
                         if (`detail.${x}.quantity_berat` in errors) {
-                            $(`#errorQuantityBerat${x}`).html(`*${errors[`detail.${x}.quantity_berat`]}`)
+                            $(`#errorQuantityBerat${x}`).html(
+                                `*${errors[`detail.${x}.quantity_berat`]}`)
                         }
                         if (`detail.${x}.id_detail_pembagian_bibit` in errors) {
                             $(`#errorIkan${x}`).html(
@@ -230,7 +231,7 @@
                         }
                     }
 
-                    // nilai acuan                    
+                    // nilai acuan
                     detailPembagianBibit.forEach(element => {
                         if (`detail.${element.id}.quantity-all` in errors) {
                             // mencari semua elemen select yang memiliki nilai selected sama dengan nilai acuan
@@ -313,7 +314,25 @@
             $.removeCookie("sharePanenMultiple", {
                 path: "/panen/create"
             });
+        } else {
+            $('#inputTanggalPembagian').val(getDateNow());
+        }
+
+        function getDateNow() {
+            const today = new Date();
+
+            // Dapatkan komponen tanggal, bulan, dan tahun dari objek tanggal
+            const tanggal = today.getDate();
+            const bulan = today.getMonth() + 1; // Ingatlah bahwa bulan dimulai dari 0 (Januari) hingga 11 (Desember)
+            const tahun = today.getFullYear();
+
+            // Buat fungsi untuk menambahkan "0" di depan angka jika kurang dari 10
+            const tambahkanNol = (nilai) => (nilai < 10 ? "0" + nilai : nilai);
+
+            // Buat tanggal dalam format "d-m-y"
+            return tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+
         }
         // end get share bibit
-</script>
+    </script>
 @endpush

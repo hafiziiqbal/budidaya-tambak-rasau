@@ -202,11 +202,15 @@
                     },
                     {
                         data: 'quantity_terpakai',
-                        name: 'quantity_terpakai',
+                        render: function(data, type, row, meta) {
+                            return pembatasKoma(data.toString())
+                        }
                     },
                     {
                         data: 'quantity',
-                        name: 'quantity',
+                        render: function(data, type, row, meta) {
+                            return pembatasKoma(data.toString())
+                        }
                     },
                     {
                         data: "id",
@@ -248,5 +252,9 @@
                 window.location.href = "{{ route('pemberian.pakan.create') }}";
             });
         });
+
+        function pembatasKoma(angka) {
+            return angka.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
     </script>
 @endpush
