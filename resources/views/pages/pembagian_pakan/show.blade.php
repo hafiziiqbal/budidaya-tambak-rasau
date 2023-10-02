@@ -66,7 +66,7 @@
                     detailBagi = response.detail_pembagian_pakan
                     console.log(response);
 
-                    // default tgl_beli                
+                    // default tgl_beli
                     $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian_pakan.split("-").reverse().join(
                         "-"));
 
@@ -83,7 +83,7 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
+        $("#formHeader").on("submit", function(e) { //id of form
             console.log('masuk');
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
@@ -91,7 +91,7 @@
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata                    
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
             $.ajax({
                 url: action,
@@ -114,7 +114,7 @@
                         loadDataHeader();
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     $('.status-error-header').removeClass('d-none')
@@ -134,7 +134,7 @@
         function loadElementDetailBagi(item, index) {
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-pakan/detail/${item.id}/edit" class=" mb-5">
-                    <div class="card mb-4"></div>    
+                    <div class="card mb-4"></div>
                     </form>`
             )
             let cardHeader = $(
@@ -154,9 +154,9 @@
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">        
-                    @csrf     
-                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">                        
+                `<div class="card-body border">
+                    @csrf
+                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">
                         <div class="mb-3 select-pakan">
                             <label class="form-label">Produk Pakan</label>
                             <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="id_detail_beli" required>
@@ -166,7 +166,7 @@
                                         {{ $value->produk->nama }}
                                     </option>
                                 @endforeach
-                            </select>                            
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Pilih Tong</label>
@@ -174,17 +174,17 @@
                                 <option></option>
                                 @foreach ($tong as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
+                                        {{ $value->nama . ' [' . $value->nama_kolam . ']' }}
                                     </option>
                                 @endforeach
-                            </select>                            
-                        </div>       
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input type="text" class="form-control quantity" name="quantity" required value="${item.quantity}" disabled>
                             <label class="error-quantity"></label>
                         </div>
-                        
+
                     </div>`
             )
 
@@ -207,7 +207,7 @@
 
 
             // handle sumbit
-            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form
                 e.preventDefault();
                 $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
                 $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
@@ -215,7 +215,7 @@
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
-                let form_data = new FormData($(this)[0]); // convert form into formdata        
+                let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
                 $.ajax({
@@ -275,7 +275,7 @@
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },
-                    error: function(response) { // handle the error            
+                    error: function(response) { // handle the error
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
@@ -317,7 +317,7 @@
                         }
 
                     },
-                    error: function(response) { // handle the error                                    
+                    error: function(response) { // handle the error
                         $(`#formDetail${index} .status-error-header`).removeClass('d-none')
                         $(`#formDetail${index} .status-error-header span`).html(response
                             .success)

@@ -82,7 +82,10 @@ class PemberianPakanController extends Controller
             if ($request->ajax()) {
                 $data = DetailPemberianPakan::with(['detail_pembagian_pakan' => function ($query) {
                     $query->with('tong', 'detail_beli.produk', 'tong_old');
-                }, 'detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->get();
+                }, 'detail_pembagian_bibit' => function ($q) {
+                    $q->with('header_pembagian_bibit.detail_beli.produk', 'jaring', 'jaring_old', 'kolam');
+                }])->get();
+
                 return DataTables::of($data)->addIndexColumn()->make(true);
             }
         } catch (\Throwable $th) {
@@ -126,7 +129,7 @@ class PemberianPakanController extends Controller
         $detailPemberianPakan->id_detail_pembagian_pakan = $request->id_pembagian_pakan;
         $detailPemberianPakan->id_detail_pembagian_bibit = $request->id_pembagian_bibit;
 
-        // Menyesuaikan nilai quantity pada detail pemberian pakan        
+        // Menyesuaikan nilai quantity pada detail pemberian pakan
         $detailPembagianPakan->quantity = ($detailPembagianPakan->quantity + ($detailPemberianPakanAll - $detailPemberianPakanTanpaDataUpdate)) - $request->quantity;
         $detailPembagianPakan->save();
         $detailPemberianPakan->quantity = $request->quantity;

@@ -1,52 +1,52 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Edit Pembagian Pakan</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
-    <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
-</ol>
+    <h1 class="mt-4">Edit Pembagian Pakan</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('pembagian.pakan') }}">Pembagian Pakan</a></li>
+        <li class="breadcrumb-item active">Edit Pembagian Pakan</li>
+    </ol>
 
-{{-- header beli --}}
-<form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
-    @csrf
-    <div id="headerPembagian" class="mb-4">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Pembagian</label>
-        </div>
-
-        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-            <span></span></label>
-        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                aria-hidden="true"></i>
-            <span></span></label>
-
-        <div class="mb-3">
-            <label for="inputNama" class="form-label">Tanggal Pembagian</label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
-                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+    {{-- header beli --}}
+    <form method="POST" id="formHeader" action="{{ route('pembagian.pakan.update', $id) }}" name="form_header">
+        @csrf
+        <div id="headerPembagian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Pembagian</label>
             </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-            Perubahan</button>
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
+
+            <div class="mb-3">
+                <label for="inputNama" class="form-label">Tanggal Pembagian</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                    <input type="text" name="tgl_pembagian" class="form-control" aria-describedby="basic-addon1"
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+                Perubahan</button>
+        </div>
+    </form>
+    <div id="detail">
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Pembagian</label>
+        </div>
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
-</form>
-<div id="detail">
-    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-        <label class="fw-bold">Detail Pembagian</label>
-    </div>
-    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
-</div>
-<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-</button>
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+    </button>
 @endsection
 
 @push('script')
-<script>
-    let detailBagi
+    <script>
+        let detailBagi
         let number = 0
 
         // inisialisasi form select 2
@@ -71,7 +71,7 @@
                 success: function(response) {
                     detailBagi = response.detail_pembagian_pakan
 
-                    // default tgl_beli                
+                    // default tgl_beli
                     $(`input[name='tgl_pembagian']`).val(response.tgl_pembagian_pakan.split("-").reverse().join(
                         "-"));
 
@@ -88,7 +88,7 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
+        $("#formHeader").on("submit", function(e) { //id of form
             console.log('masuk');
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
@@ -96,7 +96,7 @@
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata                    
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
             $.ajax({
                 url: action,
@@ -119,7 +119,7 @@
                         loadDataHeader();
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     $('.status-error-header').removeClass('d-none')
@@ -139,7 +139,7 @@
         function loadElementDetailBagi(item, index) {
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/pembagian-pakan/detail/${item.id}/edit" class=" mb-5">
-                    <div class="card mb-4"></div>    
+                    <div class="card mb-4"></div>
                     </form>`
             )
             let cardHeader = $(
@@ -150,21 +150,21 @@
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                     <span></span>
                                 </label>
-                                
+
                             </div>
                             <button type="button" class="btn-card btn-close d-none"  aria-label="Close"></button>
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">     
+                `<div class="card-body border">
                     <div id="alert${index}">
                             @include('components.alert')
-                    </div>   
-                    @csrf  
+                    </div>
+                    @csrf
                         <input type="hidden" name="type" value="update-detail">
                         <input type="hidden" class="alt" name="id_detail_beli" value="${item.id_detail_beli}">
-                        <input type="hidden" name="id" value="${item.id}">   
-                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">                        
+                        <input type="hidden" name="id" value="${item.id}">
+                        <input type="hidden" name="id_header_pembagian_pakan" id="idHeader${index}" value="${item.id_header_pembagian_pakan}">
                         <div class="mb-3 select-pakan">
                             <label class="form-label">Produk Pakan</label>
                             <select class="form-select select-pakan" id="selectPakan${index}" data-placeholder="Pilih Pakan" name="id_detail_beli" required>
@@ -174,7 +174,7 @@
                                         {{ $value->produk->nama }}
                                     </option>
                                 @endforeach
-                            </select>         
+                            </select>
                             <small class="text-danger" id="errorPakan${index}"></small>
                         </div>
                         <div class="mb-3">
@@ -183,19 +183,19 @@
                                 <option></option>
                                 @foreach ($tong as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
+                                        {{ $value->nama . ' [' . $value->nama_kolam . ']' }}
                                     </option>
                                 @endforeach
-                            </select>                            
+                            </select>
                             <small class="text-danger" id="errorTong${index}"></small>
-                        </div>       
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
                             <input disabled type="text" class="form-control quantity" name="quantity" required value="${item.quantity}">
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="btn-update-content">
-                           
+
                             <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
@@ -206,7 +206,7 @@
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Simpan
                             </button>
-                        </div>                 
+                        </div>
                     </div>`
             )
             // <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
@@ -233,7 +233,7 @@
 
 
             // handle sumbit
-            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form
                 e.preventDefault();
                 $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
                 $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
@@ -241,7 +241,7 @@
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
-                let form_data = new FormData($(this)[0]); // convert form into formdata        
+                let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
                 $.ajax({
@@ -309,7 +309,7 @@
                             $(`#formDetail${index} select`).attr('disabled', true);
                         }
                     },
-                    error: function(response) { // handle the error            
+                    error: function(response) { // handle the error
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
@@ -369,7 +369,7 @@
                         }
 
                     },
-                    error: function(response) { // handle the error                                    
+                    error: function(response) { // handle the error
                         let errors = response.responseJSON.errors
                         $("small[id^='error']").html('');
                         if (errors.general) {
@@ -425,5 +425,5 @@
             })
 
         })
-</script>
+    </script>
 @endpush

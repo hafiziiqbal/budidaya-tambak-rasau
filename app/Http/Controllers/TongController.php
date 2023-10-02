@@ -73,7 +73,8 @@ class TongController extends Controller
 
         $tong = str_replace(array('[', ']', '"'), "", $id_kolam);
 
-        $kolam = MasterKolam::whereNotIn('id', preg_split("/\,/", $tong))->get();
+        // $kolam = MasterKolam::whereNotIn('id', preg_split("/\,/", $tong))->get();
+        $kolam = MasterKolam::all();
         return view('pages.tong.create')->with([
             'title' => 'TAMBAH TONG',
             'kolam' => $kolam,

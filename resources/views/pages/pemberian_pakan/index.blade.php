@@ -16,6 +16,8 @@
                 <th>Tong</th>
                 <th>Bibit</th>
                 <th>Pakan</th>
+                <th>Jaring</th>
+                <th>Kolam</th>
                 <th>Quantity</th>
                 <th>Aksi</th>
             </tr>
@@ -61,6 +63,31 @@
                     {
                         data: 'detail_pembagian_pakan.detail_beli.produk.nama',
                         name: 'detail_pembagian_pakan.detail_beli.produk.nama'
+                    },
+                    {
+                        data: 'detail_pembagian_bibit',
+                        render: function(data, type, row, meta) {
+                            if (data.jaring == null) {
+                                if (data.jaring_old != null) {
+                                    return data.jaring_old.nama
+                                } else {
+                                    return ''
+                                }
+
+                            } else {
+                                return data.jaring.nama
+                            }
+                        }
+                    },
+                    {
+                        data: 'detail_pembagian_bibit',
+                        render: function(data, type, row, meta) {
+                            if (data.kolam == null) {
+                                return ''
+                            } else {
+                                return data.kolam.nama
+                            }
+                        }
                     },
                     {
                         data: 'quantity',

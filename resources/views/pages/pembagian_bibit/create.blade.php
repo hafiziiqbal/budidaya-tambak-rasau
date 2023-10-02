@@ -73,7 +73,7 @@
                         @if ($value->produk->quantity > 0)
                             <option value="{{ $value->id }}" data-bibitquantity="{{ $value->quantity_stok }}"
                                 data-produkquantity="{{ $value->produk->quantity }}">
-                                @DateIndo($value->header_beli->tgl_beli){{ ' | ' . $value->produk->nama }}
+                                {{ date('d-m-Y', strtotime($value->header_beli->tgl_beli)) . ' | ' . $value->produk->nama }}
                             </option>
                         @endif
                     @endforeach
@@ -87,7 +87,7 @@
                     <option></option>
                     @foreach ($sortir as $value)
                         <option value="{{ $value->id }}" data-sortirquantity="{{ $value->quantity }}">
-                            @DateIndo($value->header_panen->tgl_panen){{ ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' ( ' . $value->nama_kolam . ($value->nama_jaring == null ? '' : '|' . $value->nama_jaring) . ')' }}
+                            {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' ( ' . $value->nama_kolam . ($value->nama_jaring == null ? '' : '|' . $value->nama_jaring) . ')' }}
                         </option>
                     @endforeach
                 </select>

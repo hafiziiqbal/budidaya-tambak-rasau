@@ -118,21 +118,21 @@ class PembagianBibitController extends Controller
                 ->first();
 
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-            if ($jumlahKolamJaring->kolam_count != 0) {
+            // if ($jumlahKolamJaring->kolam_count != 0) {
 
 
-                // if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam > 1) {
-                if ($jumlahKolamJaring->kolam_count >= $jumlahKolamJaring->jaring_count && $value->id_jaring == null) {
-                    return response()->json([
-                        'errors' => [
-                            'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                        ],
-                    ], 422);
-                }
-            }
+            //     // if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam > 1) {
+            //     if ($jumlahKolamJaring->kolam_count >= $jumlahKolamJaring->jaring_count && $value->id_jaring == null) {
+            //         return response()->json([
+            //             'errors' => [
+            //                 'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+            //             ],
+            //         ], 422);
+            //     }
+            // }
 
 
-            // Jika count_kolom > count jaring 
+            // Jika count_kolom > count jaring
 
             if ($value->id_jaring != null) {
                 $jaring = MasterJaring::find($value->id_jaring);
@@ -234,13 +234,13 @@ class PembagianBibitController extends Controller
             $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
             $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
 
-            if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam > 1) {
-                return response()->json([
-                    'errors' => [
-                        'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                    ],
-                ], 422);
-            }
+            // if ($batasJaring >= 1 && $value->id_jaring == null && $batasKolam > 1) {
+            //     return response()->json([
+            //         'errors' => [
+            //             'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+            //         ],
+            //     ], 422);
+            // }
 
             if ($value->id_jaring != null) {
                 $jaring = MasterJaring::find($value->id_jaring);
@@ -288,7 +288,7 @@ class PembagianBibitController extends Controller
                 'id_kolam' => $value->id_kolam
             ]);
 
-            // Kurangi nilai quantity_stok pada tabel pembelian           
+            // Kurangi nilai quantity_stok pada tabel pembelian
             $detailPanen->update([
                 'quantity' => DB::raw("quantity-" . $value->quantity),
             ]);
@@ -375,15 +375,15 @@ class PembagianBibitController extends Controller
         // if ($cekJaringDetailBibit != null) {
         $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
         $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
-        if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
-            if ($request->detail == null) {
-                return response()->json([
-                    'errors' => [
-                        'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                    ],
-                ], 422);
-            }
-        }
+        // if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
+        //     if ($request->detail == null) {
+        //         return response()->json([
+        //             'errors' => [
+        //                 'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+        //             ],
+        //         ], 422);
+        //     }
+        // }
         // }
 
         if ($request->id_jaring != null) {
@@ -473,13 +473,13 @@ class PembagianBibitController extends Controller
 
         $batasKolam = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_old_count;
         $batasJaring = $jumlahKolamJaring->kolam_count - $jumlahKolamJaring->jaring_count;
-        if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
-            return response()->json([
-                'errors' => [
-                    'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
-                ],
-            ], 422);
-        }
+        // if ($batasJaring >= 1 && $request->id_jaring == null && $batasKolam > 1) {
+        //     return response()->json([
+        //         'errors' => [
+        //             'general' => "$kolam->nama Sudah Penuh, Silahkan Tambah Jaring Untuk Menggunakan"
+        //         ],
+        //     ], 422);
+        // }
 
         if ($request->id_jaring != null) {
             $jaring = MasterJaring::find($request->id_jaring);

@@ -92,7 +92,7 @@
                                 <option></option>
                                 @foreach ($tong as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->nama }}
+                                        {{ $value->nama . ' [' . $value->nama_kolam . ']' }}
                                     </option>
                                 @endforeach
                             </select>

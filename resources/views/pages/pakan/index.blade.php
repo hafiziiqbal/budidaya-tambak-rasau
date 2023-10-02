@@ -85,7 +85,7 @@
                         let share = '';
                         if (row['quantity_stok'] > 0) {
                             share =
-                                `<button title="Bagikan Pakan" data-id="${data}" class="btn btn-primary me-2 btn-share"><i class="fa fa-paper-plane"></i></button>`;
+                                `<button title="Bagikan Pakan" data-id="${data}" class="btn btn-primary me-2 btn-share" ><i class="fa fa-paper-plane"></i></button>`;
                         }
                         let edit =
                             `<a title="Edit Data" href="/pakan/${data}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
@@ -137,6 +137,7 @@
             // jika checkbox terseleksi, tambahkan nilai data-id ke dalam array id
             if ($(this).is(':checked')) {
                 id.push(dataId);
+
             }
             // jika checkbox tidak terseleksi, hapus nilai data-id dari array id
             else {
@@ -196,8 +197,10 @@
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
             if (checkedCount >= 2) {
                 $('#shareMultiple').removeAttr('disabled');
+                $('.btn-share').attr('disabled', 'disabled')
             } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
                 $('#shareMultiple').attr('disabled', true);
+                $('.btn-share').removeAttr('disabled')
             }
         });
 

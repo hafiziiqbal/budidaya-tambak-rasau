@@ -30,8 +30,21 @@ class PembagianPakanController extends Controller
                 $query->where('id_kategori', '=', 5);
             })->get();
 
-        $tong =  DB::table('master_tong')
-            ->select('master_tong.*')
+        // $tong =  DB::table('master_tong')
+        //     ->select('master_tong.*')
+        //     ->get();
+        $tong = DB::table('master_tong')
+            ->leftJoin('master_kolam', function ($join) {
+                $join->on('master_tong.id_kolam', 'like', DB::raw('CONCAT("%", master_kolam.id, "%")'));
+            })
+            ->select(
+                'master_tong.id',
+                'master_tong.nama',
+                DB::raw('GROUP_CONCAT(master_kolam.nama) as nama_kolam'),
+                'master_tong.created_at',
+                'master_tong.updated_at'
+            )
+            ->groupBy('master_tong.id', 'master_tong.nama', 'master_tong.created_at', 'master_tong.updated_at')
             ->get();
 
         return view('pages.pembagian_pakan.show')->with([
@@ -91,10 +104,25 @@ class PembagianPakanController extends Controller
                 $query->where('id_kategori', '=', 5);
             })->where('quantity_stok', '>', '0')->get();
 
-        $tong =  DB::table('master_tong')
+        // $tong =  DB::table('master_tong')
+        //     ->leftJoin('detail_pembagian_pakan', 'master_tong.id', '=', 'detail_pembagian_pakan.id_tong')
+        //     ->select('master_tong.*')
+        //     ->whereNull('detail_pembagian_pakan.id_tong')
+        //     ->get();
+        $tong = DB::table('master_tong')
             ->leftJoin('detail_pembagian_pakan', 'master_tong.id', '=', 'detail_pembagian_pakan.id_tong')
-            ->select('master_tong.*')
+            ->leftJoin('master_kolam', function ($join) {
+                $join->on('master_tong.id_kolam', 'like', DB::raw('CONCAT("%", master_kolam.id, "%")'));
+            })
+            ->select(
+                'master_tong.id',
+                'master_tong.nama',
+                DB::raw('GROUP_CONCAT(master_kolam.nama) as nama_kolam'),
+                'master_tong.created_at',
+                'master_tong.updated_at'
+            )
             ->whereNull('detail_pembagian_pakan.id_tong')
+            ->groupBy('master_tong.id', 'master_tong.nama', 'master_tong.created_at', 'master_tong.updated_at')
             ->get();
 
 
@@ -237,8 +265,9 @@ class PembagianPakanController extends Controller
 
         // Hitung total quantity yang akan terpakai (jumlah quantity di request ditambah dengan total quantity dari record yang sudah ada di tabel detail_pembagian_pakan)
         $total_quantity_to_use = $total_quantity + $request->quantity;
+
         // Cek apakah total_quantity_to_use melebihi column quantity_stok pada tabel detail_beli
-        if ($total_quantity_to_use > (float)$detailBeli->quantity_stok) {
+        if ($total_quantity_to_use > $detailBeli->quantity) {
             // Jika melebihi, berikan respon quantity melebihi batas
             return response()->json([
                 'errors' => [
@@ -281,9 +310,24 @@ class PembagianPakanController extends Controller
                 $query->where('id_kategori', '=', 5);
             })->get();
 
-        $tong =  DB::table('master_tong')
-            ->select('master_tong.*')
+        // $tong =  DB::table('master_tong')
+        //     ->select('master_tong.*')
+        //     ->get();
+
+        $tong = DB::table('master_tong')
+            ->leftJoin('master_kolam', function ($join) {
+                $join->on('master_tong.id_kolam', 'like', DB::raw('CONCAT("%", master_kolam.id, "%")'));
+            })
+            ->select(
+                'master_tong.id',
+                'master_tong.nama',
+                DB::raw('GROUP_CONCAT(master_kolam.nama) as nama_kolam'),
+                'master_tong.created_at',
+                'master_tong.updated_at'
+            )
+            ->groupBy('master_tong.id', 'master_tong.nama', 'master_tong.created_at', 'master_tong.updated_at')
             ->get();
+
 
         return view('pages.pembagian_pakan.edit')->with([
             'title' => 'EDIT PEMBAGIAN PAKAN',
