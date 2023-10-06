@@ -23,11 +23,26 @@ class PemberianPakanRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'id_pembagian_pakan' => 'required|exists:detail_pembagian_pakan,id',
-            'id_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
-            'quantity' => 'required|numeric|between:0,99999999.99',
-        ];
+        $validate = '';
+        if ($this->type == 'store-all') {
+            $validate =
+                [
+
+                    'inputs.*.quantity' => 'required|numeric|between:0,99999999.99',
+                    'inputs.*.id_pembagian_pakan' => 'required|exists:detail_pembagian_pakan,id',
+                    'inputs.*.id_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                ];
+        } else {
+            $validate =
+                [
+
+                    'id_pembagian_pakan' => 'required|exists:detail_pembagian_pakan,id',
+                    'id_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                    'quantity' => 'required|numeric|between:0,99999999.99',
+                ];
+        }
+
+        return $validate;
     }
 
     public function messages()
@@ -42,6 +57,17 @@ class PemberianPakanRequest extends FormRequest
             'quantity.required' => 'Quantity harus diisi',
             'quantity.numeric' => 'Quantity harus berupa angka',
             'quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
+
+
+            'inputs.*.id_pembagian_pakan.required' => 'Pembagian pakan harus dipilih',
+            'inputs.*.id_pembagian_pakan.exists' => 'Pembagian pakan tidak tersedia',
+
+            'inputs.*.id_pembagian_bibit.required' => ' Pembagian bibit harus dipilih',
+            'inputs.*.id_pembagian_bibit.exists' => ' Pembagian bibit tidak tersedia',
+
+            'inputs.*.quantity.required' => 'Quantity harus diisi',
+            'inputs.*.quantity.numeric' => 'Quantity harus berupa angka',
+            'inputs.*.quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
         ];
     }
 }

@@ -19,6 +19,7 @@ class DetailPanen extends Model
         'posisi_kolam',
         'nama_jaring',
         'posisi_jaring',
+        'id_produk',
         'quantity',
         'quantity_berat',
         'quantity_awal'
@@ -36,6 +37,11 @@ class DetailPanen extends Model
     public function header_panen()
     {
         return $this->belongsTo(HeaderPanen::class, 'id_header_panen');
+    }
+
+    public function produk_panen()
+    {
+        return $this->belongsTo(Produk::class, 'id_produk');
     }
 
     public function detail_jual()

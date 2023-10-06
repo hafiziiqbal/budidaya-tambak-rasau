@@ -34,9 +34,13 @@
         </div>
         <div class="tab-pane fade" id="detail" role="tabpanel" aria-labelledby="detail-tab" tabindex="0">
             <br>
+            <button class="btn btn-primary mb-3" disabled id="shareMultiple"><i class="fa fa-paper-plane me-3"></i>Bagikan
+                Pakan Yang
+                Dipilih</button>
             <table id="tblDetailPembagian" class="table table-striped table-bordered nowrap " style="width:100%">
                 <thead>
                     <tr>
+                        <th><input class="form-check-input" type="checkbox" id="checkAll"></th>
                         <th>No</th>
                         <th>Tanggal</th>
                         <th>Produk</th>
@@ -174,6 +178,18 @@
                     },
                 },
                 columns: [{
+                        data: "id",
+                        render: function(data, type, row, meta) {
+                            if (row['quantity'] > 0) {
+                                return `<input class="form-check-input checkbox" data-id="${data}" type="checkbox" >`
+                            } else {
+                                return ''
+                            }
+
+                        },
+                        orderable: false
+                    },
+                    {
                         data: "updated_at",
                         render: function(data, type, row, meta) {
                             return row.DT_RowIndex
@@ -248,9 +264,88 @@
                 let id = $(this).data('id');
                 document.cookie = `sharePakanDetailBagi=${id};path=/pemberian-pakan/create`;
                 document.cookie = `sharePakanUrl=pembagian-pakan;path=/pemberian-pakan/create`;
+                document.cookie = `sharePakanMultiple=false;path=/pemberian-pakan/create`;
 
                 window.location.href = "{{ route('pemberian.pakan.create') }}";
             });
+
+            let id = [];
+            // ketika checkbox di klik
+            tableDetail.on('click', '.checkbox', function() {
+                var dataId = $(this).data('id'); // ambil nilai data-id dari checkbox yang diklik
+
+                // jika checkbox terseleksi, tambahkan nilai data-id ke dalam array id
+                if ($(this).is(':checked')) {
+                    id.push(dataId);
+
+                }
+                // jika checkbox tidak terseleksi, hapus nilai data-id dari array id
+                else {
+                    id.splice($.inArray(dataId, id), 1);
+                }
+            });
+
+            // ketika checkbox di header tabel diklik
+            tableDetail.on('click', '#checkAll', function() {
+                // jika checkbox di header tabel terseleksi, centang semua checkbox di baris tabel dan tambahkan nilai data-id ke dalam array id
+                if ($(this).is(':checked')) {
+                    $('.checkbox').prop('checked', true);
+                    $('.checkbox').each(function() {
+                        var dataId = $(this).data('id');
+
+                        if ($.inArray(dataId, id) === -1) {
+                            id.push(dataId);
+                        }
+                    });
+                }
+                // jika checkbox di header tabel tidak terseleksi, hapus semua nilai data-id dari array id dan hilangkan centang dari semua checkbox di baris tabel
+                else {
+                    $('.checkbox').prop('checked', false);
+                    $('.checkbox').each(function() {
+                        var dataId = $(this).data('id');
+                        id.splice($.inArray(dataId, id), 1);
+                    });
+                }
+            });
+
+            $('#shareMultiple').click(function() {
+
+                document.cookie = `sharePakanDetailBagi=${id};path=/pemberian-pakan/create`;
+                document.cookie = `sharePakanUrl=pembagian-pakan;path=/pemberian-pakan/create`;
+                document.cookie = `sharePakanMultiple=true;path=/pemberian-pakan/create`;
+
+                window.location.href = "{{ route('pemberian.pakan.create') }}";
+            })
+
+
+            // Ketika terjadi perubahan pada setiap element input type check
+            tableDetail.on('change', 'input.checkbox', function() {
+                // Mengambil jumlah element input type check yang tercentang
+                let checkedCount = $('input.checkbox').filter(':checked').length;
+                // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
+                if (checkedCount >= 2) {
+                    $('#shareMultiple').removeAttr('disabled');
+                    $('.btn-share').attr('disabled', 'disabled')
+                } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
+                    $('#shareMultiple').attr('disabled', true);
+                    $('.btn-share').removeAttr('disabled')
+                }
+            });
+
+            // Ketika terjadi perubahan pada setiap element input type check
+            tableDetail.on('click', '#checkAll', function() {
+                // Mengambil jumlah element input type check yang tercentang
+                let checkedCount = $('input.checkbox').filter(':checked').length;
+                // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
+                if (checkedCount >= 2) {
+                    $('#shareMultiple').removeAttr('disabled');
+                    $('.btn-share').attr('disabled', 'disabled')
+                } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
+                    $('#shareMultiple').attr('disabled', true);
+                    $('.btn-share').removeAttr('disabled')
+                }
+            });
+
         });
 
         function pembatasKoma(angka) {

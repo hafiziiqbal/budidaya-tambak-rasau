@@ -32,35 +32,104 @@ class PemberianPakanController extends Controller
         ]);
     }
 
+    // public function store(PemberianPakanRequest $request)
+    // {
+    //     $pakan = new DetailPemberianPakan;
+    //     $detailPembagianPakan = DetailPembagianPakan::find($request->id_pembagian_pakan);
+
+    //     if ($request->quantity > $detailPembagianPakan->quantity) {
+    //         return redirect('/pemberian-pakan/create')->withErrors([
+    //             'error' => 'Quantity melebihi quantity pembagian pakan'
+    //         ])->withInput();
+    //     }
+    //     $pakan->id_detail_pembagian_pakan = $request->id_pembagian_pakan;
+    //     $pakan->quantity = $request->quantity;
+    //     $pakan->id_detail_pembagian_bibit = $request->id_pembagian_bibit;
+    //     $pakan->save();
+
+    //     $detailPembagianPakan->quantity -= $request->quantity;
+    //     $detailPembagianPakan->save();
+
+    //     if ($detailPembagianPakan->quantity <= 0) {
+    //         $detailPembagianPakan->id_tong_old = $detailPembagianPakan->id_tong;
+    //         $detailPembagianPakan->id_tong = null;
+    //         $detailPembagianPakan->save();
+    //     }
+
+
+    //     return redirect()->route('pemberian.pakan')->with(
+    //         'success',
+    //         'Berhasil Tambah Data'
+    //     );
+    // }
+
     public function store(PemberianPakanRequest $request)
     {
-        $pakan = new DetailPemberianPakan;
-        $detailPembagianPakan = DetailPembagianPakan::find($request->id_pembagian_pakan);
+        $inputs = $request->inputs;
+        // Buat array kosong untuk menyimpan hasil pengolahan
+        $inputsTemp = [];
 
-        if ($request->quantity > $detailPembagianPakan->quantity) {
-            return redirect('/pemberian-pakan/create')->withErrors([
-                'error' => 'Quantity melebihi quantity pembagian pakan'
-            ])->withInput();
+        // Looping array detail
+        foreach ($inputs as $item) {
+            // Jika id_detail belum ada di array result, tambahkan sebagai item baru
+            if (!isset($inputsTemp[$item['id_pembagian_pakan']])) {
+                $inputsTemp[$item['id_pembagian_pakan']] = $item['quantity'];
+            } else {
+                // Jika id_detail sudah ada di array result, tambahkan jumlah quantity nya
+                $inputsTemp[$item['id_pembagian_pakan']] += $item['quantity'];
+            }
         }
-        $pakan->id_detail_pembagian_pakan = $request->id_pembagian_pakan;
-        $pakan->quantity = $request->quantity;
-        $pakan->id_detail_pembagian_bibit = $request->id_pembagian_bibit;
-        $pakan->save();
 
-        $detailPembagianPakan->quantity -= $request->quantity;
-        $detailPembagianPakan->save();
+        // Looping array result untuk membandingkan dengan quantity_stok dari tabel detail_beli
+        foreach ($inputsTemp as $id_pembagian_pakan => $quantity) {
+            $detailPembagianPakan = DetailPembagianPakan::find($id_pembagian_pakan);
+            $quantity_stok = $detailPembagianPakan ? $detailPembagianPakan->quantity : 0;
 
-        if ($detailPembagianPakan->quantity <= 0) {
-            $detailPembagianPakan->id_tong_old = $detailPembagianPakan->id_tong;
-            $detailPembagianPakan->id_tong = null;
+            // Membandingkan quantity dengan quantity_stok
+            if ($quantity > $quantity_stok) {
+                return response()->json([
+                    'errors' => [
+                        'general' => 'Quantity melebihi quantity pembagian pakan'
+                    ],
+                ], 422);
+            }
+        }
+
+
+
+
+
+        // if ($request->quantity > $detailPembagianPakan->quantity) {
+        //     return redirect('/pemberian-pakan/create')->withErrors([
+        //         'error' => 'Quantity melebihi quantity pembagian pakan'
+        //     ])->withInput();
+        // }
+
+        foreach ($request->inputs as $input) {
+            $pakan = new DetailPemberianPakan;
+            $pakan->id_detail_pembagian_pakan = $input['id_pembagian_pakan'];
+            $pakan->quantity = $input['quantity'];
+            $pakan->id_detail_pembagian_bibit = $input['id_pembagian_bibit'];
+            $pakan->save();
+
+            $detailPembagianPakan->quantity -= $input['quantity'];
             $detailPembagianPakan->save();
+
+            if ($detailPembagianPakan->quantity <= 0) {
+                $detailPembagianPakan->id_tong_old = $detailPembagianPakan->id_tong;
+                $detailPembagianPakan->id_tong = null;
+                $detailPembagianPakan->save();
+            }
         }
 
 
-        return redirect()->route('pemberian.pakan')->with(
-            'success',
-            'Berhasil Tambah Data'
-        );
+        // return redirect()->route('pemberian.pakan')->with(
+        //     'success',
+        //     'Berhasil Tambah Data'
+        // );
+        return response()->json([
+            'success' => 'Berhasil Tambah Data'
+        ]);
     }
 
     public function getBagiBibitByTong($id)
@@ -100,7 +169,7 @@ class PemberianPakanController extends Controller
         $data = DetailPemberianPakan::find($id);
         $pembagianPakan = DetailPembagianPakan::with(['header_pembagian_pakan', 'tong', 'detail_beli.produk'])->get();
         // $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('quantity', '>', 0)->get();
-        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('quantity', '>', 0)->get();
+        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring'])->where('quantity', '>', 0)->get();
         return view('pages.pemberian_pakan.edit')->with([
             'pembagianPakan' => $pembagianPakan,
             'pembagianBibit' => $pembagianBibit,

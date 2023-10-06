@@ -30,23 +30,42 @@ class PanenRequest extends FormRequest
             foreach ($this->input('detail') as $key => $detail) {
                 $rules["detail.$key.status"] = 'required';
                 $rules["detail.$key.id_detail_pembagian_bibit"] = 'required|exists:detail_pembagian_bibit,id';
+                $rules["detail.$key.id_produk"] = 'required|exists:produk,id';
                 if ($detail['status'] == 1) {
                     $rules["detail.$key.quantity_berat"] = 'required|numeric|between:0,99999999.99';
-                    $rules["detail.$key.quantity"] = 'nullable|numeric|between:0,99999999.99';
+                    $rules["detail.$key.quantity"] = 'required|numeric|between:0,99999999.99';
+                    $rules["detail.$key.id_produk"] = 'required';
                 } else {
                     $rules["detail.$key.quantity_berat"] = 'nullable|numeric|between:0,99999999.99';
                     $rules["detail.$key.quantity"] = 'required|numeric|between:0,99999999.99';
+                    $rules["detail.$key.id_produk"] = 'nullable';
                 }
             }
             $validate = $rules;
         }
-        if ($this->type == 'update-detail') {
+        if ($this->type == 'update-header') {
             $validate =
                 [
-                    'quantity' => 'required|numeric|between:0,99999999.99',
-                    'status' => 'required',
-                    'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                    'tgl_panen' => 'required|date_format:d-m-Y',
                 ];
+        }
+        if ($this->type == 'update-detail') {
+            if ($this->status == 1) {
+                $validate =
+                    [
+                        'quantity' => 'required|numeric|between:0,99999999.99',
+                        'status' => 'required',
+                        'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                        'id_produk' => 'required'
+                    ];
+            } else {
+                $validate =
+                    [
+                        'quantity' => 'required|numeric|between:0,99999999.99',
+                        'status' => 'required',
+                        'id_detail_pembagian_bibit' => 'required|exists:detail_pembagian_bibit,id',
+                    ];
+            }
         }
         if ($this->type == 'store-detail') {
             if ($this->status  == 1) {
@@ -70,6 +89,7 @@ class PanenRequest extends FormRequest
     public function messages()
     {
         return [
+            'id_produk' => 'Produk Ikan Siap Jual harus diisi',
             'quantity.required' => 'Quantity harus diisi',
             'quantity.numeric' => 'Quantity harus berupa angka',
             'quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
@@ -82,9 +102,16 @@ class PanenRequest extends FormRequest
             'tgl_panen.required' => 'Tanggal panen harus diisi',
             'tgl_panen.date_format' => 'Tanggal panen memiliki format d-m-Y',
 
+            'detail.*.id_produk.required' => 'Produk Ikan Siap Jual harus dipilih',
+            'detail.*.id_produk.exists' => 'Produk Ikan Siap Jual tidak ada di data',
+
             'detail.*.quantity.required' => 'Quantity harus diisi',
             'detail.*.quantity.numeric' => 'Quantity harus berupa angka',
             'detail.*.quantity.between' => 'Quantity minimal 0 digit dan maksimal 8 digit',
+
+            'detail.*.quantity_berat.required' => 'Total KG harus diisi',
+            'detail.*.quantity_berat.numeric' => 'Total KG harus berupa angka',
+            'detail.*.quantity_berat.between' => 'Total KG minimal 0 digit dan maksimal 8 digit',
 
             'detail.*.status' => 'Status harus dipilih',
 

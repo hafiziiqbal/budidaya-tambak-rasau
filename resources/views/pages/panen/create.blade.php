@@ -21,7 +21,7 @@
                 <div class="input-group">
                     <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
                     <input type="text" name="tgl_panen" id="inputTanggalPembagian" class="form-control"
-                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">>
+                        aria-describedby="basic-addon1" data-date-format="dd-mm-yyyy" data-provide="datepicker">
                 </div>
                 <small class="text-danger" id="errorTglPanen"></small>
 
@@ -123,7 +123,6 @@
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="detail[${index}][id_detail_pembagian_bibit]" >
                                 <option></option>
-
                             </select>
                             <small class="text-danger" id="errorIkan${index}"></small>
                         </div>
@@ -132,19 +131,32 @@
                             <select class="form-select select-status" id="selectStatus${index}" data-placeholder="Pilih Status" name="detail[${index}][status]" >
                                 <option value="-1">Mati</option>
                                 <option value="0">Sortir</option>
-                                <option value="1">Ikan</option>
+                                <option value="1">Ikan Siap Jual</option>
                             </select>
                             <small class="text-danger" id="errorStatus${index}"></small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label">Quantity (Ekor)</label>
                             <input type="text" class="form-control quantity" name="detail[${index}][quantity]" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger">wajib diisi jika status panen adalah ikan</span></label>
+                            <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger" style="font-size:13px">wajib diisi jika status panen adalah IKAN SIAP JUAL</span></label>
                             <input type="text" class="form-control quantity-berat" name="detail[${index}][quantity_berat]" >
                             <small class="text-danger" id="errorQuantityBerat${index}"></small>
+                        </div>
+                        <div class="mb-3 d-none" id="containSelectIkanSiapJual${index}">
+                            <label  class="form-label">Produk Ikan Siap Jual</label>
+                            <select  class="form-select" id="selectIkanSiapJual${index}" data-placeholder="Pilih Ikan Siap Jual"
+                             name="detail[${index}][id_produk]" >
+                            <option></option>
+                            @foreach ($produk as $value)
+                                <option value="{{ $value->id }}">
+                                    {{ $value->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="errorIdProduk${index}"></small>
                         </div>
                     </div>`
             )
@@ -158,6 +170,18 @@
                 allowClear: true,
                 containerCssClass: "select2--medium",
                 dropdownCssClass: "select2--medium",
+            });
+
+            $(`#selectStatus${index}`).on('change', function() {
+                let value = $(`#selectStatus${index}`).find(':selected').val()
+                if (value == '1') {
+                    $(`#containSelectIkanSiapJual${index}`).removeClass('d-none')
+                    $(`#selectIkanSiapJual${index}`).attr('required', 'required')
+                } else {
+                    $(`#containSelectIkanSiapJual${index}`).addClass('d-none')
+                    $(`#selectIkanSiapJual${index}`).removeAttr('required')
+                }
+
             });
 
             $(`#detailPanen${index} .btn-close`).click(function() {
@@ -229,6 +253,9 @@
                         if (`detail.${x}.status` in errors) {
                             $(`#errorStatus${x}`).html(`*${errors[`detail.${x}.status`]}`)
                         }
+                        if (`detail.${x}.id_produk` in errors) {
+                            $(`#errorIdProduk${x}`).html(`*${errors[`detail.${x}.id_produk`]}`)
+                        }
                     }
 
                     // nilai acuan
@@ -238,10 +265,15 @@
                             $('select.select-ikan').each(function() {
                                 if ($(this).val() == element.id) {
 
+                                    // $(this).parent().parent().find(
+                                    //     "small[id^='errorQuantity']").html(
+                                    //     `*${errors[`detail.${element.id}.quantity-all`]}`
+                                    // )
                                     $(this).parent().parent().find(
-                                        "small[id^='errorQuantity']").html(
+                                        "small[id^='errorQuantity']:not([id^='errorQuantityBerat'])"
+                                    ).html(
                                         `*${errors[`detail.${element.id}.quantity-all`]}`
-                                    )
+                                    );
 
                                 }
                             });

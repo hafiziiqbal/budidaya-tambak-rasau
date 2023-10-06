@@ -1,52 +1,52 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Edit Panen</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-    <li class="breadcrumb-item active">Edit Pakan</li>
-</ol>
+    <h1 class="mt-4">Edit Panen</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+        <li class="breadcrumb-item active">Edit Pakan</li>
+    </ol>
 
-{{-- header beli --}}
-<form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
-    @csrf
-    <div id="headerPembagian" class="mb-4">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Panen</label>
-        </div>
-
-        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-            <span></span></label>
-        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                aria-hidden="true"></i>
-            <span></span></label>
-
-        <div class="mb-3">
-            <label for="inputNama" class="form-label">Tanggal Panen</label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
-                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+    {{-- header beli --}}
+    <form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
+        @csrf
+        <div id="headerPembagian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Panen</label>
             </div>
-        </div>
 
-        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-            Perubahan</button>
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
+
+            <div class="mb-3">
+                <label for="inputNama" class="form-label">Tanggal Panen</label>
+                <div class="input-group mb-3">\<input type="hidden" name="type" value="update-header">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                    <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="">>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+                Perubahan</button>
+        </div>
+    </form>
+    <div id="detail">
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Panen</label>
+        </div>
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
-</form>
-<div id="detail">
-    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-        <label class="fw-bold">Detail Panen</label>
-    </div>
-    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
-</div>
-<button type="button" class="btn btn-dark my-3" id="btnTambahPanen"><i class="fa fa-plus"></i> Tambah
-</button>
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPanen"><i class="fa fa-plus"></i> Tambah
+    </button>
 @endsection
 
 @push('script')
-<script>
-    let detailPanen
+    <script>
+        let detailPanen
         let number = 0
 
         // inisialisasi form select 2
@@ -71,7 +71,7 @@
                 success: function(response) {
                     detailPanen = response.detail_panen
 
-                    // default tgl_beli                
+                    // default tgl_beli
                     $(`input[name='tgl_panen']`).val(response.tgl_panen.split("-").reverse().join(
                         "-"));
 
@@ -88,7 +88,7 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
+        $("#formHeader").on("submit", function(e) { //id of form
 
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
@@ -96,7 +96,7 @@
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata                    
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
             $.ajax({
                 url: action,
@@ -119,7 +119,7 @@
                         loadDataHeader();
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     $('.status-error-header').removeClass('d-none')
@@ -137,10 +137,10 @@
 
         // membuat element detail panen
         function loadElementDetailBagi(item, index) {
-            
+
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/panen/detail/${item.id}/edit" class=" mb-5">
-                    <div class="card mb-4"></div>    
+                    <div class="card mb-4"></div>
                     </form>`
             )
             let cardHeader = $(
@@ -164,41 +164,54 @@
                     <div id="alert${index}">
                             @include('components.alert')
                     </div>
-                    @csrf    
+                    @csrf
                         <input type="hidden" name="type" value="update-detail">
-                        <input type="hidden" name="id" value="${item.id}">                        
+                        <input type="hidden" name="id" value="${item.id}">
                         <input type="hidden" class="alt" name="id_detail_pembagian_bibit" value="${item.id_detail_pembagian_bibit}">
-                        <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">                        
+                        <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">
                         <div class="mb-3 select-ikan">
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="id_detail_pembagian_bibit" >
                                 <option></option>
                                 @foreach ($pembagianBibit as $value)
                                     <option   value="{{ $value->id }}"  data-hide={{ $value->quantity > 0 ? 'false' : 'true' }}">
-                                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' | ' . $value->kolam->nama . ' ' . ($value->jaring == null ? '' : '& ' . $value->jaring->nama) . ($value->jaring_old == null ? '' : '& ' . $value->jaring_old->nama) }}
+                                        {{ $value->header_pembagian_bibit->tgl_pembagian . ' | ' . $value->header_pembagian_bibit->detail_beli->produk->nama . ' (' . $value->quantity . ') ' . ' | ' . $value->kolam->nama . ($value->jaring == null ? '' : '& ' . $value->jaring->nama) . ($value->jaring_old == null ? '' : '& ' . $value->jaring_old->nama) }}
                                     </option>
                                 @endforeach
-                            </select>        
+                            </select>
                             <small class="text-danger" id="errorIkan${index}"></small>
-                        </div>  
+                        </div>
                         <div class="mb-3 select-status">
                             <label class="form-label">Pilih Status</label>
                             <select class="form-select select-status" id="selectStatus${index}" data-placeholder="Pilih Status" name="status" >
                                 <option value="-1">Mati</option>
                                 <option value="0">Sortir</option>
-                                <option value="1">Ikan</option>                                
-                            </select>                            
+                                <option value="1">Ikan Siap Jual</option>
+                            </select>
                             <small class="text-danger" id="errorStatus${index}"></small>
-                        </div>                        
+                        </div>
                         <div class="mb-3">
-                            <label class="form-label">Quantity</label>
+                            <label class="form-label">Quantity (Ekor)</label>
                             <input type="text" class="form-control quantity" readonly name="quantity" value="${item.quantity}" required>
                             <small class="text-danger" id="errorQuantity${index}"></small>
-                        </div>  
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Total Dalam Satuan KG <span class="fst-italic text-danger">wajib diisi jika status panen adalah ikan</span></label>
                             <input type="text" class="form-control quantity-berat" readonly name="quantity_berat" value="${item.quantity_berat}" >
                             <small class="text-danger" id="errorQuantityBerat${index}"></small>
+                        </div>
+                        <div class="mb-3" id="containSelectIkanSiapJual${index}">
+                            <label  class="form-label">Produk Ikan Siap Jual</label>
+                            <select  class="form-select" id="selectIkanSiapJual${index}" data-placeholder="Pilih Ikan Siap Jual"
+                             name="id_produk" >
+                            <option></option>
+                            @foreach ($produk as $value)
+                                <option value="{{ $value->id }}">
+                                    {{ $value->nama }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <small class="text-danger" id="errorIdProduk${index}"></small>
                         </div>
                         <div class="btn-update-content">
                             <button type="button" class="btn btn-danger " data-id="${item.id}" id="btnDeleteDetail${index}">
@@ -206,12 +219,13 @@
                                 Hapus
                             </button>
                         </div>
+
                         <div class="btn-store-content d-none">
                             <button type="submit" class="btn btn-primary" id="btnSaveDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Simpan
                             </button>
-                        </div>                 
+                        </div>
                     </div>`
             )
             // <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
@@ -229,17 +243,38 @@
                 dropdownCssClass: "select2--medium",
             });
 
+            $(`#selectStatus${index}`).on('change', function() {
+
+                let value = $(`#selectStatus${index}`).find(':selected').val()
+                if (value == '1') {
+
+                    $(`#containSelectIkanSiapJual${index}`).removeClass('d-none')
+                    $(`#selectIkanSiapJual${index}`).attr('required', 'required')
+
+                } else {
+                    $(`#containSelectIkanSiapJual${index}`).addClass('d-none')
+                    $(`#selectIkanSiapJual${index}`).removeAttr('required')
+                }
+
+            });
+
             $(`#selectIkan${index}`).val(item.id_detail_pembagian_bibit)
             $(`#selectIkan${index}`).trigger('change');
             $(`#selectIkan${index}`).select2("enable", false);
-   
+
+
+
+            $(`#selectIkanSiapJual${index}`).val(item.id_produk)
+            $(`#selectIkanSiapJual${index}`).trigger('change');
+            $(`#selectIkanSiapJual${index}`).select2("enable", false);
+
             $(`#selectStatus${index}`).val(item.status)
             $(`#selectStatus${index}`).trigger('change');
             $(`#selectStatus${index}`).select2("enable", false);
 
 
             // handle sumbit
-            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form
                 e.preventDefault();
                 $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
                 $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
@@ -247,7 +282,7 @@
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
-                let form_data = new FormData($(this)[0]); // convert form into formdata        
+                let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
                 $.ajax({
@@ -324,7 +359,7 @@
 
                         }
                     },
-                    error: function(response) { // handle the error            
+                    error: function(response) { // handle the error
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
@@ -369,7 +404,7 @@
 
             $(`#btnDeleteDetail${index}`).click(function(e) {
                 let id = $(this).data('id');
-                
+
                 $.ajax({
                     url: `/panen/detail/delete/${id}`,
                     dataType: 'json', // what to expect back from the server
@@ -391,7 +426,7 @@
                         }
 
                     },
-                    error: function(response) { // handle the error                                    
+                    error: function(response) { // handle the error
                         let errors = response.responseJSON.errors
                         $("small[id^='error']").html('');
                         if (errors.general) {
@@ -431,6 +466,7 @@
                 .prop('selected', false);
 
             $(`#selectIkan${number}`).removeAttr('disabled');
+            $(`#selectIkanSiapJual${number}`).removeAttr('disabled');
             $(`#idHeader${number}`).val(idHeader);
             $(`#formDetail${number} .card-body`).append(
                 `<input type="hidden" value="${idHeader}" name="id_header_beli">`)
@@ -451,5 +487,5 @@
             })
 
         })
-</script>
+    </script>
 @endpush

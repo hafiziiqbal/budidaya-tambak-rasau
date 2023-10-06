@@ -46,7 +46,8 @@
                         <th>Status</th>
                         <th>Jaring</th>
                         <th>Kolam</th>
-                        <th>Sisa Quantity (Kg)</th>
+                        <th>Quantity (Kg)</th>
+                        <th>Quantity (ekor)</th>
                         <th>HPP</th>
                         <th>Aksi</th>
                     </tr>
@@ -138,7 +139,7 @@
                             `<a title="Edit Data" href="/panen/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
                             `<a title="Hapus Data" href="/panen/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                        return show + deletebtn
+                        return show + edit + deletebtn
                     },
                 },
                 {
@@ -220,15 +221,15 @@
                     data: "nama_kolam",
                     name: "nama_kolam",
                 },
-                // {
-                //     data: "quantity",
-                //     name: "quantity",
-                // },
                 {
                     data: "quantity_berat",
                     render: function(data, type, row, meta) {
                         return pembatasKoma(data.toString())
                     }
+                },
+                {
+                    data: "quantity",
+                    name: "quantity",
                 },
                 {
                     data: "hpp",

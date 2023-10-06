@@ -41,7 +41,7 @@ class PenjualanController extends Controller
 
     public function create()
     {
-        $panen = DetailPanen::where('status', 1)->where('quantity', '>', 0)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen'])->get();
+        $panen = DetailPanen::where('status', 1)->where('quantity', '>', 0)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen', 'produk_panen'])->get();
         $customer = MasterCustomer::all();
 
         return view('pages.penjualan.create')->with([
@@ -106,11 +106,10 @@ class PenjualanController extends Controller
         foreach ($request->detail as $key => $valueArray) {
             $value = (object) $valueArray;
             $detailPanen = DetailPanen::where('id', $value->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->first();
-            $produk = Produk::find($detailPanen->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->id_produk);
-            $produkIkan = Produk::where('nama',  $produk->nama)->where('id_kategori', 6)->first();
+            $produk = Produk::where('id', $detailPanen->id_produk)->first();
             DetailJual::create([
                 'id_header_jual' => $headerJual->id,
-                'id_produk' => $produkIkan->id,
+                'id_produk' => $produk == null ? 0 :  $produk->id,
                 'id_detail_panen' => $value->id_detail_panen,
                 'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
                 'harga_satuan' => $value->harga_satuan,
@@ -119,9 +118,12 @@ class PenjualanController extends Controller
                 'sub_total' => $value->subtotal,
             ]);
             // update quantity produk
-            $produkIkan->update([
-                'quantity' => DB::raw("quantity - " . $value->quantity),
-            ]);
+            if ($produk != null) {
+                $produk->update([
+                    'quantity' => DB::raw("quantity - " . $value->quantity),
+                ]);
+            }
+
 
             // update quantity produk
             $detailPanen->update([
@@ -136,6 +138,7 @@ class PenjualanController extends Controller
 
     public function storeDetail(PenjualanRequest $request)
     {
+        // return $request->all();
         $panen = DetailPanen::find($request->id_detail_panen);
         if ($panen->quantity == 0) {
             return response()->json([
@@ -168,11 +171,13 @@ class PenjualanController extends Controller
         }
 
         $detailPanen = DetailPanen::where('id', $request->id_detail_panen)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk'])->first();
-        $produk = Produk::find($detailPanen->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->id_produk);
-        $produkIkan = Produk::where('nama',  $produk->nama)->where('id_kategori', 6)->first();
+        // $produk = Produk::find($detailPanen->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->id_produk);
+        // $produkIkan = Produk::where('nama',  $produk->nama)->where('id_kategori', 6)->first();
+        $produk = Produk::where('id', $detailPanen->id_produk)->first();
         $tambahBaru = DetailJual::create([
             'id_header_jual' => $request->id_header_jual,
-            'id_produk' => $produkIkan->id,
+            // 'id_produk' => $produkIkan->id,
+            'id_produk' => $produk == null ? 0 :  $produk->id,
             'id_detail_panen' => $request->id_detail_panen,
             'id_detail_beli' => $detailPanen->detail_pembagian_bibit->header_pembagian_bibit->id_detail_beli,
             'harga_satuan' => $request->harga_satuan,
@@ -181,19 +186,25 @@ class PenjualanController extends Controller
             'sub_total' => $subtotal,
         ]);
         // update quantity produk
-        $produkIkan->update([
-            'quantity' => DB::raw("quantity-" . $request->quantity),
-        ]);
+        // $produkIkan->update([
+        //     'quantity' => DB::raw("quantity-" . $request->quantity),
+        // ]);
+
+        if ($produk != null) {
+            $produk->update([
+                'quantity' => DB::raw("quantity - " . $request->quantity),
+            ]);
+        }
 
         // update quantity produk
         $detailPanen->update([
             'quantity_berat' => DB::raw("quantity_berat-" . $request->quantity),
         ]);
 
-        // update quantity produk
-        Produk::where('id', $request->id_produk)->update([
-            'quantity' => DB::raw("quantity-" . $request->quantity),
-        ]);
+        // // update quantity produk
+        // Produk::where('id', $request->id_produk)->update([
+        //     'quantity' => DB::raw("quantity-" . $request->quantity),
+        // ]);
 
         $headerJual = HeaderJual::find($request->id_header_jual);
         $headerJual->update([
@@ -215,7 +226,7 @@ class PenjualanController extends Controller
 
     public function edit($id)
     {
-        $panen = DetailPanen::where('status', 1)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen'])->get();
+        $panen = DetailPanen::where('status', 1)->with(['detail_pembagian_bibit.header_pembagian_bibit.detail_beli.produk', 'header_panen', 'produk_panen'])->get();
         $customer = MasterCustomer::all();
         return view('pages.penjualan.edit')->with([
             'title' => 'PENJUALAN',
@@ -299,7 +310,7 @@ class PenjualanController extends Controller
         ]);
 
         // update quantity produk
-        $produk = Produk::find($detailJualUpdate->id_produk);
+        $produk = Produk::find($panen->id_produk);
         $jumlahProduk = ($produk->quantity + $quantityProdukOld) - $request->quantity;
         $produk->update([
             'quantity' => $jumlahProduk,
@@ -339,7 +350,7 @@ class PenjualanController extends Controller
                 'quantity' => DB::raw("quantity+" . $value->quantity),
             ]);
             DetailPanen::find($value->id_detail_panen)->update([
-                'quantity' => DB::raw("quantity+" . $value->quantity),
+                'quantity_berat' => DB::raw("quantity_berat+" . $value->quantity),
             ]);
             $detailJual->delete();
         }
@@ -375,7 +386,7 @@ class PenjualanController extends Controller
             'quantity' => DB::raw("quantity+" . $detailJual->quantity),
         ]);
         DetailPanen::find($detailJual->id_detail_panen)->update([
-            'quantity' => DB::raw("quantity+" . $detailJual->quantity),
+            'quantity_berat' => DB::raw("quantity_berat+" . $detailJual->quantity),
         ]);
 
         $detailJual->delete();

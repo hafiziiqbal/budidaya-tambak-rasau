@@ -80,13 +80,13 @@
                                 <option></option>
                                 @foreach ($produkPakan as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->produk->nama }}
+                                        {{ $value->produk->nama . ' | ' . $value->quantity_stok }}
                                     </option>
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorPakan${index}"></small>
                         </div>
-                        <div>
+                        <div class="mb-3">
                             <label class="form-label">Pilih Tong <span class="nama-kolam"></span></label>
                             <select class="form-select select-tong" id="selectTong${index}" data-placeholder="Pilih Tong" name="detail[${index}][id_tong]" >
                                 <option></option>

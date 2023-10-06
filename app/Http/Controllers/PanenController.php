@@ -79,13 +79,14 @@ class PanenController extends Controller
     {
 
         $kolam = MasterKolam::all();
-
+        $produkIkan = Produk::where('id_kategori',  6)->get();
         // return response()->json($pembagianBibit);
 
 
         return view('pages.panen.create')->with([
             'title' => 'PANEN',
             'kolam' => $kolam,
+            'produk' => $produkIkan,
             'pekerjaan_toogle' => 1
         ]);
     }
@@ -153,6 +154,7 @@ class PanenController extends Controller
         $headerPanen = new HeaderPanen;
         $headerPanen->tgl_panen = $tglPanen;
         $headerPanen->save();
+
         // Kurangi quantity pada tabel detail_pembagian_bibit sesuai dengan quantity pada request
         foreach ($details as $detail) {
             $id_detail_pembagian_bibit = $detail['id_detail_pembagian_bibit'];
@@ -164,6 +166,7 @@ class PanenController extends Controller
 
             $detailPanen = DetailPanen::create([
                 'id_header_panen' => $headerPanen->id,
+                'id_produk' => $detail['id_produk'],
                 'status' => $detail['status'],
                 'quantity' => $quantity,
                 'quantity_berat' => $detail['quantity_berat'] == null || $detail['quantity_berat'] == '' ? 0 : $detail['quantity_berat'],
@@ -220,36 +223,40 @@ class PanenController extends Controller
                         'hpp' => $jumlahHpp
                     ]);
                 }
-            }
-        }
-
-        // Masukkan data ke dalam tabel produk
-        $produk = [];
-        foreach ($request->detail as $detail) {
-            $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detail['id_detail_pembagian_bibit'])->first();
-
-            if ($detail['status'] == 1) {
-                if (isset($produk[$detail['id_detail_pembagian_bibit']])) {
-                    $produk[$detail['id_detail_pembagian_bibit']]['quantity'] += $detail['quantity_berat'];
-                } else {
-                    $produk[$detail['id_detail_pembagian_bibit']] = [
-                        'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
-                        'quantity' => $detail['quantity_berat'],
-                        'id_kategori' => 6
-
-                    ];
+                $produkExists = Produk::where('id',  $detail['id_produk'])->where('id_kategori', 6)->first();
+                if ($produkExists) {
+                    DB::table('produk')->where('id',  $detail['id_produk'])->where('id_kategori', 6)->increment('quantity', $detail['quantity_berat']);
                 }
             }
         }
 
-        foreach ($produk as $item) {
-            $produkExists = Produk::where('nama',  $item['nama'])->where('id_kategori', 6)->first();
-            if ($produkExists) {
-                DB::table('produk')->where('nama',  $item['nama'])->where('id_kategori', 6)->increment('quantity', $item['quantity']);
-            } else {
-                Produk::create($item);
-            }
-        }
+        // // Masukkan data ke dalam tabel produk
+
+        // foreach ($request->detail as $detail) {
+        //     $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detail['id_detail_pembagian_bibit'])->first();
+
+        //     if ($detail['status'] == 1) {
+        //         if (isset($produk[$detail['id_detail_pembagian_bibit']])) {
+        //             $produk[$detail['id_detail_pembagian_bibit']]['quantity'] += $detail['quantity_berat'];
+        //         } else {
+        //             $produk[$detail['id_detail_pembagian_bibit']] = [
+        //                 'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
+        //                 'quantity' => $detail['quantity_berat'],
+        //                 'id_kategori' => 6
+
+        //             ];
+        //         }
+        //     }
+        // }
+
+        // foreach ($produk as $item) {
+        //     $produkExists = Produk::where('nama',  $item['nama'])->where('id_kategori', 6)->first();
+        //     if ($produkExists) {
+        //         DB::table('produk')->where('nama',  $item['nama'])->where('id_kategori', 6)->increment('quantity', $item['quantity']);
+        //     } else {
+        //         Produk::create($item);
+        //     }
+        // }
 
         return response()->json([
             'success' => 'Berhasil Tambah Data'
@@ -286,6 +293,7 @@ class PanenController extends Controller
         $detailPanen = DetailPanen::create([
             'id_header_panen' => $request->id_header_panen,
             'status' => $request->status,
+            'id_produk' => $request->id_produk,
             'quantity' => $quantity,
             'quantity_berat' => $request->quantity_berat == null || $request->quantity_berat == '' ? 0 : $request->quantity_berat,
             'id_detail_pembagian_bibit' => $request->id_detail_pembagian_bibit,
@@ -343,17 +351,20 @@ class PanenController extends Controller
                 ]);
             }
 
-
-            $produkExists = Produk::where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->first();
+            $produkExists = Produk::where('id',  $request->id_produk)->where('id_kategori', 6)->first();
             if ($produkExists) {
-                DB::table('produk')->where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->increment('quantity', $request->quantity_berat);
-            } else {
-                Produk::create([
-                    'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
-                    'quantity' => $request->quantity_berat,
-                    'id_kategori' => 3
-                ]);
+                DB::table('produk')->where('id',  $request->id_produk)->where('id_kategori', 6)->increment('quantity', $request->quantity_berat);
             }
+            // $produkExists = Produk::where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->first();
+            // if ($produkExists) {
+            //     DB::table('produk')->where('nama',  $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->increment('quantity', $request->quantity_berat);
+            // } else {
+            //     Produk::create([
+            //         'nama' => $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama,
+            //         'quantity' => $request->quantity_berat,
+            //         'id_kategori' => 3
+            //     ]);
+            // }
         }
 
         return response()->json([
@@ -368,6 +379,7 @@ class PanenController extends Controller
         $detailPanen = DetailPanen::select('id', 'id_header_panen', 'id_detail_pembagian_bibit')->with(['detail_pembagian_bibit' => function ($query) {
             $query->select('id', 'id_kolam');
         }])->where('id_header_panen', $id)->first();
+        $produkIkan = Produk::where('id_kategori',  6)->get();
 
         if ($detailPanen != null) {
             $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk', 'kolam', 'jaring', 'detail_pemberian_pakan'])
@@ -382,6 +394,7 @@ class PanenController extends Controller
             'title' => 'EDIT PANEN',
             'pembagianBibit' => $pembagianBibit,
             'id' => $id,
+            'produk' => $produkIkan,
             'pekerjaan_toogle' => 1
         ]);
     }
@@ -558,8 +571,11 @@ class PanenController extends Controller
             }
 
 
-            $produkExists = Produk::where('nama', $detailPembagianBibit->first()->header_pembagian_bibit->detail_beli->produk->nama)->where('id_kategori', 6)->first();
-            $produkExists->decrement('quantity', $detail->quantity_berat);
+            $produkExists = Produk::where('id',  $detail->id_produk)->where('id_kategori', 6)->first();
+
+            if ($produkExists != null) {
+                $produkExists->decrement('quantity', $detail->quantity_berat);
+            }
         }
         // Menghapus semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus
         DB::table('detail_panen')
@@ -600,7 +616,7 @@ class PanenController extends Controller
         // Menyimpan nilai quantity dari detail_pembagian_pakan yang akan dihapus
         $quantity = $detailPanen->quantity;
 
-        // Memperbarui nilai column quantity pada tabel detail_pembagian_bibit        
+        // Memperbarui nilai column quantity pada tabel detail_pembagian_bibit
         $detailPanen->detail_pembagian_bibit->increment('quantity', $quantity);
         if ($detailPanen->detail_pembagian_bibit->quantity > 0 && $detailPanen->detail_pembagian_bibit->id_jaring == null) {
             if ($detailPanen->detail_pembagian_bibit->id_jaring_old != null) {
@@ -614,9 +630,9 @@ class PanenController extends Controller
         }
 
         // Memperbarui nilai column quantity pada tabel produk
-        $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detailPanen->id_detail_pembagian_bibit)->first();
-        $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
-        $produkExists = Produk::where('nama', $namaProduk)->where('id_kategori', 6)->first();
+        // $pembagianBibit = DetailPembagianBibit::with(['header_pembagian_bibit.detail_beli.produk'])->where('id', $detailPanen->id_detail_pembagian_bibit)->first();
+        // $namaProduk = $pembagianBibit->header_pembagian_bibit->detail_beli->produk->nama;
+        $produkExists = Produk::where('id', $detailPanen->id_produk)->where('id_kategori', 6)->first();
         if ($detailPanen->status == 1) {
             $produkExists->decrement('quantity', $detailPanen->quantity_berat);
         }

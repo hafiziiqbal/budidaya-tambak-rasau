@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('posisi_jaring')->nullable();
             $table->decimal('quantity')->default(0);
             $table->decimal('quantity_berat')->default(0);
+            $table->bigInteger('id_produk')->nullable();
             $table->timestamps();
         });
     }

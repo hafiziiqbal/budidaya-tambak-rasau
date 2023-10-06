@@ -171,7 +171,7 @@
                                 <option></option>
                                 @foreach ($produkPakan as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->produk->nama }}
+                                        {{ $value->produk->nama . ' | ' . $value->quantity_stok }}
                                     </option>
                                 @endforeach
                             </select>

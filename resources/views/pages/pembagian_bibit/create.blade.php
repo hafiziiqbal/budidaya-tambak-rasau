@@ -87,7 +87,7 @@
                     <option></option>
                     @foreach ($sortir as $value)
                         <option value="{{ $value->id }}" data-sortirquantity="{{ $value->quantity }}">
-                            {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' ( ' . $value->nama_kolam . ($value->nama_jaring == null ? '' : '|' . $value->nama_jaring) . ')' }}
+                            {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama . ' ( ' . $value->nama_kolam . ($value->nama_jaring == null ? '' : ' | ' . $value->nama_jaring) . ' : ' . $value->quantity . ')' }}
                         </option>
                     @endforeach
                 </select>

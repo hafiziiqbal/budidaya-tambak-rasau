@@ -1,46 +1,46 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Info Panen</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
-    <li class="breadcrumb-item active">Info Pakan</li>
-</ol>
+    <h1 class="mt-4">Info Panen</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('panen') }}">Panen</a></li>
+        <li class="breadcrumb-item active">Info Pakan</li>
+    </ol>
 
-{{-- header beli --}}
-<form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
-    @csrf
-    <div id="headerPembagian" class="mb-4">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Panen</label>
-        </div>
+    {{-- header beli --}}
+    <form method="POST" id="formHeader" action="{{ route('panen.update', $id) }}" name="form_header">
+        @csrf
+        <div id="headerPembagian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Panen</label>
+            </div>
 
-        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-            <span></span></label>
-        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                aria-hidden="true"></i>
-            <span></span></label>
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
 
-        <div class="mb-3">
-            <label for="inputNama" class="form-label">Tanggal Panen</label>
-            <div class="input-group mb-3">
-                <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
-                <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
-                    data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" disabled>
+            <div class="mb-3">
+                <label for="inputNama" class="form-label">Tanggal Panen</label>
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1"><i class="fa fa-calendar"></i></span>
+                    <input type="text" name="tgl_panen" class="form-control" aria-describedby="basic-addon1"
+                        data-date-format="dd-mm-yyyy" data-provide="datepicker" value="" disabled>
+                </div>
             </div>
         </div>
+    </form>
+    <div id="detail">
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Panen</label>
+        </div>
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
-</form>
-<div id="detail">
-    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-        <label class="fw-bold">Detail Panen</label>
-    </div>
-    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
-</div>
 @endsection
 
 @push('script')
-<script>
-    let detailPanen
+    <script>
+        let detailPanen
         let number = 0
 
         // inisialisasi form select 2
@@ -65,7 +65,7 @@
                 success: function(response) {
                     detailPanen = response.detail_panen
 
-                    // default tgl_beli                
+                    // default tgl_beli
                     $(`input[name='tgl_panen']`).val(response.tgl_panen.split("-").reverse().join(
                         "-"));
 
@@ -82,7 +82,7 @@
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
+        $("#formHeader").on("submit", function(e) { //id of form
 
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
@@ -90,7 +90,7 @@
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata                    
+            let form_data = new FormData($(this)[0]); // convert form into formdata
 
             $.ajax({
                 url: action,
@@ -113,7 +113,7 @@
                         loadDataHeader();
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     $('.status-error-header').removeClass('d-none')
@@ -133,7 +133,7 @@
         function loadElementDetailBagi(item, index) {
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/panen/detail/${item.id}/edit" class=" mb-5">
-                    <div class="card mb-4"></div>    
+                    <div class="card mb-4"></div>
                     </form>`
             )
             let cardHeader = $(
@@ -153,9 +153,9 @@
                     </div>`
             )
             let cardBody = $(
-                `<div class="card-body border">        
-                    @csrf     
-                        <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">                        
+                `<div class="card-body border">
+                    @csrf
+                        <input type="hidden" name="id_header_panen" id="idHeader${index}" value="${item.id_header_panen}">
                         <div class="mb-3 select-ikan">
                             <label class="form-label">Pilih Ikan</label>
                             <select class="form-select select-ikan" id="selectIkan${index}" data-placeholder="Pilih Ikan" name="id_detail_pembagian_bibit">
@@ -165,22 +165,26 @@
                                         {{ $value->header_pembagian_bibit->detail_beli->produk->nama }}
                                     </option>
                                 @endforeach
-                            </select>                            
-                        </div>  
+                            </select>
+                        </div>
                         <div class="mb-3 select-status">
                             <label class="form-label">Pilih Status</label>
                             <select class="form-select select-status" id="selectStatus${index}" data-placeholder="Pilih Status" name="status" >
                                 <option value="-1">Mati</option>
                                 <option value="0">Sortir</option>
-                                <option value="1">Ikan</option>                                
-                            </select>                            
-                        </div>                        
+                                <option value="1">Ikan</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
-                            <label class="form-label">Quantity (Kg)</label>
+                            <label class="form-label">Quantity (Ekor)</label>
+                            <input type="text" class="form-control quantity" disabled value="${item.quantity}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Total Dalam Satuan KG</label>
                             <input type="text" class="form-control quantity" name="quantity" value="${item.quantity_berat}" required disabled>
                             <label class="error-quantity"></label>
-                        </div>    
-                        
+                        </div>
+
                     </div>`
             )
 
@@ -203,7 +207,7 @@
 
 
             // handle sumbit
-            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form
                 e.preventDefault();
                 $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
                 $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
@@ -211,7 +215,7 @@
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
-                let form_data = new FormData($(this)[0]); // convert form into formdata        
+                let form_data = new FormData($(this)[0]); // convert form into formdata
 
 
                 $.ajax({
@@ -273,7 +277,7 @@
                             $(`#btnDeleteDetail${index}`).attr('data-id', response.id);
                         }
                     },
-                    error: function(response) { // handle the error            
+                    error: function(response) { // handle the error
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
@@ -315,7 +319,7 @@
                         }
 
                     },
-                    error: function(response) { // handle the error                                    
+                    error: function(response) { // handle the error
                         $(`#formDetail${index} .status-error-header`).removeClass('d-none')
                         $(`#formDetail${index} .status-error-header span`).html(response
                             .success)
@@ -366,5 +370,5 @@
             })
 
         })
-</script>
+    </script>
 @endpush

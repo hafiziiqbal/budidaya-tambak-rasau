@@ -14,6 +14,7 @@
                 <th>No</th>
                 <th>Nama</th>
                 <th>Posisi</th>
+                <th>Total Ikan (Ekor)</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -48,6 +49,20 @@
                     {
                         data: "posisi",
                         name: "posisi",
+                    },
+                    {
+                        data: "detail_pembagian_bibit",
+                        render: function(data, type, row, meta) {
+                            if (data.length == 0) {
+                                return 0
+                            } else {
+                                let quantity = data[0].total_quantity
+                                if (data[0].total_quantity % 1 === 0) {
+                                    quantity = parseInt(data[0].total_quantity);
+                                }
+                                return quantity
+                            }
+                        },
                     },
                     {
                         data: "id",

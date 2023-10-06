@@ -22,16 +22,22 @@ class KolamController extends Controller
 
     public function datatable(Request $request)
     {
-        try {
-            if ($request->ajax()) {
-                $data = MasterKolam::orderBy('updated_at', 'desc')->get();
-                return DataTables::of($data)->addIndexColumn()->make(true);
-            }
-        } catch (\Throwable $th) {
-            return redirect('/')->withErrors([
-                'error' => 'Terdapat Kesalahan'
-            ]);
+        // try {
+        if ($request->ajax()) {
+            // $data = MasterKolam::orderBy('updated_at', 'desc')->get();
+            $data = MasterKolam::with(['detail_pembagian_bibit' => function ($query) {
+                $query->selectRaw('id_kolam, SUM(quantity) as total_quantity')
+                    ->groupBy('id_kolam');
+            }])->orderBy('updated_at', 'desc')->get();
+
+
+            return DataTables::of($data)->addIndexColumn()->make(true);
         }
+        // } catch (\Throwable $th) {
+        //     return redirect('/')->withErrors([
+        //         'error' => 'Terdapat Kesalahan'
+        //     ]);
+        // }
     }
 
     public function create()

@@ -1,88 +1,88 @@
 @extends('layouts.admin')
 @section('content')
-<h1 class="mt-4">Edit Jual</h1>
-<ol class="breadcrumb mb-4">
-    <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
-    <li class="breadcrumb-item active">Edit Jual</li>
-</ol>
+    <h1 class="mt-4">Edit Jual</h1>
+    <ol class="breadcrumb mb-4">
+        <li class="breadcrumb-item"><a href="{{ route('jual') }}">Jual</a></li>
+        <li class="breadcrumb-item active">Edit Jual</li>
+    </ol>
 
-{{-- header beli --}}
-<form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
-    @csrf
-    <input type="hidden" name="type" value="update-header">
-    <div id="headerPembelian" class="mb-4">
-        <div class="bg-info p-2 border-dark border-bottom mb-3">
-            <label class="fw-bold">Header Jual</label>
+    {{-- header beli --}}
+    <form method="POST" id="formHeader" action="{{ route('jual.update', $id) }}" name="form_header">
+        @csrf
+        <input type="hidden" name="type" value="update-header">
+        <div id="headerPembelian" class="mb-4">
+            <div class="bg-info p-2 border-dark border-bottom mb-3">
+                <label class="fw-bold">Header Jual</label>
+            </div>
+            <div id="alertJs">
+                @include('components.alert')
+            </div>
+            <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
+                <span></span></label>
+            <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
+                    aria-hidden="true"></i>
+                <span></span></label>
+
+            <div class="mb-3">
+                <label for="selectCustomer" class="form-label">Customer</label>
+                <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
+                    <option></option>
+                    @foreach ($customer as $value)
+                        <option value="{{ $value->id }}">
+                            {{ $value->nama }}
+                        </option>
+                    @endforeach
+                </select>
+                <small class="text-danger" id="errorCustomer"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputTotalBruto" class="form-label">Total Bruto</label>
+                <input type="text" class="form-control money-format" id="inputTotalBruto" name="total_bruto" readonly>
+                <small class="text-danger" id="errorTotalBruto"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
+                <input type="text" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga">
+                <small class="text-danger" id="errorPotonganHarga"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputTotalNetto" class="form-label">Total Netto</label>
+                <input type="text" class="form-control money-format" id="inputTotalNetto" name="total_netto" readonly>
+                <small class="text-danger" id="errorTotalNetto"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputPay" class="form-label">Bayar</label>
+                <input type="text" class="form-control money-format" id="inputPay" name="pay">
+                <small class="text-danger" id="errorPay"></small>
+            </div>
+            <div class="mb-3">
+                <label for="inputChange" class="form-label">Kembali</label>
+                <input type="text" class="form-control money-format" id="inputChange" name="change" readonly>
+                <small class="text-danger" id="errorChange"></small>
+            </div>
+            <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
+                    class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
+                Perubahan</button>
         </div>
-        <div id="alertJs">
+    </form>
+    <div id="detail">
+
+        <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
+            <label class="fw-bold">Detail Jual</label>
+        </div>
+        <div id="alertGeneral">
             @include('components.alert')
         </div>
-        <label class="text-success fw-bold status-header d-none mb-2"><i class="fa fa-check" aria-hidden="true"></i>
-            <span></span></label>
-        <label class="text-danger fw-bold status-error-header d-none  mb-2"><i class="fa fa-exclamation-triangle"
-                aria-hidden="true"></i>
-            <span></span></label>
-
-        <div class="mb-3">
-            <label for="selectCustomer" class="form-label">Customer</label>
-            <select class="form-select" id="selectCustomer" data-placeholder="Pilih Customer" name="customer">
-                <option></option>
-                @foreach ($customer as $value)
-                <option value="{{ $value->id }}">
-                    {{ $value->nama }}
-                </option>
-                @endforeach
-            </select>
-            <small class="text-danger" id="errorCustomer"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputTotalBruto" class="form-label">Total Bruto</label>
-            <input type="number" class="form-control money-format" id="inputTotalBruto" name="total_bruto" readonly>
-            <small class="text-danger" id="errorTotalBruto"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputPotonganHarga" class="form-label">Potongan Harga</label>
-            <input type="number" class="form-control money-format" id="inputPotonganHarga" name="potongan_harga">
-            <small class="text-danger" id="errorPotonganHarga"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputTotalNetto" class="form-label">Total Netto</label>
-            <input type="number" class="form-control money-format" id="inputTotalNetto" name="total_netto" readonly>
-            <small class="text-danger" id="errorTotalNetto"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputPay" class="form-label">Bayar</label>
-            <input type="number" class="form-control money-format" id="inputPay" name="pay">
-            <small class="text-danger" id="errorPay"></small>
-        </div>
-        <div class="mb-3">
-            <label for="inputChange" class="form-label">Kembali</label>
-            <input type="number" class="form-control money-format" id="inputChange" name="change" readonly>
-            <small class="text-danger" id="errorChange"></small>
-        </div>
-        <button type="submit" class="btn btn-primary w-100" id="btnSimpanHeader"><i
-                class="fas fa-spinner fa-spin d-none me-2"></i>Simpan
-            Perubahan</button>
+        <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
     </div>
-</form>
-<div id="detail">
-
-    <div class="bg-info p-2 border-dark border-bottom mb-3 mt-5">
-        <label class="fw-bold">Detail Jual</label>
-    </div>
-    <div id="alertGeneral">
-        @include('components.alert')
-    </div>
-    <label class="info-delete ms-1 mb-3 text-success fw-bold"></label>
-</div>
-<button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
-</button>
+    <button type="button" class="btn btn-dark my-3" id="btnTambahPembagian"><i class="fa fa-plus"></i> Tambah
+    </button>
 @endsection
 
 @push('script')
-<script>
-    let detailJual
-    let number = 0
+    <script>
+        let detailJual
+        let number = 0
 
         // inisialisasi form select 2
         $(".form-select").select2({
@@ -124,7 +124,9 @@
                     // pay
                     $(`#inputChange`).val(response.change);
 
-                    $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                    $('input.money-format').mask('000.000.000.000.000', {
+                        reverse: true
+                    });
 
                 },
                 error: function(response) { // handle the error
@@ -136,23 +138,22 @@
 
             })
 
-            
+
         }
         loadDataHeader()
 
         // handle form_header
-        $("#formHeader").on("submit", function(e) { //id of form 
+        $("#formHeader").on("submit", function(e) { //id of form
             $('#btnSimpanHeader').attr('disabled', 'disabled')
             $('#btnSimpanHeader').children().removeClass('d-none')
 
             e.preventDefault();
             let action = $(this).attr("action"); //get submit action from form
             let method = $(this).attr("method"); // get submit method
-            let form_data = new FormData($(this)[0]); // convert form into formdata        
-            for (var pair of form_data.entries())
-                {
-                    form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));       
-                }
+            let form_data = new FormData($(this)[0]); // convert form into formdata
+            for (var pair of form_data.entries()) {
+                form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));
+            }
             $.ajax({
                 url: action,
                 dataType: 'json', // what to expect back from the server
@@ -171,14 +172,18 @@
                         $('#alertNotif span').html(response.success);
                         $('#alertJs').append(`@include('components.alert')`);
                         loadDataHeader();
-                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                        $('input.money-format').mask('000.000.000.000.000', {
+                            reverse: true
+                        });
                     }
                 },
-                error: function(response) { // handle the error            
+                error: function(response) { // handle the error
                     $('#btnSimpanHeader').removeAttr('disabled')
                     $('#btnSimpanHeader').children().addClass('d-none')
                     loadDataHeader();
-                    $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                    $('input.money-format').mask('000.000.000.000.000', {
+                        reverse: true
+                    });
                     let errors = response.responseJSON.errors
                     $("small[id^='error']").html('');
 
@@ -216,9 +221,10 @@
 
         // membuat element detail beli
         function loadElementDetailJual(item, index) {
+            console.log(item.harga_satuan);
             let form = $(
                 `<form name="form_detail${index}" id="formDetail${index}" method="POST" action="/penjualan/detail/${item.id}/edit" class=" mb-5">
-                    <div class="card mb-4"></div>    
+                    <div class="card mb-4"></div>
                     </form>`
             )
             let cardHeader = $(
@@ -241,50 +247,50 @@
                 `<div class="card-body border">
                         <div id="alert${index}">
                             @include('components.alert')
-                        </div>        
+                        </div>
                         @csrf
                         <input type="hidden" name="type" value="update-detail">
-                        <input type="hidden" name="id" value="${item.id}">                        
+                        <input type="hidden" name="id" value="${item.id}">
                         <input type="hidden" class="alt" name="id_detail_panen" value="${item.id_detail_panen}">
-                        <input type="hidden" name="id_header_jual" id="idHeader${index}" value="${item.id_heder_panen}">                        
+                        <input type="hidden" name="id_header_jual" id="idHeader${index}" value="${item.id_heder_panen}">
                         <div class="mb-3">
                             <label class="form-label">Pilih Produk Panen</label>
                             <select class="form-select select-panen${index}" data-placeholder="Pilih Produk Panen" name="id_detail_panen" required>
                                 <option></option>
                                 @foreach ($panen as $value)
                                     <option value="{{ $value->id }}">
-                                        {{ $value->header_panen->tgl_panen . ' | ' . $value->detail_pembagian_bibit->header_pembagian_bibit->detail_beli->produk->nama }}
+                                        {{ $value->header_panen->tgl_panen . ' | ' . $value->produk_panen->nama . ' (' . $value->quantity_berat . ')' }}
                                     </option>
                                 @endforeach
                             </select>
                             <small class="text-danger" id="errorPanen${index}"></small>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Harga Per-Kg</label>
+                            <label class="form-label">Harga Per-Kg ${item.harga_satuan}</label>
                             <input type="text" class="form-control money-format harga-satuan" name="harga_satuan" value="${item.harga_satuan}" required>
                             <small class="text-danger" id="errorhargaSatuan${index}"></small>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Diskon</label>
                             <input type="text" readonly class="form-control diskon" name="diskon" value="${item.diskon}" required>
-                            <small class="text-danger" id="errorDiskon${index}"></small>                            
-                        </div>                       
+                            <small class="text-danger" id="errorDiskon${index}"></small>
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Quantity</label>
-                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>                                                
+                            <input type="text" class="form-control quantity" name="quantity" value="${item.quantity}" required>
                             <small id="errorQuantity${index}" class="text-danger"></small>
-                        </div>                       
+                        </div>
                         <div class="mb-3">
                             <label class="form-label">Subtotal</label>
                             <input type="text" class="form-control subtotal money-format" name="subtotal" value="${item.sub_total}" required readonly>
                             <small class="text-danger" id="errorSubtotal${index}"></small>
-                        </div>                       
+                        </div>
                         <div class="btn-update-content">
                             <button type="submit" class="btn btn-success" id="btnUpdateDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Perbarui
                             </button>
-                            <button type="button" class="btn btn-danger" data-id="${item.id}" id="btnDeleteDetail${index}">
+                            <button  type="button" class="btn btn-danger ${index == 0 ? 'd-none' : '' }" data-id="${item.id}" id="btnDeleteDetail${index}">
                                 <i class="fas fa-spinner fa-spin d-none"></i>
                                 Hapus
                             </button>
@@ -314,7 +320,7 @@
 
 
             // handle sumbit
-            $(`#formDetail${index}`).on("submit", function(e) { //id of form 
+            $(`#formDetail${index}`).on("submit", function(e) { //id of form
                 e.preventDefault();
                 $(`#btnUpdateDetail${index}`).attr('disabled', 'disabled')
                 $(`#btnUpdateDetail${index}`).children().removeClass('d-none')
@@ -322,11 +328,10 @@
 
                 let action = $(this).attr("action"); //get submit action from form
                 let method = $(this).attr("method"); // get submit method
-                let form_data = new FormData($(this)[0]); // convert form into formdata        
-                for (var pair of form_data.entries())
-                {
+                let form_data = new FormData($(this)[0]); // convert form into formdata
+                for (var pair of form_data.entries()) {
                     if (pair[0] != 'quantity' && pair[0] != 'diskon') {
-                        form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));           
+                        form_data.set(pair[0], pair[1].toString().replace(/\./g, ''));
                     }
                 }
                 $.ajax({
@@ -359,7 +364,9 @@
                                 });
                             }, 500);
 
-                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                            $('input.money-format').mask('000.000.000.000.000', {
+                                reverse: true
+                            });
                         }
 
                         if (response.save_detail != undefined) {
@@ -376,17 +383,21 @@
                             $(`#formDetail${index} input.alt`).attr('name', 'id_detail_panen');
                             $(`#formDetail${index} select.select-panen${index}`).removeAttr('name');
                             $(`#formDetail${index} input[name='type']`).val('update-detail');
-                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                            $('input.money-format').mask('000.000.000.000.000', {
+                                reverse: true
+                            });
                         }
                     },
-                    error: function(response) { // handle the error            
+                    error: function(response) { // handle the error
                         $(`#btnUpdateDetail${index}`).removeAttr('disabled')
                         $(`#btnSaveDetail${index}`).removeAttr('disabled')
                         $(`#btnUpdateDetail${index}`).children().addClass('d-none')
                         $(`#btnSaveDetail${index}`).children().addClass('d-none')
                         $(`#btnDeleteDetail${index}`).removeAttr('disabled')
                         loadDataHeader();
-                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                        $('input.money-format').mask('000.000.000.000.000', {
+                            reverse: true
+                        });
                         let errors = response.responseJSON.errors
                         $("small[id^='error']").html('');
 
@@ -446,11 +457,13 @@
                                 loadElementDetailJual(item, index)
                             });
 
-                            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                            $('input.money-format').mask('000.000.000.000.000', {
+                                reverse: true
+                            });
                         }
 
                     },
-                    error: function(response) { // handle the error                                    
+                    error: function(response) { // handle the error
                         $(`#formDetail${index} .status-error-header`).removeClass('d-none')
                         $(`#formDetail${index} .status-error-header span`).html(response
                             .success)
@@ -459,7 +472,9 @@
                                 "d-none");
                         }, 3000);
                         loadDataHeader();
-                        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+                        $('input.money-format').mask('000.000.000.000.000', {
+                            reverse: true
+                        });
                     },
 
                 })
@@ -471,7 +486,7 @@
             loadElementDetailJual(item, index)
 
         });
-        
+
 
         // tambah element detail
         $('#btnTambahPembagian').click(function() {
@@ -479,18 +494,22 @@
             idHeader = {!! $id !!}
             loadElementDetailJual({
                 id_produk: null,
-                id_heder_panen: idHeader
+                id_heder_panen: idHeader,
+                harga_satuan: 0,
+                diskon: 0,
+                quantity: 0,
+                sub_total: 0,
 
             }, number)
-            $('input[name="id_detail_panen"]').attr('disabled',true)
+            $('input[name="id_detail_panen"]').attr('disabled', true)
             $('input.diskon').removeAttr('readonly')
 
-            // hapus semua nilai input
-            $(':input', `#formDetail${number}`)
-                .not(':button, :submit, :reset, :hidden')
-                .val('')
-                .prop('checked', false)
-                .prop('selected', false);
+            // // hapus semua nilai input
+            // $(':input', `#formDetail${number}`)
+            //     .not(':button, :submit, :reset, :hidden')
+            //     .val('')
+            //     .prop('checked', false)
+            //     .prop('selected', false);
 
             $(`.select-panen${number}`).removeAttr('disabled');
 
@@ -511,8 +530,12 @@
             $(`#formDetail${number} .btn-card.btn-close`).click(function() {
                 $(this).parent().parent().parent().remove();
             })
-            $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
+            $('input.money-format').mask('000.000.000.000.000', {
+                reverse: true
+            });
         })
-        $( 'input.money-format' ).mask('000.000.000.000.000', {reverse: true});
-</script>
+        $('input.money-format').mask('000.000.000.000.000', {
+            reverse: true
+        });
+    </script>
 @endpush

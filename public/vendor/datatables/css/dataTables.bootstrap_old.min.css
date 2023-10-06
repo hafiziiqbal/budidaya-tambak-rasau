@@ -1,32 +1,32 @@
 :root {
-    --dt-row-selected: 13, 110, 253;
+    --dt-row-selected: 0, 136, 204;
     --dt-row-selected-text: 255, 255, 255;
     --dt-row-selected-link: 9, 10, 11;
-    --dt-row-stripe: 0, 0, 0;
-    --dt-row-hover: 0, 0, 0;
-    --dt-column-ordering: 0, 0, 0;
-    --dt-html-background: white;
-}
-:root.dark {
-    --dt-html-background: rgb(33, 37, 41);
 }
 table.dataTable td.dt-control {
     text-align: center;
     cursor: pointer;
 }
 table.dataTable td.dt-control:before {
+    height: 1em;
+    width: 1em;
+    margin-top: -9px;
     display: inline-block;
-    color: rgba(0, 0, 0, 0.5);
-    content: "►";
+    color: white;
+    border: 0.15em solid white;
+    border-radius: 1em;
+    box-shadow: 0 0 0.2em #444;
+    box-sizing: content-box;
+    text-align: center;
+    text-indent: 0 !important;
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1em;
+    content: "+";
+    background-color: #31b131;
 }
 table.dataTable tr.dt-hasChild td.dt-control:before {
-    content: "▼";
-}
-html.dark table.dataTable td.dt-control:before {
-    color: rgba(255, 255, 255, 0.5);
-}
-html.dark table.dataTable tr.dt-hasChild td.dt-control:before {
-    color: rgba(255, 255, 255, 0.5);
+    content: "-";
+    background-color: #d33333;
 }
 table.dataTable thead > tr > th.sorting,
 table.dataTable thead > tr > th.sorting_asc,
@@ -81,7 +81,6 @@ table.dataTable thead > tr > td.sorting_asc_disabled:before,
 table.dataTable thead > tr > td.sorting_desc_disabled:before {
     bottom: 50%;
     content: "▲";
-    content: "▲"/"";
 }
 table.dataTable thead > tr > th.sorting:after,
 table.dataTable thead > tr > th.sorting_asc:after,
@@ -95,7 +94,6 @@ table.dataTable thead > tr > td.sorting_asc_disabled:after,
 table.dataTable thead > tr > td.sorting_desc_disabled:after {
     top: 50%;
     content: "▼";
-    content: "▼"/"";
 }
 table.dataTable thead > tr > th.sorting_asc:before,
 table.dataTable thead > tr > th.sorting_desc:after,
@@ -113,10 +111,10 @@ table.dataTable thead > tr > th:active,
 table.dataTable thead > tr > td:active {
     outline: none;
 }
-div.dataTables_scrollBody > table.dataTable > thead > tr > th:before,
-div.dataTables_scrollBody > table.dataTable > thead > tr > th:after,
-div.dataTables_scrollBody > table.dataTable > thead > tr > td:before,
-div.dataTables_scrollBody > table.dataTable > thead > tr > td:after {
+div.dataTables_scrollBody table.dataTable thead > tr > th:before,
+div.dataTables_scrollBody table.dataTable thead > tr > th:after,
+div.dataTables_scrollBody table.dataTable thead > tr > td:before,
+div.dataTables_scrollBody table.dataTable thead > tr > td:after {
     display: none;
 }
 div.dataTables_processing {
@@ -141,8 +139,7 @@ div.dataTables_processing > div:last-child > div {
     width: 13px;
     height: 13px;
     border-radius: 50%;
-    background: rgb(13, 110, 253);
-    background: rgb(var(--dt-row-selected));
+    background: 0 136 204;
     animation-timing-function: cubic-bezier(0, 1, 1, 0);
 }
 div.dataTables_processing > div:last-child > div:nth-child(1) {
@@ -265,18 +262,13 @@ table.dataTable tbody td.dt-body-justify {
 table.dataTable tbody th.dt-body-nowrap,
 table.dataTable tbody td.dt-body-nowrap {
     white-space: nowrap;
-} /*! Bootstrap 5 integration for DataTables
- *
- * ©2020 SpryMedia Ltd, all rights reserved.
- * License: MIT datatables.net/license/mit
- */
+}
 table.dataTable {
     clear: both;
     margin-top: 6px !important;
     margin-bottom: 6px !important;
     max-width: none !important;
     border-collapse: separate !important;
-    border-spacing: 0;
 }
 table.dataTable td,
 table.dataTable th {
@@ -291,14 +283,14 @@ table.dataTable.nowrap th,
 table.dataTable.nowrap td {
     white-space: nowrap;
 }
-table.dataTable.table-striped > tbody > tr:nth-of-type(2n + 1) > * {
-    box-shadow: none;
+table.dataTable.table-striped > tbody > tr:nth-of-type(2n + 1) {
+    background-color: transparent;
 }
 table.dataTable > tbody > tr {
     background-color: transparent;
 }
 table.dataTable > tbody > tr.selected > * {
-    box-shadow: inset 0 0 0 9999px rgb(13, 110, 253);
+    box-shadow: inset 0 0 0 9999px rgb(0, 136, 204);
     box-shadow: inset 0 0 0 9999px rgb(var(--dt-row-selected));
     color: rgb(255, 255, 255);
     color: rgb(var(--dt-row-selected-text));
@@ -308,17 +300,17 @@ table.dataTable > tbody > tr.selected a {
     color: rgb(var(--dt-row-selected-link));
 }
 table.dataTable.table-striped > tbody > tr.odd > * {
-    box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-stripe), 0.05);
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.023);
 }
 table.dataTable.table-striped > tbody > tr.odd.selected > * {
-    box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.95);
-    box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-selected), 0.95);
+    box-shadow: inset 0 0 0 9999px rgba(0, 136, 204, 0.923);
+    box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-selected), 0.923);
 }
 table.dataTable.table-hover > tbody > tr:hover > * {
-    box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-hover), 0.075);
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.075);
 }
 table.dataTable.table-hover > tbody > tr.selected:hover > * {
-    box-shadow: inset 0 0 0 9999px rgba(13, 110, 253, 0.975);
+    box-shadow: inset 0 0 0 9999px rgba(0, 136, 204, 0.975);
     box-shadow: inset 0 0 0 9999px rgba(var(--dt-row-selected), 0.975);
 }
 div.dataTables_wrapper div.dataTables_length label {
@@ -327,7 +319,7 @@ div.dataTables_wrapper div.dataTables_length label {
     white-space: nowrap;
 }
 div.dataTables_wrapper div.dataTables_length select {
-    width: auto;
+    width: 75px;
     display: inline-block;
 }
 div.dataTables_wrapper div.dataTables_filter {
@@ -344,7 +336,8 @@ div.dataTables_wrapper div.dataTables_filter input {
     width: auto;
 }
 div.dataTables_wrapper div.dataTables_info {
-    padding-top: 0.85em;
+    padding-top: 8px;
+    white-space: nowrap;
 }
 div.dataTables_wrapper div.dataTables_paginate {
     margin: 0;
@@ -354,10 +347,16 @@ div.dataTables_wrapper div.dataTables_paginate {
 div.dataTables_wrapper div.dataTables_paginate ul.pagination {
     margin: 2px 0;
     white-space: nowrap;
-    justify-content: flex-end;
 }
-div.dataTables_wrapper div.dt-row {
-    position: relative;
+div.dataTables_wrapper div.dataTables_processing {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200px;
+    margin-left: -100px;
+    margin-top: -26px;
+    text-align: center;
+    padding: 1em 0;
 }
 div.dataTables_scrollHead table.dataTable {
     margin-bottom: 0 !important;
@@ -367,16 +366,13 @@ div.dataTables_scrollBody > table {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
-div.dataTables_scrollBody > table > thead .sorting:before,
-div.dataTables_scrollBody > table > thead .sorting_asc:before,
-div.dataTables_scrollBody > table > thead .sorting_desc:before,
 div.dataTables_scrollBody > table > thead .sorting:after,
 div.dataTables_scrollBody > table > thead .sorting_asc:after,
 div.dataTables_scrollBody > table > thead .sorting_desc:after {
     display: none;
 }
-div.dataTables_scrollBody > table > tbody tr:first-child th,
-div.dataTables_scrollBody > table > tbody tr:first-child td {
+div.dataTables_scrollBody > table > tbody > tr:first-child > th,
+div.dataTables_scrollBody > table > tbody > tr:first-child > td {
     border-top: none;
 }
 div.dataTables_scrollFoot > .dataTables_scrollFootInner {
@@ -393,29 +389,16 @@ div.dataTables_scrollFoot > .dataTables_scrollFootInner > table {
     div.dataTables_wrapper div.dataTables_paginate {
         text-align: center;
     }
-    div.dataTables_wrapper div.dataTables_paginate ul.pagination {
-        justify-content: center !important;
-    }
 }
-table.dataTable.table-sm > thead > tr > th:not(.sorting_disabled) {
+table.dataTable.table-condensed > thead > tr > th {
     padding-right: 20px;
 }
 table.table-bordered.dataTable {
     border-right-width: 0;
 }
-table.table-bordered.dataTable thead tr:first-child th,
-table.table-bordered.dataTable thead tr:first-child td {
-    border-top-width: 1px;
-}
 table.table-bordered.dataTable th,
 table.table-bordered.dataTable td {
     border-left-width: 0;
-}
-table.table-bordered.dataTable th:first-child,
-table.table-bordered.dataTable th:first-child,
-table.table-bordered.dataTable td:first-child,
-table.table-bordered.dataTable td:first-child {
-    border-left-width: 1px;
 }
 table.table-bordered.dataTable th:last-child,
 table.table-bordered.dataTable th:last-child,
@@ -423,9 +406,9 @@ table.table-bordered.dataTable td:last-child,
 table.table-bordered.dataTable td:last-child {
     border-right-width: 1px;
 }
-table.table-bordered.dataTable th,
-table.table-bordered.dataTable td {
-    border-bottom-width: 1px;
+table.table-bordered.dataTable tbody th,
+table.table-bordered.dataTable tbody td {
+    border-bottom-width: 0;
 }
 div.dataTables_scrollHead table.table-bordered {
     border-bottom-width: 0;
@@ -444,9 +427,4 @@ div.table-responsive
     > div.row
     > div[class^="col-"]:last-child {
     padding-right: 0;
-}
-:root[data-bs-theme="dark"] {
-    --dt-row-hover: 255, 255, 255;
-    --dt-row-stripe: 255, 255, 255;
-    --dt-column-ordering: 255, 255, 255;
 }

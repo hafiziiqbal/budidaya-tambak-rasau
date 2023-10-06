@@ -211,8 +211,10 @@
             // Jika terdapat minimal 2 element input type check tercentang, maka hilangkan atribut disabled pada button checkAll
             if (checkedCount >= 2) {
                 $('#shareMultiple').removeAttr('disabled');
+                $('.btn-share').attr('disabled', 'disabled')
             } else { // Jika hanya ada 1 element input type check tercentang atau tidak ada sama sekali, maka tambahkan atribut disabled pada button shareMultiple
                 $('#shareMultiple').attr('disabled', true);
+                $('.btn-share').removeAttr('disabled')
             }
         });
 
