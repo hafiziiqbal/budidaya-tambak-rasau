@@ -211,7 +211,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::get('/contoh', [PanenController::class, 'contoh'])->name('panen.contoh');
         Route::get('/{id}/edit', [PanenController::class, 'edit'])->name('panen.pakan.edit');
         Route::get('/{id}/edit-json', [PanenController::class, 'editJson'])->name('panen.edit.json');
-        Route::get('/delete/{id}', [PanenController::class, 'destroy'])->name('panen.destory');
+        Route::delete('/delete/{id}/', [PanenController::class, 'destroy'])->name('panen.destory');
         Route::get('/{id}/show', [PanenController::class, 'show'])->name('panen.show');
         Route::get('/pembagian-bibit/{id}', [PanenController::class, 'pembagianBibitByKolam'])->name('panen.pembagian.bibit');
 

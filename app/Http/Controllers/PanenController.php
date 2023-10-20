@@ -187,18 +187,23 @@ class PanenController extends Controller
                 $detail_pembagian_bibit->id_jaring = null;
                 $detail_pembagian_bibit->save();
             }
+            if ($detail['status'] == 0) {
 
-            if ($detail['status'] == 1) {
+                $hargaSatuanBibit  = $detail_pembagian_bibit->header_pembagian_bibit->detail_beli->harga_satuan;
 
-                $hargaBeliBibit  = $detail_pembagian_bibit->header_pembagian_bibit->detail_beli->subtotal;
-                $pemberianPakan = DetailPemberianPakan::where('id_detail_pembagian_bibit', $detail_pembagian_bibit->id)->get();
-                $quantityPemberianPakan = $pemberianPakan->sum('quantity');
-                $detailPembagianPakan = DetailPembagianPakan::find($pemberianPakan[0]->id_detail_pembagian_pakan);
-                $detailBeliPakan = DetailBeli::select('id', 'harga_satuan')->where('id', $detailPembagianPakan->id_detail_beli)->first();
+                $sums = DetailPemberianPakan::where('id_detail_pembagian_bibit', $detail_pembagian_bibit->id)
+                    ->select('id_detail_pembagian_pakan', DB::raw('SUM(quantity) as total_quantity'))
+                    ->groupBy('id_detail_pembagian_pakan')
+                    ->get();
 
-                $hargaPakanYangDigunakan = $quantityPemberianPakan * $detailBeliPakan->harga_satuan;
-                $jumlahHpp = ($hargaBeliBibit + $hargaPakanYangDigunakan) / $quantity;
+                $totalPrice = 0;
 
+                foreach ($sums as $sum) {
+                    $detailPakan = DetailPemberianPakan::where('id_detail_pembagian_pakan', $sum->id_detail_pembagian_pakan)->with('detail_pembagian_pakan.detail_beli')->first();
+                    $total_quantity = $sum->total_quantity;
+                    $harga_satuan = $detailPakan->detail_pembagian_pakan->detail_beli->harga_satuan;
+                    $totalPrice += $total_quantity * $harga_satuan;
+                }
                 $idDetailPanenSortir = $detail_pembagian_bibit->header_pembagian_bibit->id_detail_panen;
 
                 if ($idDetailPanenSortir != null) {
@@ -209,20 +214,73 @@ class PanenController extends Controller
                     Hpp::create([
                         'id_detail_panen' => $detailPanen->id,
                         'id_detail_pembagian_bibit' =>  $detail['id_detail_pembagian_bibit'],
-                        'total_biaya_pakan' => $cekHppSebelumnya->total_biaya_pakan +  $hargaPakanYangDigunakan,
-                        'jumlah_ikan_panen' => $cekHppSebelumnya->jumlah_ikan_panen  + $quantity,
-                        'hpp' => ($hargaBeliBibit + ($cekHppSebelumnya->total_biaya_pakan +  $hargaPakanYangDigunakan)) / (($cekHppSebelumnya->jumlah_ikan_panen  + $quantity))
+                        'total_biaya_pakan' => $totalPrice + $cekHppSebelumnya->total_biaya_pakan,
+                        'jumlah_ikan_panen' => $quantity,
+                        'hpp' => ($totalPrice + $cekHppSebelumnya->total_biaya_pakan)
                     ]);
                 }
                 if ($idDetailPanenSortir == null) {
                     Hpp::create([
                         'id_detail_panen' => $detailPanen->id,
                         'id_detail_pembagian_bibit' =>  $detail['id_detail_pembagian_bibit'],
-                        'total_biaya_pakan' => $hargaPakanYangDigunakan,
+                        'total_biaya_pakan' => $totalPrice,
                         'jumlah_ikan_panen' => $quantity,
-                        'hpp' => $jumlahHpp
+                        'hpp' => $totalPrice
                     ]);
                 }
+            }
+
+            if ($detail['status'] == 1) {
+
+                $hargaSatuanBibit  = $detail_pembagian_bibit->header_pembagian_bibit->detail_beli->harga_satuan;
+
+                $sums = DetailPemberianPakan::where('id_detail_pembagian_bibit', $detail_pembagian_bibit->id)
+                    ->select('id_detail_pembagian_pakan', DB::raw('SUM(quantity) as total_quantity'))
+                    ->groupBy('id_detail_pembagian_pakan')
+                    ->get();
+
+                $totalPrice = 0;
+                $hargaSatuan = 0;
+
+                foreach ($sums as $sum) {
+                    $detailPakan = DetailPemberianPakan::where('id_detail_pembagian_pakan', $sum->id_detail_pembagian_pakan)->with('detail_pembagian_pakan.detail_beli')->first();
+                    $total_quantity = $sum->total_quantity;
+                    $harga_satuan = $detailPakan->detail_pembagian_pakan->detail_beli->harga_satuan;
+                    if ($hargaSatuan != $harga_satuan) {
+                        $hargaSatuan = $harga_satuan;
+                    }
+                    $totalPrice += $total_quantity * $harga_satuan;
+                }
+
+                $idDetailPanenSortir = $detail_pembagian_bibit->header_pembagian_bibit->id_detail_panen;
+
+                if ($idDetailPanenSortir != null) {
+                    $idHeaderPanen = DetailPanen::where('id', $idDetailPanenSortir)->get()[0]->id_header_panen;
+                    $idDetailPanenSortir = DetailPanen::where('id_header_panen', $idHeaderPanen)->where('status', 0)->first()->id;
+
+                    $cekHppSebelumnya = Hpp::where('id_detail_panen', $idDetailPanenSortir)->first();
+                    $hpp = (($totalPrice + $cekHppSebelumnya->total_biaya_pakan) / $quantity) + $hargaSatuanBibit;
+
+                    Hpp::create([
+                        'id_detail_panen' => $detailPanen->id,
+                        'id_detail_pembagian_bibit' =>  $detail['id_detail_pembagian_bibit'],
+                        'total_biaya_pakan' => $totalPrice + $cekHppSebelumnya->total_biaya_pakan,
+                        'jumlah_ikan_panen' => $quantity,
+                        'hpp' => $hpp
+                    ]);
+                }
+                if ($idDetailPanenSortir == null) {
+                    $hpp = ($totalPrice / $quantity) + $hargaSatuanBibit;
+
+                    Hpp::create([
+                        'id_detail_panen' => $detailPanen->id,
+                        'id_detail_pembagian_bibit' =>  $detail['id_detail_pembagian_bibit'],
+                        'total_biaya_pakan' => $totalPrice,
+                        'jumlah_ikan_panen' => $quantity,
+                        'hpp' => $hpp
+                    ]);
+                }
+
                 $produkExists = Produk::where('id',  $detail['id_produk'])->where('id_kategori', 6)->first();
                 if ($produkExists) {
                     DB::table('produk')->where('id',  $detail['id_produk'])->where('id_kategori', 6)->increment('quantity', $detail['quantity_berat']);
@@ -530,8 +588,10 @@ class PanenController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
+        $isDecrementProduk = $request->input('isDecrementProduk');
+
         // Mencari semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus
         $details = DetailPanen::where('id_header_panen', $id)->get();
         foreach ($details as $key => $value) {
@@ -570,11 +630,24 @@ class PanenController extends Controller
                 ]);
             }
 
+            if ($isDecrementProduk) {
+                $produkExists = Produk::where('id',  $detail->id_produk)->where('id_kategori', 6)->first();
 
-            $produkExists = Produk::where('id',  $detail->id_produk)->where('id_kategori', 6)->first();
-
-            if ($produkExists != null) {
-                $produkExists->decrement('quantity', $detail->quantity_berat);
+                if ($produkExists != null) {
+                    if ($produkExists->quantity > $detail->quantity_berat) {
+                        $produkExists->decrement('quantity', $detail->quantity_berat);
+                    } else {
+                        return redirect()->route('panen')->withErrors([
+                            'error' =>
+                            'Qty Produk Tidak Dikurangi Karena Tidak Mencukupi'
+                        ]);
+                    }
+                } else {
+                    return redirect()->route('panen')->withErrors([
+                        'error' =>
+                        'Qty Produk Tidak Dikurangi Karena Tidak Ada Produk Yang Terbaca'
+                    ]);
+                }
             }
         }
         // Menghapus semua record dari tabel detail_pembagian_pakan yang terkait dengan header_pembagian_pakan yang akan dihapus

@@ -308,7 +308,8 @@
         shareKolam = getCookie('shareKolam');
 
         if (shareIdDetail != '') {
-            $('#inputTanggalPembagian').val(shareTanggal)
+            $('#inputTanggalPembagian').val(getDateNow());
+            // $('#inputTanggalPembagian').val(shareTanggal)
             $('ol a').attr('href', `/${shareUrl}`);
             $('ol a').html('Pembagian Bibit');
 
@@ -362,7 +363,10 @@
             const tambahkanNol = (nilai) => (nilai < 10 ? "0" + nilai : nilai);
 
             // Buat tanggal dalam format "d-m-y"
-            return tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+            let tanggalFormat = `${tambahkanNol(tanggal)}-${tambahkanNol(bulan)}-${tahun}`;
+            console.log(tanggalFormat);
+            return tanggalFormat;
+
 
         }
         // end get share bibit

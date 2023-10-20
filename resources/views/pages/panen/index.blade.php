@@ -138,8 +138,10 @@
                         let edit =
                             `<a title="Edit Data" href="/panen/${id}/edit" class="btn btn-warning me-2"><i class="fa fa-pencil"></i></a>`;
                         let deletebtn =
-                            `<a title="Hapus Data" href="/panen/delete/${id}" class="btn btn-danger"><i class="fa fa-trash"></i></a>`
-                        return show + edit + deletebtn
+                            `<a title="Hapus Data" data-id="${id}" class="btn btn-danger btn-delete"><i class="fa fa-trash"></i></a>`
+
+                        return show + deletebtn
+
                     },
                 },
                 {
@@ -148,7 +150,19 @@
                     visible: false,
                 }
             ],
+        });
+        table.on('click', '.btn-delete', function() {
+            var dataId = $(this).data('id'); // ambil nilai data-id dari checkbox yang diklik
+            // Menampilkan kotak konfirmasi
+            const confirmation = confirm(
+                "Apakah Anda ingin menghapus data yang ada di produk?");
 
+            // Mengirim permintaan berdasarkan hasil konfirmasi
+            if (confirmation) {
+                window.location.href = `/panen/delete/${dataId}?isDecrementProduk=true`;
+            } else {
+                window.location.href = `/panen/delete/${dataId}?isDecrementProduk=false`;
+            }
 
         });
 
